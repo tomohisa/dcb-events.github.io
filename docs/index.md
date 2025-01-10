@@ -1,4 +1,4 @@
-# Introduction
+# What is it?
 
 DCB is a technique for enforcing consistency in an event-driven system.
 
@@ -22,6 +22,10 @@ The decision results in one or more events to be published.
 Since the data used for making the decision are frozen in time at the moment identified by the consistency marker, the publishing operation needs to be performed only conditionally. The condition that must be fulfilled is that no events that could affect the decision that was just made happened after the consistency marker.
 
 DCB acts as a form of optimistic lock for publishing events.
+
+## Getting started
+
+## How it works
 
 ## Limitations
 

@@ -31,16 +31,25 @@ theme:
       accent: deep orange
 
 nav:
-  - index.md
+  - DCB: index.md
   - Examples:
+      - examples/index.md
       - Uniqueness across entities: examples/uniqueness.md
       - Reservation pattern: examples/reservation-pattern.md
       - Idempotency: examples/idempotency.md
+  - Advanced topics:
+      - advanced/index.md
+      - DCB vs Outbox Pattern: advanced/dcbVsOutboxPattern.md
+      - DCB with a "classical" Event Store: advanced/dcbWithAClassicalEventStore.md
+      - DCB without Event Sourcing: advanced/dcbWithoutEventSourcing.md
+      - Performance: advanced/performance.md
   - Resources:
+      - Specification: resources/specification.md
       - API: resources/api.md
       - Implementations: resources/implementations.md
       - Other: resources/other.md
-  - Glossary: glossary.md
+  - Definitions: definitions.md
+  - FAQ: faq.md
 
 markdown_extensions:
   - pymdownx.emoji:
