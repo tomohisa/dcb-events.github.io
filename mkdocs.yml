@@ -39,6 +39,7 @@ nav:
       - Idempotency: examples/idempotency.md
   - Advanced topics:
       - advanced/index.md
+      - Composing projections: advanced/composing-projections.md
       - DCB vs Outbox Pattern: advanced/dcb-vs-outbox-pattern.md
       - DCB with a "classical" Event Store: advanced/dcb-with-a-classical-event-store.md
       - DCB without Event Sourcing: advanced/dcb-without-event-sourcing.md
