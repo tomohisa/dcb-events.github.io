@@ -48,7 +48,7 @@ nav:
       - API: resources/api.md
       - Implementations: resources/implementations.md
       - Other: resources/other.md
-  - Definitions: definitions.md
+  - Glossary: glossary.md
   - FAQ: faq.md
 
 markdown_extensions:
