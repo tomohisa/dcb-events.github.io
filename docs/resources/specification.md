@@ -98,13 +98,11 @@ It...
 
 When reading from the [EventStore](#EventStore) an `EventStream` is returned.
 
-It...
-
 - It _MUST_ be iterable
 - It _MUST_ return an [EventEnvelope](#EventEnvelope) for every iteration
 - It _CAN_ include new events if they occur during iteration
-- Individual [EventEnvelope](#EventEnvelope) instances _MAY_ be converted during iteration for performance optimization
 - Batches of events _MAY_ be loaded from the underlying storage at once for performance optimization
+- It _CAN_ provide additional functionality, e.g. a `subscribe()` function to realize reactive behavior
 
 ### EventEnvelope
 
@@ -192,6 +190,8 @@ A `Tag` can add domain specific metadata to an event allowing for custom partiti
 - It _MUST_ be _either_ a
   - [SequenceNumber](#SequenceNumber) - representing the highest sequence number that was consumed when building the condition
   - `NONE` - no event must match the specified [StreamQuery](#StreamQuery)
+
+#### 
 
 ```
 AppendCondition {
