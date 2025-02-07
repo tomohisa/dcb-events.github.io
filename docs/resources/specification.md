@@ -28,13 +28,15 @@ EventStore {
 An optional parameter to `EventStore.read()` that allows for cursor-based pagination of events.
 It has two parameters:
 
-- `backwards` a flag that, if set to `true`, returns the events in descending order (default: `false`)
 - `from` an optional [SequenceNumber](#SequenceNumber) to start streaming events from (depending on the `backwards` flag this is either a _minimum_ or _maximum_ sequence number of the resulting stream)
+- `backwards` a flag that, if set to `true`, returns the events in descending order (default: `false`)
+- `limit` an optional number that, if set, limits the event stream to a maximum number of events. This can be useful to only retrieve the last event for example.
 
 ```
 ReadOptions {
   from?: SequenceNumber
-  backwards: bool
+  backwards: boolean
+  limit?: integer
 }
 ```
 
@@ -45,8 +47,8 @@ It effectively allows for filtering events by their [type](#EventType) and/or [t
 
 - It _MUST_ contain a set of [StreamQuery Criteria](#StreamQuery-Criterion)
 
-> [!NOTE]  
-> All criteria of a StreamQuery are merged into a _logical disjunction_, so events match the query if they match the first **OR** the second criterion...
+!!! info
+    All criteria of a StreamQuery are merged into a _logical disjunction_, so events match the query if they match the first **OR** the second criterion...
 
 ### StreamQuery Criterion
 
@@ -179,7 +181,7 @@ A set of [Tag](#Tag) instances.
 
 A `Tag` can add domain specific metadata to an event allowing for custom partitioning
 
-!!! note
+!!! info
     Usually a tag represents a concept of the domain, e.g. the type and id of an entity like `product:p123`
 
 - It _MUST_ satisfy the regular expression `/^[[:alnum:]\-\_\:]{1,150}`
@@ -188,7 +190,7 @@ A `Tag` can add domain specific metadata to an event allowing for custom partiti
 
 - It _MUST_ contain a [StreamQuery](#StreamQuery)
 - It _MUST_ be _either_ a
-  - [SequenceNumber](#SequenceNumber) - representing the highest sequence number that was consumed when building the condition
+  - [SequenceNumber](#SequenceNumber) - representing the highest sequence number that was consumed when building the condition. *Note:* There is no guarantee that this number is not _higher_ than the last event that matched the StreamQuery
   - `NONE` - no event must match the specified [StreamQuery](#StreamQuery)
 
 #### 
