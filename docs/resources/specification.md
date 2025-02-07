@@ -64,8 +64,8 @@ Each criterion of a [StreamQuery](#StreamQuery) allows to target events by their
 The following example query would match events that are either...
 
 - ...of type `EventType1` **OR** `EventType2`
-- ...tagged `foo:bar` **AND** `baz:foos`
-- ...of type `EventType2` **OR** `EventType3` **AND** tagged `foo:bar`**AND** `foo:baz`
+- ...tagged `tag1` **AND** `tag2`
+- ...of type `EventType2` **OR** `EventType3` **AND** tagged `tag1`**AND** `tag3`
 
 ```json
 {
@@ -74,11 +74,11 @@ The following example query would match events that are either...
       "event_types": ["EventType1", "EventType2"]
     },
     {
-      "tags": ["foo:bar", "baz:foos"]
+      "tags": ["tag1", "tag2"]
     },
     {
       "event_types": ["EventType2", "EventType3"],
-      "tags": ["foo:bar", "foo:baz"]
+      "tags": ["tag1", "tag3"]
     }
   ]
 }
@@ -100,7 +100,7 @@ It...
 
 When reading from the [EventStore](#EventStore) an `EventStream` is returned.
 
-- It _MUST_ be iterable
+- It _MUST_ be iterable (e.g. via generator or reactive pattern, depending on the specific implementation)
 - It _MUST_ return an [EventEnvelope](#EventEnvelope) for every iteration
 - It _CAN_ include new events if they occur during iteration
 - Batches of events _MAY_ be loaded from the underlying storage at once for performance optimization
@@ -123,7 +123,7 @@ It...
   "event": {
     "type": "SomeEventType",
     "data": "{\"some\":\"data\"}",
-    "tags": ["type1:value1", "type2:value2"]
+    "tags": ["tag1", "tag2"]
   },
   "sequence_number": 1234,
   "recorded_at": "2024-12-10 14:02:40"
@@ -152,7 +152,7 @@ It...
 {
   "type": "SomeEventType",
   "data": "{\"some\":\"data\"}",
-  "tags": ["key1:value1", "key1:value2"]
+  "tags": ["tag1", "tag2"]
 }
 ```
 
@@ -185,6 +185,7 @@ A `Tag` can add domain specific metadata to an event allowing for custom partiti
     Usually a tag represents a concept of the domain, e.g. the type and id of an entity like `product:p123`
 
 - It _MUST_ satisfy the regular expression `/^[[:alnum:]\-\_\:]{1,150}`
+- It _CAN_ represent a key/value pair such as `product:123` but that is irrelevant to the Event Store
 
 ### AppendCondition
 
