@@ -29,7 +29,7 @@ An optional parameter to `EventStore.read()` that allows for cursor-based pagina
 It has two parameters:
 
 - `from` an optional [SequenceNumber](#SequenceNumber) to start streaming events from (depending on the `backwards` flag this is either a _minimum_ or _maximum_ sequence number of the resulting stream)
-- `backwards` a flag that, if set to `true`, returns the events in descending order (default: `false`)
+- `backwards` a flag that, if set to `true`, returns the events in reverse order (default: `false`)
 - `limit` an optional number that, if set, limits the event stream to a maximum number of events. This can be useful to only retrieve the last event for example.
 
 ```
@@ -191,7 +191,7 @@ A `Tag` can add domain specific metadata to an event allowing for custom partiti
 
 - It _MUST_ contain a [StreamQuery](#StreamQuery)
 - It _MUST_ be _either_ a
-  - [SequenceNumber](#SequenceNumber) - representing the highest sequence number that was consumed when building the condition. *Note:* There is no guarantee that this number is not _higher_ than the last event that matched the StreamQuery
+  - [SequenceNumber](#SequenceNumber) - representing the highest sequence number that the client was aware of while building the decision model. *Note:* This number can be _higher_ than the sequence number of the last event matching the StreamQuery.
   - `NONE` - no event must match the specified [StreamQuery](#StreamQuery)
 
 #### 
