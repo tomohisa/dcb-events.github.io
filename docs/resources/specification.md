@@ -190,7 +190,7 @@ A `Tag` can add domain specific metadata to an event allowing for custom partiti
 ### AppendCondition
 
 - It _MUST_ contain a [StreamQuery](#StreamQuery)
-- It _MUST_ be _either_ a
+- It _MUST_ contain the "expected ceiling" that is _either_ a
   - [SequenceNumber](#SequenceNumber) - representing the highest sequence number that the client was aware of while building the decision model. *Note:* This number can be _higher_ than the sequence number of the last event matching the StreamQuery.
   - `NONE` - no event must match the specified [StreamQuery](#StreamQuery)
 
@@ -199,6 +199,6 @@ A `Tag` can add domain specific metadata to an event allowing for custom partiti
 ```
 AppendCondition {
   query: StreamQuery
-  highestSequenceNumber: SequenceNumber | NONE
+  expectedCeiling: SequenceNumber | NONE
 }
 ```
