@@ -1,7 +1,7 @@
 An EventStore that supports DCB provides a way to:
 
-- **read** an [EventStream](#EventStream) matching a [Query](#Query), optionally starting from a specified [SequencePosition](#SequencePosition)
-- **append** an [Event(s)](#Events), optionally specifiying an [AppendCondition](#AppendCondition) to enforce consistency
+- **read** an [EventStream](#eventstream) matching a [Query](#query), optionally starting from a specified [SequencePosition](#sequenceposition)
+- **append** an [Event(s)](#events), optionally specifiying an [AppendCondition](#appendcondition) to enforce consistency
 
 A typical interface of the `EventStore` (pseudo-code):
 
@@ -14,10 +14,10 @@ EventStore {
 
 ## Query
 
-The `Query` describes constraints that must be matched by [Event](#Event)s in the [EventStore](#EventStore)
-It effectively allows for filtering events by their [type](#EventType) and/or [tags](#Tags).
+The `Query` describes constraints that must be matched by [Event](#event)s in the [EventStore](../glossary.md#event-store)
+It effectively allows for filtering events by their [type](#eventtype) and/or [tags](#tags).
 
-- It _MUST_ contain a set of [QueryItems](#QueryItem) with at least one item or represent a query that matches all events
+- It _MUST_ contain a set of [QueryItems](#queryitem) with at least one item or represent a query that matches all events
 - All QueryItems are effectively combined with an **OR**, e.g. adding an extra QueryItem will likely result in more events being returned
 
 To differentiate the two query variants, dedicated factory methods might be useful:
@@ -29,12 +29,12 @@ Query.all()
 
 ### QueryItem
 
-Each item of a [Query](#Query) allows to target events by their [type](#EventType) and/or [tags](#Tags)
+Each item of a [Query](#query) allows to target events by their [type](#eventtype) and/or [tags](#tags)
 
 An event, in order to match a specific QueryItem, needs to have the following characteristics:
 
-- the [type](#Event-Type) _MUST_ match **one** of the provided types of the QueryItem
-- the [tags](#Tags) _MUST_ contain **all** of the tags specified by the QueryItem
+- the [type](#eventtype) _MUST_ match **one** of the provided types of the QueryItem
+- the [tags](#tags) _MUST_ contain **all** of the tags specified by the QueryItem
 
 #### Example
 
@@ -66,7 +66,7 @@ The following example query would match events that are either...
 An optional parameter to `EventStore.read()` that allows for cursor-based pagination of events.
 It has two parameters:
 
-- `from` an optional [SequencePosition](#SequencePosition) to start streaming events from (depending on the `backwards` flag this is either a _minimum_ or _maximum_ sequence number of the resulting stream)
+- `from` an optional [SequencePosition](#sequenceposition) to start streaming events from (depending on the `backwards` flag this is either a _minimum_ or _maximum_ sequence number of the resulting stream)
 - `backwards` a flag that, if set to `true`, returns the events in reverse order (default: `false`)
 - `limit` an optional number that, if set, limits the event stream to a maximum number of events. This can be useful to only retrieve the last event for example.
 
@@ -80,22 +80,22 @@ ReadOptions {
 
 ## EventStream
 
-When reading from the [EventStore](#EventStore) an `EventStream` is returned.
+When reading from the [EventStore](../glossary.md#event-store) an `EventStream` is returned.
 
 - It _MUST_ be iterable (e.g. via generator or reactive pattern, depending on the specific implementation)
-- It _MUST_ return an [EventEnvelope](#EventEnvelope) for every iteration
+- It _MUST_ return an [EventEnvelope](#eventenvelope) for every iteration
 - It _CAN_ include new events if they occur during iteration
 - Batches of events _MAY_ be loaded from the underlying storage at once for performance optimization
 - It _CAN_ provide additional functionality, e.g. a `subscribe()` function to realize reactive behavior
 
 ## EventEnvelope
 
-Each item in the [EventStream](#EventStream) is an `EventEnvelope` that consists of the underlying event and metadata, like the [SequencePosition](#SequencePosition) that was added during the `append()` call.
+Each item in the [EventStream](#eventstream) is an `EventEnvelope` that consists of the underlying event and metadata, like the [SequencePosition](#sequenceposition) that was added during the `append()` call.
 
 It...
 
-- It _MUST_ contain the [SequencePosition](#SequencePosition)
-- It _MUST_ contain the [Event](#Event)
+- It _MUST_ contain the [SequencePosition](#sequenceposition)
+- It _MUST_ contain the [Event](#event)
 - It _CAN_ include more fields, like timestamps or metadata
 
 ### Example
@@ -116,7 +116,7 @@ The following example shows a *potential* JSON representation of an Event Envelo
 
 ## SequencePosition
 
-When an [Event](#Event) is appended to the [EventStore](#EventStore) a global `SequencePosition` is assigned to it.
+When an [Event](#event) is appended to the [EventStore](../glossary.md#event-store) a global `SequencePosition` is assigned to it.
 
 It...
 
@@ -128,18 +128,18 @@ It...
 
 ## Events
 
-A set of [Event](#Event) instances that is passed to the `append()` method of the [EventStore](#EventStore)
+A set of [Event](#event) instances that is passed to the `append()` method of the [EventStore](../glossary.md#event-store)
 
 It...
 
 - _MUST_ not be empty
-- _MUST_ be iterable, each iteration returning an [Event](#Event)
+- _MUST_ be iterable, each iteration returning an [Event](#event)
 
 ## Event
 
-- It _MUST_ contain an [EventType](#EventType)
-- It _MUST_ contain [EventData](#EventData)
-- It _MAY_ contain [Tags](#Tags)
+- It _MUST_ contain an [EventType](#eventtype)
+- It _MUST_ contain [EventData](#eventdata)
+- It _MAY_ contain [Tags](#tags)
 - It _MAY_ contain further fields, like metadata
 
 ### Example
@@ -162,7 +162,7 @@ String based type of the event
 
 ## EventData
 
-String based, opaque payload of an [Event](#Event)
+String based, opaque payload of an [Event](#event)
 
 - It _SHOULD_ have a reasonable large enough maximum length (depending on language and environment)
 - It _MAY_ contain [JSON](https://www.json.org/)
@@ -170,10 +170,10 @@ String based, opaque payload of an [Event](#Event)
 
 ## Tags
 
-A set of [Tag](#Tag) instances.
+A set of [Tag](#tag) instances.
 
-- It _MUST_ contain at least one [Tag](#Tag)
-- It _SHOULD_ not contain multiple [Tag](#Tag)s with the same value
+- It _MUST_ contain at least one [Tag](#tag)
+- It _SHOULD_ not contain multiple [Tag](#tag)s with the same value
 
 ## Tag
 
@@ -185,10 +185,10 @@ Usually a tag represents a concept of the domain, e.g. the type and id of an ent
 
 ## AppendCondition
 
-- It _MUST_ contain a [Query](#Query)
+- It _MUST_ contain a [Query](#query)
 - It _MUST_ contain the "expected ceiling" that is _either_ a
-  - [SequencePosition](#SequencePosition) - representing the highest position that the client was aware of while building the decision model. *Note:* This number can be _higher_ than the position of the last event matching the Query.
-  - `NONE` - no event must match the specified [Query](#Query)
+  - [SequencePosition](#sequenceposition) - representing the highest position that the client was aware of while building the decision model. *Note:* This number can be _higher_ than the position of the last event matching the Query.
+  - `NONE` - no event must match the specified [Query](#query)
 
 ```
 AppendCondition {

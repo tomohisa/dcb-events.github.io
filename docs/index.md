@@ -1,32 +1,50 @@
 # What is it?
 
-DCB is a technique for enforcing consistency in an event-driven system.
+Dynamic Consistency Boundary (DCB) is a technique for enforcing consistency in event-driven systems without relying on rigid transactional boundaries.
 
-Event-driven applications have proven to be very effective solutions for distributed systems, allowing temporal and spatial decoupling.
+Traditional systems use strict constraints to maintain immediate consistency, while event-driven architectures embrace eventual consistency for scalability and resilience. However, this flexibility raises challenges in defining where and how consistency should be enforced.
 
-Nevertheless, they come with some downsides. First of all, the well-known eventual consistency issue. The temporal decoupling between the moment an event is published and the moment it is handled generates a gap between the happening fact and its effective propagation and visibility across the system. How large this gap is depends on many factors and can go from a few milliseconds to a very long interval, like hours or even days sometimes.
-As a consequence, the decisions the system makes based on the projected state are potentially inaccurate since they are based on potentially obsolete information.
-
-In the majority of cases, this is not a problem at all.
-
-Nevertheless, there are a few situations where it is crucial to avoid mistakes caused by data obsolescence. In these situations, it is paramount to base the decision on the latest information, including those contained in the events already published but not yet handled, still on the fly.
-
-There are many solutions to this problem. DCB is one of them.
-
-Each event published in a specific context is identified by a global sequential index.
-
-Every time the system requires some data to make a decision, it is essential to know how up-to-date those data are. This is possible with a consistency marker — nothing more than the identifier of the latest event the projected data are aware of.
-
-The decision results in one or more events to be published.
-
-Since the data used for making the decision are frozen in time at the moment identified by the consistency marker, the publishing operation needs to be performed only conditionally. The condition that must be fulfilled is that no events that could affect the decision that was just made happened after the consistency marker.
-
-DCB acts as a form of optimistic lock for publishing events.
-
-## Getting started
+Introduced by Sara Pellegrini in her blog post "[Killing the Aggregate](https://sara.event-thinking.io/2023/04/kill-aggregate-chapter-1-I-am-here-to-kill-the-aggregate.html)", DCB provides a pragmatic approach to balancing strong consistency with flexibility. Unlike eventual consistency, which allows temporary inconsistencies across system components, DCB selectively enforces strong consistency where needed, particularly for operations spanning multiple entities. This ensures critical business processes and cross-entity invariants remain reliable while avoiding the constraints of traditional transactional models. By defining context-sensitive consistency boundaries, DCB helps teams optimize performance, scalability, and operational correctness.
 
 ## How it works
 
-## Limitations
+To illustrate how DCB works, it makes sense to first explain the "classic" Event Sourcing approach and its main issue:
 
-DCB could guarantee consistency only inside the scope of the global sequential index. Indeed, the events must be ordered to allow the conditional publication based on the consistency marker.
+In her blog post Sara describes an example application that allows students to subscribe to courses.
+Restrictions apply to students and courses to ensure their integrity so it is obvious to implement these as [Aggregates](glossary.md#aggregate).
+
+But then constraints are added that affect both entities, namely:
+
+- a course cannot accept more than n students
+- a student cannot subscribe to more than 10 courses
+
+### Classic approach
+
+Since it is impossible to update two aggregates with a single transaction, such requirements are usually solved with a [Saga](glossary.md#saga) that coordinates the process:
+
+1. Mark student subscribed by publishing an event to the Event Stream of the student
+2. If successful, mark seat in course reserved by publishing an event to the Event Stream of the affected course
+3. If that fails due to constraint violations (e.g. because another student was subscribed to the same course in the meantime) append some compensating event to the student's Event Stream
+
+![Classic](assets/img/example_classic.png)
+
+This approach poses some issues in terms of added complexity and unwanted side-effects (e.g. the state of the system being incorrect for a short period of time).
+
+But even for the happy path, the implementation leads to **two events** being published that represent **the same occurrence**.
+
+### DCB approach
+
+DCB solves this issue by allowing events to be tagged when they are published.
+This allows one event to affect **multiple** entities/concepts in the system.
+
+As a result, there is only a single global Event Stream and the example above can be simplified to:
+
+![Classic](assets/img/example_dcb.png)
+
+## Getting started
+
+Visit the [Examples](examples/index.md) section to explore various use cases for DCB.
+
+The [Advanced topics](advanced/index.md) section provides in-depth articles on additional subjects related to DCB.
+
+To begin using DCB, refer to the [libraries](libraries/index.md) section.

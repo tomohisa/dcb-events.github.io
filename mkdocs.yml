@@ -34,21 +34,23 @@ nav:
   - DCB: index.md
   - Examples:
       - examples/index.md
-      - Uniqueness across entities: examples/uniqueness.md
-      - Reservation pattern: examples/reservation-pattern.md
-      - Idempotency: examples/idempotency.md
+      - Course subscriptions: examples/course-subscriptions.md
+      - Unique username: examples/unique-username.md
+      - Prevent record duplication: examples/prevent-record-duplication.md
+      - Dynamic product price: examples/dynamic-product-price.md
+      - Invoice number (tbd): examples/invoice-number.md
+      - Opt-In Token (tbd): examples/opt-in-token.md
   - Advanced topics:
       - advanced/index.md
+      - Aggregates (tbd): advanced/aggregates.md
       - Composing projections: advanced/composing-projections.md
-      - DCB vs Outbox Pattern: advanced/dcb-vs-outbox-pattern.md
-      - DCB with a "classical" Event Store: advanced/dcb-with-a-classical-event-store.md
-      - DCB without Event Sourcing: advanced/dcb-without-event-sourcing.md
-      - Performance: advanced/performance.md
-  - Resources:
-      - Specification: resources/specification.md
-      - API: resources/api.md
-      - Implementations: resources/implementations.md
-      - Other: resources/other.md
+      - DCB vs Outbox Pattern (tbd): advanced/dcb-vs-outbox-pattern.md
+      - DCB with a "classical" Event Store (tbd): advanced/dcb-with-a-classical-event-store.md
+      - DCB without Event Sourcing (tbd): advanced/dcb-without-event-sourcing.md
+      - Performance (tbd): advanced/performance.md
+  - Libraries:
+      - libraries/index.md
+      - Specification: libraries/specification.md
   - Glossary: glossary.md
   - FAQ: faq.md
 

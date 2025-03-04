@@ -3,27 +3,27 @@
 ```javascript
 const events = [
   {
-    type: "COURSE_CREATED",
+    type: "COURSE_DEFINED",
     data: { courseId: "c1", capacity: 10 },
     tags: ["course:c1"],
   }
-];
+]
 
 const courseExists = (courseId) => {
   const projection = {
     $init: () => false,
-    COURSE_CREATED: () => true,
-  };
+    COURSE_DEFINED: () => true,
+  }
   return events
     .filter(event => event.tags.includes(`course:${courseId}`))
     .reduce((state, event) =>
       projection[event.type]?.(state, event) ?? state,
       projection.$init?.()
-    );
-};
+    )
+}
 
 for (const courseId of ['c1', 'c2']) {
-  console.log(`course "${courseId}" ${courseExists(courseId) ? 'exists' : 'does not exist'}`);
+  console.log(`course "${courseId}" ${courseExists(courseId) ? 'exists' : 'does not exist'}`)
 }
 ```
 <codapi-snippet engine="browser" sandbox="javascript"></codapi-snippet>
@@ -34,31 +34,31 @@ for (const courseId of ['c1', 'c2']) {
 
 ```typescript
 type Event<TData = any> = {
-  type: string;
-  data: TData;
-  tags?: string[];
-};
+  type: string
+  data: TData
+  tags?: string[]
+}
 
 type Mapping<TState, TEvent extends Event> = {
-  $init: () => TState;
-  [eventType: string]: ((state: TState, event: TEvent) => TState) | (() => TState);
-};
+  $init: () => TState
+  [eventType: string]: ((state: TState, event: TEvent) => TState) | (() => TState)
+}
 
 type Projection<TState, TEvent extends Event> = {
-  initialState: () => TState | null;
-  apply: (state: TState, event: TEvent) => TState;
-};
+  initialState: () => TState | null
+  apply: (state: TState, event: TEvent) => TState
+}
 
 declare function projection<TState, TEvent extends Event>(
   mapping: Mapping<TState, TEvent>,
   tag: string
-): Projection<TState, TEvent>;
+): Projection<TState, TEvent>
 
 declare function buildDecisionModel<TProjections extends Record<string, Projection<any, Event>>>(
   projections: TProjections
 ): {
-  [K in keyof TProjections]: ReturnType<TProjections[K]['initialState']>;
-};
+  [K in keyof TProjections]: ReturnType<TProjections[K]['initialState']>
+}
 ```
 
 As a result, the example from above can be simplified:
@@ -66,22 +66,22 @@ As a result, the example from above can be simplified:
 ```javascript
 const events = [
   {
-    type: "COURSE_CREATED",
+    type: "COURSE_DEFINED",
     data: { courseId: "c1", capacity: 10 },
     tags: ["course:c1"],
   }
-];
+]
 
 const courseExists = (courseId) => projection({
   $init: () => false,
-  COURSE_CREATED: () => true,
-}, `course:${courseId}`);
+  COURSE_DEFINED: () => true,
+}, `course:${courseId}`)
 
 for (const courseId of ['c1', 'c2']) {
   const decisionModel = buildDecisionModel({
     courseExists: courseExists(courseId)
   })
-  console.log(`course "${courseId}" ${decisionModel.courseExists ? 'exists' : 'does not exist'}`);
+  console.log(`course "${courseId}" ${decisionModel.courseExists ? 'exists' : 'does not exist'}`)
 }
 ```
 <codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
@@ -93,7 +93,7 @@ adding a `courseCapacity` projection to keep track of the total capacity of a co
 ```javascript
 const events = [
   {
-    type: "COURSE_CREATED",
+    type: "COURSE_DEFINED",
     data: { courseId: "c1", capacity: 10 },
     tags: ["course:c1"],
   },
@@ -102,19 +102,19 @@ const events = [
     data: { courseId: "c1", newCapacity: 2 },
     tags: ["course:c1"],
   }
-];
+]
 
 const courseCapacity = (courseId) => projection({
   $init: () => 0,
-  COURSE_CREATED: (_, event) => event.data.capacity,
+  COURSE_DEFINED: (_, event) => event.data.capacity,
   COURSE_CAPACITY_CHANGED: (_, event) => event.data.newCapacity,
-}, `course:${courseId}`);
+}, `course:${courseId}`)
 
-const courseId = 'c1';
+const courseId = 'c1'
 const decisionModel = buildDecisionModel({
     courseCapacity: courseCapacity(courseId),
 })
-console.log(`course "${courseId}" has a total capacity of ${decisionModel.courseCapacity}`);
+console.log(`course "${courseId}" has a total capacity of ${decisionModel.courseCapacity}`)
 ```
 <codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
@@ -123,7 +123,7 @@ adding a `numberOfCourseSubscriptions` projection to keep a count of the subscri
 ```javascript
 const events = [
   {
-    type: "COURSE_CREATED",
+    type: "COURSE_DEFINED",
     data: { courseId: "c1", capacity: 10 },
     tags: ["course:c1"],
   },
@@ -137,18 +137,18 @@ const events = [
     data: { studentId: "s2", courseId: "c1" },
     tags: ["student:s2", "course:c1"],
   },
-];
+]
 
 const numberOfCourseSubscriptions = (courseId) => projection({
   $init: () => 0,
   STUDENT_SUBSCRIBED_TO_COURSE: (state) => state + 1,
-}, `course:${courseId}`);
+}, `course:${courseId}`)
 
-const courseId = 'c1';
+const courseId = 'c1'
 const decisionModel = buildDecisionModel({
     numberOfCourseSubscriptions: numberOfCourseSubscriptions(courseId),
 })
-console.log(`course "${courseId}" currently has ${decisionModel.numberOfCourseSubscriptions} subscriptions`);
+console.log(`course "${courseId}" currently has ${decisionModel.numberOfCourseSubscriptions} subscriptions`)
 ```
 <codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
@@ -159,12 +159,12 @@ Now those three projections `courseExists`, `courseCapacity` and `numberOfCourse
 ```javascript
 const events = [
   {
-    type: "COURSE_CREATED",
+    type: "COURSE_DEFINED",
     data: { courseId: "c1", capacity: 10 },
     tags: ["course:c1"],
   },
   {
-    type: "COURSE_CREATED",
+    type: "COURSE_DEFINED",
     data: { courseId: "c2", capacity: 15 },
     tags: ["course:c2"],
   },
@@ -188,23 +188,23 @@ const events = [
     data: { studentId: "s2", courseId: "c1" },
     tags: ["student:s2", "course:c1"],
   },
-];
+]
 
 const courseExists = (courseId) => projection({
   $init: () => false,
-  COURSE_CREATED: () => true,
-}, `course:${courseId}`);
+  COURSE_DEFINED: () => true,
+}, `course:${courseId}`)
 
 const courseCapacity = (courseId) => projection({
   $init: () => 0,
-  COURSE_CREATED: (_, event) => event.data.capacity,
+  COURSE_DEFINED: (_, event) => event.data.capacity,
   COURSE_CAPACITY_CHANGED: (_, event) => event.data.newCapacity,
-}, `course:${courseId}`);
+}, `course:${courseId}`)
 
 const numberOfCourseSubscriptions = (courseId) => projection({
   $init: () => 0,
   STUDENT_SUBSCRIBED_TO_COURSE: (state) => state + 1,
-}, `course:${courseId}`);
+}, `course:${courseId}`)
 
 for (const courseId of ['c1', 'c2', 'c3']) {
   const decisionModel = buildDecisionModel({
@@ -212,8 +212,8 @@ for (const courseId of ['c1', 'c2', 'c3']) {
     courseCapacity: courseCapacity(courseId),
     numberOfCourseSubscriptions: numberOfCourseSubscriptions(courseId),
   })
-  const remainingSeats = decisionModel.courseCapacity - decisionModel.numberOfCourseSubscriptions;
-  console.log(`course "${courseId}" (capacity: ${decisionModel.courseCapacity}) ${decisionModel.courseExists ? 'exists' : 'does not exist'} and has ${remainingSeats} seats left`);
+  const remainingSeats = decisionModel.courseCapacity - decisionModel.numberOfCourseSubscriptions
+  console.log(`course "${courseId}" (capacity: ${decisionModel.courseCapacity}) ${decisionModel.courseExists ? 'exists' : 'does not exist'} and has ${remainingSeats} seats left`)
 }
 ```
 <codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
@@ -237,12 +237,12 @@ const events = [
     data: { studentId: "s2", courseId: "c1" },
     tags: ["student:s2", "course:c1"],
   },
-];
+]
 
 const studentSubscriptions = (studentId) => projection({
   $init: () => [],
   STUDENT_SUBSCRIBED_TO_COURSE: (state, event) => [...state, event.data.courseId],
-}, `student:${studentId}`);
+}, `student:${studentId}`)
 
 for (const studentId of ["s1", "s2"]) {
   const decisionModel = buildDecisionModel({
@@ -258,12 +258,12 @@ Finally, everything can be combined to implement a command handler `subscribeStu
 ```javascript
 const events = [
   {
-    type: "COURSE_CREATED",
+    type: "COURSE_DEFINED",
     data: { courseId: "c1", capacity: 10 },
     tags: ["course:c1"],
   },
   {
-    type: "COURSE_CREATED",
+    type: "COURSE_DEFINED",
     data: { courseId: "c2", capacity: 15 },
     tags: ["course:c2"],
   },
@@ -287,28 +287,28 @@ const events = [
     data: { studentId: "s2", courseId: "c1" },
     tags: ["student:s2", "course:c1"],
   },
-];
+]
 
 const courseExists = (courseId) => projection({
   $init: () => false,
-  COURSE_CREATED: () => true,
-}, `course:${courseId}`);
+  COURSE_DEFINED: () => true,
+}, `course:${courseId}`)
 
 const courseCapacity = (courseId) => projection({
   $init: () => 0,
-  COURSE_CREATED: (_, event) => event.data.capacity,
+  COURSE_DEFINED: (_, event) => event.data.capacity,
   COURSE_CAPACITY_CHANGED: (_, event) => event.data.newCapacity,
-}, `course:${courseId}`);
+}, `course:${courseId}`)
 
 const numberOfCourseSubscriptions = (courseId) => projection({
   $init: () => 0,
   STUDENT_SUBSCRIBED_TO_COURSE: (state) => state + 1,
-}, `course:${courseId}`);
+}, `course:${courseId}`)
 
 const studentSubscriptions = (studentId) => projection({
   $init: () => [],
   STUDENT_SUBSCRIBED_TO_COURSE: (state, event) => [...state, event.data.courseId],
-}, `student:${studentId}`);
+}, `student:${studentId}`)
 
 const subscribeStudentToCourse = (studentId, courseId) => {
   const decisionModel = buildDecisionModel({
@@ -318,13 +318,13 @@ const subscribeStudentToCourse = (studentId, courseId) => {
       studentSubscriptions: studentSubscriptions(studentId),
   })
   if (!decisionModel.courseExists) {
-      throw new Error("course not found");
+      throw new Error("course not found")
   }
   if (decisionModel.numberOfCourseSubscriptions >= decisionModel.courseCapacity) {
-      throw new Error("course is full");
+      throw new Error("course is full")
   }
   if (decisionModel.studentSubscriptions.includes(courseId)) {
-      throw new Error("already subscribed");
+      throw new Error("already subscribed")
   }
   // TODO publish STUDENT_SUBSCRIBED_TO_COURSE event
 }
