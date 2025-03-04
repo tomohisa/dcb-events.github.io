@@ -36,10 +36,10 @@ nav:
       - examples/index.md
       - Course subscriptions: examples/course-subscriptions.md
       - Unique username: examples/unique-username.md
-      - Prevent record duplication: examples/prevent-record-duplication.md
       - Dynamic product price: examples/dynamic-product-price.md
-      - Invoice number (tbd): examples/invoice-number.md
       - Opt-In Token (tbd): examples/opt-in-token.md
+      - Invoice number (tbd): examples/invoice-number.md
+      - Prevent record duplication (tbd): examples/prevent-record-duplication.md
   - Advanced topics:
       - advanced/index.md
       - Aggregates (tbd): advanced/aggregates.md
