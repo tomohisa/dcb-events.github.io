@@ -41,6 +41,62 @@ As a result, there is only a single global Event Stream and the example above ca
 
 ![Classic](assets/img/example_dcb.png)
 
+#### Reading events
+
+A DCB compliant Event Store allows to filter events by their type and/or tags.
+
+To determine how many students are enrolled in a course, simply count the subscription events tagged with that course's identifier.
+Similarly, to find out how many courses a student is subscribed to, count the subscription events tagged with that student's identifier.
+
+Those queries can be combined. To find out...
+
+- ...whether the course with a specified id (e.g. `c1`) exists
+- ...whether the _student_ with the specified id (e.g. `s1`) exists
+- ...how many students are subscribed to a course
+- ...and how many courses the student is subscribed to
+
+the following query items can be specified (pseudo code):
+
+```json
+[
+  {
+    "event_type": "course defined",
+    "tag": "course:c1"
+  },
+  {
+    "event_type": "student registered",
+    "tags": "student:s1"
+  },
+  {
+    "event_type": "student subscribed to course",
+    "tag": "course:c1"
+  },
+  {
+    "event_type": "student subscribed to course",
+    "tags": "student:s1"
+  }
+]
+```
+
+As a result, only the events matching the specified query will be returned:
+
+- one for the `course defined` event (if the course exists)
+- one for the `student registered` event (if the student was registered)
+- one for each subscription to the course
+- one for each subscription of the student
+
+!!! info
+
+    Usually those queries wouldn't be "hard coded". Instead, they can be derived from an in-memory projection (aka "decision model") as demonstrated by some of the [Examples](examples/index.md)
+
+#### Writing events
+
+When appending events to the Event Store, the *same query* can be passed along together with the position of the last event that was consumed when reading the events in order to build a decision model.
+
+The DCB capable Event Store ensures that no event *matching the same query* was appended in the meantime.
+
+This can be compared with the "expected revision" of "classic" Event Stores – but DCB does not use revisions or event streams.
+
 ## Getting started
 
 Visit the [Examples](examples/index.md) section to explore various use cases for DCB.
