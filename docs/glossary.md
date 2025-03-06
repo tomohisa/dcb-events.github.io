@@ -43,6 +43,14 @@ Specialized storage system for events that ensures they are stored sequentially 
 
 State where data across a distributed system becomes consistent over time, without requiring immediate synchronization
 
+## Optimistic Locking
+
+Concurrency control mechanism that prevents conflicts by allowing multiple transactions to read and update data but checking for changes before committing. If the data has been modified by another transaction in the meantime, the update is rejected
+
+## Pessimistic Locking
+
+Concurrency control mechanism that prevents conflicts by locking a resource for a transaction, blocking others from modifying it until the lock is released
+
 ## Process Manager
 
 Component that orchestrates complex workflows by reacting to events, maintaining state, and dispatching commands to coordinate
