@@ -26,7 +26,7 @@ Some common questions and misconceptions about DCB:
 
 ## How can it be used with a "classical" event store?
 
-*tbd:* link to [DCB with a "classical" Event Store](advanced/dcb-with-a-classical-event-store.md)
+*tbd:* link to [DCB with a traditional Event Store](advanced/dcb-with-a-traditional-event-store.md)
 
 ## Why do you want to kill aggregates?
 

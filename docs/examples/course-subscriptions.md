@@ -11,9 +11,9 @@ The goal is an application that allows students to subscribe to courses, with th
 - The course title can change at any time to any title different from the current one
 - The student cannot join more than 10 courses
 
-## Classic approaches
+## Traditional approaches
 
-The first and last constraints, in particular, make this example difficult to implement using classic Event Sourcing, as they cause the `STUDENT_SUBSCRIBED_TO_COURSE` event to impact two separate entities, each with its own constraints.
+The first and last constraints, in particular, make this example difficult to implement using traditional Event Sourcing, as they cause the `STUDENT_SUBSCRIBED_TO_COURSE` event to impact two separate entities, each with its own constraints.
 
 There are several potential strategies to solve this without DCB:
 

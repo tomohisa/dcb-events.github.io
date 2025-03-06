@@ -8,7 +8,7 @@ Introduced by Sara Pellegrini in her blog post "[Killing the Aggregate](https://
 
 ## How it works
 
-To illustrate how DCB works, it makes sense to first explain the "classic" Event Sourcing approach and its main issue:
+To illustrate how DCB works, it makes sense to first explain the traditional Event Sourcing approach and its main issue:
 
 In her blog post Sara describes an example application that allows students to subscribe to courses.
 Restrictions apply to students and courses to ensure their integrity so it is obvious to implement these as [Aggregates](glossary.md#aggregate).
@@ -18,7 +18,7 @@ But then constraints are added that affect both entities, namely:
 - a course cannot accept more than n students
 - a student cannot subscribe to more than 10 courses
 
-### Classic approach
+### Traditional approach
 
 Since it is impossible to update two aggregates with a single transaction, such requirements are usually solved with a [Saga](glossary.md#saga) that coordinates the process:
 
@@ -26,7 +26,7 @@ Since it is impossible to update two aggregates with a single transaction, such 
 2. If successful, mark seat in course reserved by publishing an event to the Event Stream of the affected course
 3. If that fails due to constraint violations (e.g. because another student was subscribed to the same course in the meantime) append some compensating event to the student's Event Stream
 
-![Classic](assets/img/example_classic.png)
+![Traditional](assets/img/example_traditional.png)
 
 This approach poses some issues in terms of added complexity and unwanted side-effects (e.g. the state of the system being incorrect for a short period of time).
 
@@ -39,7 +39,7 @@ This allows one event to affect **multiple** entities/concepts in the system.
 
 As a result, there is only a single global Event Stream and the example above can be simplified to:
 
-![Classic](assets/img/example_dcb.png)
+![Traditional](assets/img/example_dcb.png)
 
 #### Reading events
 
@@ -95,7 +95,7 @@ When appending events to the Event Store, the *same query* can be passed along t
 
 The DCB capable Event Store ensures that no event *matching the same query* was appended in the meantime.
 
-This can be compared with the "expected revision" of "classic" Event Stores – but DCB does not use revisions or event streams.
+This can be compared with the "expected revision" of traditional Event Stores – but DCB does not use revisions or event streams.
 
 ## Getting started
 

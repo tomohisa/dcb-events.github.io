@@ -12,7 +12,7 @@ As a bonus, this example is extended by adding the following features:
 - Allow users to change their username
 - Only release unused usernames after a configurable delay
 
-## Classic approaches
+## Traditional approaches
 
 There are a couple of common strategies to achieve global uniqueness in event-driven systems:
 

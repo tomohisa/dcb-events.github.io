@@ -11,7 +11,7 @@ The goal is an application that allows customers to purchase products, ensuring 
 - Product prices can be changed at any time
 - If a product price was changed, the previous price(s) must be valid for a configurable grace period
 
-## Classic approaches
+## Traditional approaches
 
 There are several potential strategies to solve this without DCB:
 
@@ -198,7 +198,7 @@ for (const displayedPrice of [100, 130, 135]) {
 
 ### 03: Multiple products (shopping cart)
 
-The previous stages could be implemented with a classic event-sourced [Aggregate](../glossary.md#aggregate) in theory.
+The previous stages could be implemented with a traditional event-sourced [Aggregate](../glossary.md#aggregate) in theory.
 But with the requirement to be able to order multiple products at once with a dynamic price, the flexibility of DCB shines:
 
 ```js
