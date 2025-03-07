@@ -34,188 +34,298 @@ With DCB all events that affect the unique contraint (the username in this examp
 This example is the most simple one just checking whether a given username is claimed
 
 ```js
-// event fixture
-const events = [
-  {
-    type: "ACCOUNT_REGISTERED",
-    data: { id: "a1", username: "u1" /*, more: data */ },
-    tags: ["account:a1", "username:u1"],
-  },
-  {
-    type: "ACCOUNT_REGISTERED",
-    data: { id: "a2", username: "u2" },
-    tags: ["account:a2", "username:u2"],
-  },
-]
+// decision models:
 
-const isUsernameClaimed = (username) => {
-  const projection = {
-    $init: () => false,
-    ACCOUNT_REGISTERED: () => true,
+const isUsernameClaimed = (username) => ({
+  initialState: false,
+  handlers: {
+    AccountRegistered: (state, event) => true,
+  },
+  tagFilter: [`username:${username}`],
+})
+
+// command handler:
+
+const registerAccount = (command) => {
+  const { state, appendCondition } = buildDecisionModel({
+    isUsernameClaimed: isUsernameClaimed(command.username),
+  })
+  if (state.isUsernameClaimed) {
+    throw new Error(`Username "${command.username}" is claimed`)
   }
-  return events
-    .filter(event => event.tags.includes(`username:${username}`))
-    .reduce((state, event) => projection[event.type]?.(state, event) ?? state, projection.$init?.())
+  appendEvent(
+    {
+      type: "AccountRegistered",
+      data: { username: "command.username" },
+      tags: ["username:command.username"],
+    },
+    appendCondition
+  )
 }
 
-// example commands
-for (const username of ['u1', 'u2', 'u3', 'u4']) {
-  console.log(`username "${username}" is ${isUsernameClaimed(username) ? 'taken' : 'free'}`)
-}
+// event fixture:
+
+appendEvents([
+  {
+    type: "AccountRegistered",
+    data: { username: "u1" },
+    tags: ["username:u1"],
+  },
+])
+
+// test cases:
+
+test([
+  {
+    description: "Register account with claimed username",
+    test: () => registerAccount({ username: "u1" }),
+    expectedError: 'Username "u1" is claimed',
+  },
+  {
+    description: "Register account with unused username",
+    test: () => registerAccount({ username: "u2" }),
+  },
+])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" editor="basic"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
 ### 02: Release usernames
 
 This example extends the previous one to show how a previously claimed username could be released whent the corresponding account is suspended
 
-```js
-// event fixture
-const events = [
-  {
-    type: "ACCOUNT_REGISTERED",
-    data: { id: "a1", username: "u1" },
-    tags: ["account:a1", "username:u1"],
-  },
-  {
-    type: "ACCOUNT_REGISTERED",
-    data: { id: "a2", username: "u2" },
-    tags: ["account:a2", "username:u2"],
-  },
-  {
-    type: "ACCOUNT_SUSPENDED",
-    data: { id: "a1" },
-    tags: ["account:a2", "username:u1"],
-  }
-]
+```js hl_lines="7"
+// decision models:
 
-const isUsernameClaimed = (username) => {
-  const projection = {
-    $init: () => false,
-    ACCOUNT_REGISTERED: () => true,
-    ACCOUNT_SUSPENDED: () => false,
+const isUsernameClaimed = (username) => ({
+  initialState: false,
+  handlers: {
+    AccountRegistered: (state, event) => true,
+    AccountSuspended: (state, event) => false,
+  },
+  tagFilter: [`username:${username}`],
+})
+
+// command handler:
+
+const registerAccount = (command) => {
+  const { state, appendCondition } = buildDecisionModel({
+    isUsernameClaimed: isUsernameClaimed(command.username),
+  })
+  if (state.isUsernameClaimed) {
+    throw new Error(`Username "${command.username}" is claimed`)
   }
-  return events
-    .filter(event => event.tags.includes(`username:${username}`))
-    .reduce((state, event) => projection[event.type]?.(state, event) ?? state, projection.$init?.())
+  appendEvent(
+    {
+      type: "AccountRegistered",
+      data: { username: "command.username" },
+      tags: ["username:command.username"],
+    },
+    appendCondition
+  )
 }
 
-// example commands
-for (const username of ['u1', 'u2', 'u3', 'u4']) {
-  console.log(`username "${username}" is ${isUsernameClaimed(username) ? 'taken' : 'free'}`)
-}
+// event fixture:
+
+appendEvents([
+  {
+    type: "AccountRegistered",
+    data: { username: "u1" },
+    tags: ["username:u1"],
+  },
+  {
+    type: "AccountSuspended",
+    data: { username: "u1" },
+    tags: ["username:u1"],
+  },
+])
+
+// test cases:
+
+test([
+  {
+    description: "Register account with released username",
+    test: () => registerAccount({ username: "u1" }),
+  },
+])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" editor="basic"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
 ### 03: Allow changing of usernames
 
 This example extends the previous one to show how the username of an active account could be changed
 
-```js
-// event fixture
-const events = [
-  {
-    type: "ACCOUNT_REGISTERED",
-    data: { id: "a1", username: "u1" },
-    tags: ["account:a1", "username:u1"],
-  },
-  {
-    type: "ACCOUNT_REGISTERED",
-    data: { id: "a2", username: "u2" },
-    tags: ["account:a2", "username:u2"],
-  },
-  {
-    type: "ACCOUNT_SUSPENDED",
-    data: { id: "a1" },
-    tags: ["account:a2", "username:u1"],
-  },
-  {
-    type: "USERNAME_CHANGED",
-    data: { id: "a2", newUsername: "u3" },
-    tags: ["account:a2", "username:u2", "username:u3"], // NOTE: contains both tags, of the old and the new username
-  },
-]
+```js hl_lines="8"
+// decision models:
 
-const isUsernameClaimed = (username) => {
-  const projection = {
-    $init: () => false,
-    ACCOUNT_REGISTERED: () => true,
-    ACCOUNT_SUSPENDED: () => false,
-    USERNAME_CHANGED: (_, event) => event.data.newUsername === username,
+const isUsernameClaimed = (username) => ({
+  initialState: false,
+  handlers: {
+    AccountRegistered: (state, event) => true,
+    AccountSuspended: (state, event) => false,
+    UsernameChanged: (state, event) => event.data.newUsername === username,
+  },
+  tagFilter: [`username:${username}`],
+})
+
+// command handler:
+
+const registerAccount = (command) => {
+  const { state, appendCondition } = buildDecisionModel({
+    isUsernameClaimed: isUsernameClaimed(command.username),
+  })
+  if (state.isUsernameClaimed) {
+    throw new Error(`Username "${command.username}" is claimed`)
   }
-  return events
-    .filter(event => event.tags.includes(`username:${username}`))
-    .reduce((state, event) => projection[event.type]?.(state, event) ?? state, projection.$init?.())
+  appendEvent(
+    {
+      type: "AccountRegistered",
+      data: { username: "command.username" },
+      tags: ["username:command.username"],
+    },
+    appendCondition
+  )
 }
 
-// example commands
-for (const username of ['u1', 'u2', 'u3', 'u4']) {
-  console.log(`username "${username}" is ${isUsernameClaimed(username) ? 'taken' : 'free'}`)
-}
+// event fixture:
+
+appendEvents([
+  {
+    type: "AccountRegistered",
+    data: { username: "u1" },
+    tags: ["username:u1"],
+  },
+  {
+    type: "UsernameChanged",
+    data: { oldUsername: "u1", newUsername: "u1changed" },
+    tags: ["username:u1", "username:u1changed"],
+  },
+])
+
+// test cases:
+
+test([
+  {
+    description: "Register account with changed username",
+    test: () => registerAccount({ username: "u1" }),
+  },
+])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" editor="basic"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
 ### 04: Release unused usernames with a configurable delay
 
 This example extends the previous one to show how the release of a username could be postponed by X days
 
-```js
-// helper function to generate dates X minutes ago
-const minutesAgo = (minutes) => new Date(new Date().getTime() - minutes * (1000 * 60))
+!!! note
 
-// event fixture
-const events = [
-  {
-    type: "ACCOUNT_REGISTERED",
-    data: { id: "a1", username: "u1" },
-    tags: ["account:a1", "username:u1"],
-    recordedAt: daysAgo(5),
-  },
-  {
-    type: "ACCOUNT_REGISTERED",
-    data: { id: "a2", username: "u2" },
-    tags: ["account:a2", "username:u2"],
-    recordedAt: daysAgo(4),
-  },
-  {
-    type: "ACCOUNT_SUSPENDED",
-    data: { id: "a1" },
-    tags: ["account:a2", "username:u1"],
-    recordedAt: daysAgo(3),
-  },
-  {
-    type: "USERNAME_CHANGED",
-    data: { id: "a2", newUsername: "u3" },
-    tags: ["account:a2", "username:u2", "username:u3"],
-    recordedAt: daysAgo(2),
-  },
-]
+    The `daysAgo` property of the `event` is a simplification. Typically, a timestamp representing the event's recording time is stored within the event's payload or metadata. This timestamp can be compared to the current date to determine the event's age in the decision model.
 
-// number of days before a released username can be re-claimed
-const usernameReleaseDelayInDays = 3
+```js hl_lines="7 8"
+// decision models:
 
-// helpfer function to calculate the age of an event
-const eventAgeInDays = (event) => (new Date - event.recordedAt) / (1000 * 60 * 60 * 24)
+const isUsernameClaimed = (username) => ({
+  initialState: false,
+  handlers: {
+    AccountRegistered: (state, event) => true,
+    AccountSuspended: (state, event) => event.daysAgo <= 3,
+    UsernameChanged: (state, event) => event.data.newUsername === username || event.daysAgo <= 3,
+  },
+  tagFilter: [`username:${username}`],
+})
 
-const isUsernameClaimed = (username) => {
-  const projection = {
-    $init: () => false,
-    ACCOUNT_REGISTERED: () => true,
-    ACCOUNT_SUSPENDED: (_, event) => eventAgeInDays(event) < usernameReleaseDelayInDays,
-    USERNAME_CHANGED: (_, event) => event.data.newUsername === username || eventAgeInDays(event) < usernameReleaseDelayInDays
+// command handler:
+
+const registerAccount = (command) => {
+  const { state, appendCondition } = buildDecisionModel({
+    isUsernameClaimed: isUsernameClaimed(command.username),
+  })
+  if (state.isUsernameClaimed) {
+    throw new Error(`Username "${command.username}" is claimed`)
   }
-  return events
-    .filter(event => event.tags.includes(`username:${username}`))
-    .reduce((state, event) => projection[event.type]?.(state, event) ?? state, projection.$init?.())
+  appendEvent(
+    {
+      type: "AccountRegistered",
+      data: { username: "command.username" },
+      tags: ["username:command.username"],
+    },
+    appendCondition
+  )
 }
 
-// example commands
-for (const username of ['u1', 'u2', 'u3', 'u4']) {
-  console.log(`username "${username}" is ${isUsernameClaimed(username) ? 'taken' : 'free'}`)
-}
+// event fixture:
+
+appendEvents([
+  {
+    type: "AccountRegistered",
+    data: { username: "u1" },
+    tags: ["username:u1"],
+  },
+  {
+    type: "AccountRegistered",
+    data: { username: "u3" },
+    tags: ["username:u3"],
+  },
+  {
+    type: "AccountRegistered",
+    data: { username: "u4" },
+    tags: ["username:u4"],
+  },
+  {
+    type: "AccountRegistered",
+    data: { username: "u5" },
+    tags: ["username:u5"],
+  },
+  {
+    type: "AccountSuspended",
+    data: { username: "u1" },
+    tags: ["username:u1"],
+    daysAgo: 4,
+  },
+  {
+    type: "UsernameChanged",
+    data: { oldUsername: "u2", newUsername: "u2changed" },
+    tags: ["username:u2", "username:u2changed"],
+    daysAgo: 4,
+  },
+  {
+    type: "AccountSuspended",
+    data: { username: "u3" },
+    tags: ["username:u3"],
+    daysAgo: 3,
+  },
+  {
+    type: "UsernameChanged",
+    data: { oldUsername: "u4", newUsername: "u4changed" },
+    tags: ["username:u4", "username:u4changed"],
+    daysAgo: 3,
+  },
+])
+
+// test cases:
+
+test([
+  {
+    description: "Register account with username of suspended account before grace period",
+    test: () => registerAccount({ username: "u3" }),
+    expectedError: 'Username "u3" is claimed',
+  },
+  {
+    description: "Register account with released username before grace period",
+    test: () => registerAccount({ username: "u4" }),
+    expectedError: 'Username "u4" is claimed',
+  },
+  {
+    description: "Register account with username of suspended account after grace period",
+    test: () => registerAccount({ username: "u1" }),
+  },
+  {
+    description: "Register account with released username after grace period",
+    test: () => registerAccount({ username: "u2" }),
+  },
+])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" editor="basic"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>

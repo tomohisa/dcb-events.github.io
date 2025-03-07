@@ -32,65 +32,66 @@ If only a single product with a fixed price can be purchased at a time, the impl
 
 
 ```js
-// event fixture
-const events = [
+// decision models:
+
+const productPrice = (productId) => ({
+  initialState: 0,
+  handlers: {
+    ProductDefined: (state, event) => event.data.price,
+  },
+  tagFilter: [`product:${productId}`],
+})
+
+// command handler:
+
+const orderProduct = (command) => {
+  const { state, appendCondition } = buildDecisionModel({
+    productPrice: productPrice(command.productId),
+  })
+  if (state.productPrice !== command.displayedPrice) {
+    throw new Error(`invalid price ${command.displayedPrice} for product "${command.productId}"`)
+  }
+  appendEvent(
+    {
+      type: "ProductOrdered",
+      data: [],
+      tags: [],
+    },
+    appendCondition
+  )
+}
+
+// event fixture:
+
+appendEvents([
   {
-    type: "PRODUCT_DEFINED",
-    data: { id: "p1", price: 123 },
+    type: "ProductDefined",
+    data: { productId: "p1", price: 123 },
     tags: ["product:p1"],
   },
   {
-    type: "PRODUCT_DEFINED",
-    data: { id: "p2", price: 222 },
+    type: "ProductDefined",
+    data: { productId: "p2", price: 222 },
     tags: ["product:p2"],
   },
-]
+])
 
-/**
- * the in-memory decision model (aka aggregate)
- *
- * @param {string} productId
- * @returns {number} the price of this product
- */
-const productPriceDecisionModel = (productId) => {
-  const projection = {
-    $init: () => 0,
-    PRODUCT_DEFINED: (_, event) => event.data.price,
-  }
-  return events
-    .filter((event) => event.tags.includes(`product:${productId}`))
-    .reduce(
-      (state, event) => projection[event.type]?.(state, event) ?? state,
-      projection.$init?.()
-    )
-}
+// test cases:
 
-/**
- * the "command handler"
- *
- * @param {string} productId
- * @param {number} displayedPrice
- */
-const purchaseProduct = (productId, displayedPrice) => {
-  const productPrice = productPriceDecisionModel(productId)
-  if (productPrice !== displayedPrice) {
-    throw new Error(`invalid price ${displayedPrice}`)
-  }
-  // success -> process purchase...
-}
-
-// example commands
-for (const displayedPrice of [100, 130, 123]) {
-  try {
-    purchaseProduct("p1", displayedPrice)
-    console.log(`purchase with displayedPrice ${displayedPrice} succeeded`)
-  } catch (e) {
-    console.error(`purchase with displayedPrice ${displayedPrice} failed: ${e.message}`)
-  }
-}
+test([
+  {
+    description: "Order product with a displayed price that is not valid",
+    test: () => orderProduct({ productId: "p1", displayedPrice: 100 }),
+    expectedError: 'invalid price 100 for product "p1"',
+  },
+  {
+    description: "Order product with valid price",
+    test: () => orderProduct({ productId: "p1", displayedPrice: 123 }),
+  },
+])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" editor="basic"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
 ### 02: Changing product prices
 
@@ -98,103 +99,115 @@ Complexity increases if the product price can be changed and previous prices sha
 
 ![dynamic product price example 2](img/dynamic-product-price-02.png)
 
+!!! note
+
+    The `minutesAgo` property of the `event` is a simplification. Typically, a timestamp representing the event's recording time is stored within the event's payload or metadata. This timestamp can be compared to the current date to determine the event's age in the decision model.
+
 ```js
-// helper function to generate dates X minutes ago
-const minutesAgo = (minutes) => new Date(new Date().getTime() - minutes * (1000 * 60))
+// decision models:
 
-// event fixture
-const events = [
-  {
-    type: "PRODUCT_DEFINED",
-    data: { id: "p1", price: 123 },
-    tags: ["product:p1"],
-    recordedAt: minutesAgo(20),
-  },
-  {
-    type: "PRODUCT_DEFINED",
-    data: { id: "p2", price: 222 },
-    tags: ["product:p2"],
-    recordedAt: minutesAgo(15),
-  },
-  {
-    type: "PRODUCT_PRICE_CHANGED",
-    data: { id: "p1", newPrice: 130 },
-    tags: ["product:p1"],
-    recordedAt: minutesAgo(9),
-  },
-  {
-    type: "PRODUCT_PRICE_CHANGED",
-    data: { id: "p1", newPrice: 135 },
-    tags: ["product:p1"],
-    recordedAt: minutesAgo(5),
-  },
-]
-
-/**
- * the in-memory decision model (aka aggregate)
- *
- * @param {string} productId
- * @returns {Object{basePrice: number|null, validPrices: number[]}}
- */
-const productPriceDecisionModel = (productId) => {
-  // helper function to calculate the age of an event in minutes
-  const eventAgeInMinutes = (event) => (new Date() - event.recordedAt) / (1000 * 60)
-
-  // number of minutes before a changed product price is enforced
-  const priceGracePeriodInMinutes = 10
-  const projection = {
-    $init: () => ({ basePrice: null, validPrices: [] }),
-    PRODUCT_DEFINED: (state, event) => ({
+const productPrice = (productId) => ({
+  initialState: { basePrice: null, validPrices: [] },
+  handlers: {
+    ProductDefined: (state, event) => ({
       ...state,
       basePrice: event.data.price,
-      validPrices: eventAgeInMinutes(event) <= priceGracePeriodInMinutes ? [event.data.price] : [],
+      validPrices: event.minutesAgo <= 10 ? [event.data.price] : [],
     }),
-    PRODUCT_PRICE_CHANGED: (state, event) => ({
+    ProductPriceChanged: (state, event) => ({
       ...state,
       basePrice: event.data.newPrice,
       validPrices:
-        eventAgeInMinutes(event) <= priceGracePeriodInMinutes
-          ? [...state.validPrices, event.data.newPrice]
-          : state.validPrices,
+        event.minutesAgo <= 10 ? [...state.validPrices, event.data.newPrice] : state.validPrices,
     }),
-  }
-  return events
-    .filter((event) => event.tags.includes(`product:${productId}`))
-    .reduce(
-      (state, event) => projection[event.type]?.(state, event) ?? state,
-      projection.$init?.()
-    )
-}
+  },
+  tagFilter: [`product:${productId}`],
+})
 
-/**
- * the "command handler"
- *
- * @param {string} productId
- * @param {number} displayedPrice
- */
-const purchaseProduct = (productId, displayedPrice) => {
-  const productPrice = productPriceDecisionModel(productId)
+// command handler:
+
+const orderProduct = (command) => {
+  const { state, appendCondition } = buildDecisionModel({
+    productPrice: productPrice(command.productId),
+  })
+  if (state.productPrice.basePrice === null) {
+    throw new Error(`unknown product id "${command.productId}"`)
+  }
   if (
-    productPrice.basePrice !== displayedPrice &&
-    !productPrice.validPrices.includes(displayedPrice)
+    state.productPrice.basePrice !== command.displayedPrice &&
+    !state.productPrice.validPrices.includes(command.displayedPrice)
   ) {
-    throw new Error(`invalid price ${displayedPrice}`)
+    throw new Error(`invalid price ${command.displayedPrice} for product "${command.productId}"`)
   }
-  // success -> process purchase...
+  appendEvent(
+    {
+      type: "ProductOrdered",
+      data: [],
+      tags: [],
+    },
+    appendCondition
+  )
 }
 
-// example commands
-for (const displayedPrice of [100, 130, 135]) {
-  try {
-    purchaseProduct("p1", displayedPrice)
-    console.log(`purchase with displayedPrice ${displayedPrice} succeeded`)
-  } catch (e) {
-    console.error(`purchase with displayedPrice ${displayedPrice} failed: ${e.message}`)
-  }
-}
+// event fixture:
+
+appendEvents([
+  {
+    type: "ProductDefined",
+    data: { productId: "p1", price: 123 },
+    tags: ["product:p1"],
+    minutesAgo: 20,
+  },
+  {
+    type: "ProductDefined",
+    data: { productId: "p2", price: 222 },
+    tags: ["product:p2"],
+    minutesAgo: 15,
+  },
+  {
+    type: "ProductPriceChanged",
+    data: { productId: "p1", newPrice: 130 },
+    tags: ["product:p1"],
+    minutesAgo: 9,
+  },
+  {
+    type: "ProductPriceChanged",
+    data: { productId: "p1", newPrice: 135 },
+    tags: ["product:p1"],
+    minutesAgo: 5,
+  },
+])
+
+// test cases:
+
+test([
+  {
+    description: "Order unknown product",
+    test: () => orderProduct({ productId: "p0", displayedPrice: 123 }),
+    expectedError: 'unknown product id "p0"',
+  },
+  {
+    description: "Order product with a displayed price that was never valid",
+    test: () => orderProduct({ productId: "p1", displayedPrice: 100 }),
+    expectedError: 'invalid price 100 for product "p1"',
+  },
+  {
+    description: "Order product with a price that was changed more than 10 minutes ago",
+    test: () => orderProduct({ productId: "p1", displayedPrice: 123 }),
+    expectedError: 'invalid price 123 for product "p1"',
+  },
+  {
+    description: "Order product with a price that was changed less than 10 minutes ago",
+    test: () => orderProduct({ productId: "p1", displayedPrice: 130 }),
+  },
+  {
+    description: "Order product with valid price",
+    test: () => orderProduct({ productId: "p1", displayedPrice: 135 }),
+  },
+])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" editor="basic"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
 ### 03: Multiple products (shopping cart)
 
@@ -202,111 +215,113 @@ The previous stages could be implemented with a traditional event-sourced [Aggre
 But with the requirement to be able to order multiple products at once with a dynamic price, the flexibility of DCB shines:
 
 ```js
-// helper function to generate dates X minutes ago
-const minutesAgo = (minutes) => new Date(new Date().getTime() - minutes * (1000 * 60))
+// decision models:
 
-// event fixture
-const events = [
-  {
-    type: "PRODUCT_DEFINED",
-    data: { id: "p1", price: 123 },
-    tags: ["product:p1"],
-    recordedAt: minutesAgo(20),
-  },
-  {
-    type: "PRODUCT_DEFINED",
-    data: { id: "p2", price: 222 },
-    tags: ["product:p2"],
-    recordedAt: minutesAgo(15),
-  },
-  {
-    type: "PRODUCT_PRICE_CHANGED",
-    data: { id: "p1", newPrice: 130 },
-    tags: ["product:p1"],
-    recordedAt: minutesAgo(9),
-  },
-  {
-    type: "PRODUCT_PRICE_CHANGED",
-    data: { id: "p1", newPrice: 135 },
-    tags: ["product:p1"],
-    recordedAt: minutesAgo(5),
-  },
-]
-
-/**
- * the in-memory decision model (aka aggregate)
- *
- * @param {string[]} productIds
- * @returns {Object.<string, {basePrice: number|null, validPrices: number[]}>}
- */
-const productPriceDecisionModel = (productIds) => {
-  // helper function to calculate the age of an event in minutes
-  const eventAgeInMinutes = (event) => (new Date() - event.recordedAt) / (1000 * 60)
-
-  // number of minutes before a changed product price is enforced
-  const priceGracePeriodInMinutes = 10
-  const projection = {
-    $init: () => ({}),
-    PRODUCT_DEFINED: (state, event) => ({
+const productPrice = (productId) => ({
+  initialState: { basePrice: null, validPrices: [] },
+  handlers: {
+    ProductDefined: (state, event) => ({
       ...state,
-      [event.data.id]: {
-        basePrice: event.data.price,
-        validPrices:
-          eventAgeInMinutes(event) <= priceGracePeriodInMinutes ? [event.data.price] : [],
-      },
+      basePrice: event.data.price,
+      validPrices: event.minutesAgo <= 10 ? [event.data.price] : [],
     }),
-    PRODUCT_PRICE_CHANGED: (state, event) => ({
+    ProductPriceChanged: (state, event) => ({
       ...state,
-      [event.data.id]: {
-        basePrice: event.data.newPrice,
-        validPrices:
-          eventAgeInMinutes(event) <= priceGracePeriodInMinutes
-            ? [...state[event.data.id].validPrices, event.data.newPrice]
-            : state[event.data.id].validPrices,
-      },
+      basePrice: event.data.newPrice,
+      validPrices:
+        event.minutesAgo <= 10 ? [...state.validPrices, event.data.newPrice] : state.validPrices,
     }),
-  }
-  return events
-    .filter((event) => productIds.some((productId) => event.tags.includes(`product:${productId}`)))
-    .reduce((state, event) => projection[event.type]?.(state, event) ?? state, projection.$init?.())
-}
+  },
+  tagFilter: [`product:${productId}`],
+})
 
-/**
- * the "command handler"
- *
- * @param {Object.<string, number>} cart - Cart object mapping product IDs to their displayed price
- */
-const purchaseProducts = (cart) => {
-  const productPrices = productPriceDecisionModel(Object.keys(cart))
-  for (const [productId, displayedPrice] of Object.entries(cart)) {
-    if (productPrices[productId] === undefined) {
-      throw new Error(`unknown product id ${productId}`)
+// command handler:
+
+const orderProducts = (command) => {
+  const { state, appendCondition } = buildDecisionModel(
+    command.cart.reduce((models, cartItem) => {
+      models[cartItem.productId] = productPrice(cartItem.productId)
+      return models
+    }, {})
+  )
+  for (const cartItem of command.cart) {
+    if (state[cartItem.productId].basePrice === null) {
+      throw new Error(`unknown product id "${cartItem.productId}"`)
     }
     if (
-      productPrices[productId].basePrice !== displayedPrice &&
-      !productPrices[productId].validPrices.includes(displayedPrice)
+      state[cartItem.productId].basePrice !== cartItem.displayedPrice &&
+      !state[cartItem.productId].validPrices.includes(cartItem.displayedPrice)
     ) {
-      throw new Error(`invalid price ${displayedPrice} for product "${productId}"`)
+      throw new Error(
+        `invalid price ${cartItem.displayedPrice} for product "${cartItem.productId}"`
+      )
     }
   }
-  // success -> process purchase...
+  appendEvent({ type: "ProductsOrdered" /* ... */ }, appendCondition)
 }
 
-// example commands
-for (const cart of [
-  { p0: 123 },
-  { p1: 100 },
-  { p1: 123, p2: 222 },
-  { p1: 130 },
-  { p1: 135, p2: 222 },
-]) {
-  try {
-    purchaseProducts(cart)
-    console.log(`purchase with cart ${JSON.stringify(cart)} succeeded`)
-  } catch (e) {
-    console.error(`purchase with cart ${JSON.stringify(cart)} failed: ${e.message}`)
-  }
-}
+// event fixture:
+
+appendEvents([
+  {
+    type: "ProductDefined",
+    data: { productId: "p1", price: 123 },
+    tags: ["product:p1"],
+    minutesAgo: 20,
+  },
+  {
+    type: "ProductDefined",
+    data: { productId: "p2", price: 222 },
+    tags: ["product:p2"],
+    minutesAgo: 15,
+  },
+  {
+    type: "ProductPriceChanged",
+    data: { productId: "p1", newPrice: 130 },
+    tags: ["product:p1"],
+    minutesAgo: 9,
+  },
+  {
+    type: "ProductPriceChanged",
+    data: { productId: "p1", newPrice: 135 },
+    tags: ["product:p1"],
+    minutesAgo: 5,
+  },
+])
+
+// test cases:
+
+test([
+  {
+    description: "Order unknown product",
+    test: () => orderProducts({ cart: [{ productId: "p0", displayedPrice: 123 }] }),
+    expectedError: 'unknown product id "p0"',
+  },
+  {
+    description: "Order product with a displayed price that was never valid",
+    test: () => orderProducts({ cart: [{ productId: "p1", displayedPrice: 100 }] }),
+    expectedError: 'invalid price 100 for product "p1"',
+  },
+  {
+    description: "Order product with a price that was changed more than 10 minutes ago",
+    test: () => orderProducts({ cart: [{ productId: "p1", displayedPrice: 123 }] }),
+    expectedError: 'invalid price 123 for product "p1"',
+  },
+  {
+    description: "Order product with a price that was changed less than 10 minutes ago",
+    test: () => orderProducts({ cart: [{ productId: "p1", displayedPrice: 130 }] }),
+  },
+  {
+    description: "Order multiple products with valid prices",
+    test: () =>
+      orderProducts({
+        cart: [
+          { productId: "p1", displayedPrice: 135 },
+          { productId: "p2", displayedPrice: 222 },
+        ],
+      }),
+  },
+])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" editor="basic"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
