@@ -81,7 +81,8 @@ extra:
   social:
     - icon: simple/github
       link: https://github.com/dcb-events/dcb-events.github.io
-copyright: Copyright &copy; 2025 Paul Grimshaw, Sara Pellegrini, Bastian Waidelich
+hooks:
+  - hooks/copyright.py
 
 watch:
   - includes
