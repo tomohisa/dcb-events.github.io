@@ -32,297 +32,444 @@ With DCB the challenge can be solved simply by adding a [Tag](../libraries/speci
 
 ### Feature 1: Register courses
 
+The first implementation just allows to specify new courses and make sure that they have a unique id:
+
 ```js
-// decision models:
+// event type definitions:
 
-const courseExists = (courseId) => ({
-  initialState: false,
-  handlers: {
-    CourseDefined: (state, event) => true,
+const eventTypes = {
+  CourseDefined: {
+    tagResolver: (data) => [`course:${data.courseId}`],
   },
-  tagFilter: [`course:${courseId}`],
-})
-
-// command handler:
-
-const defineCourse = (command) => {
-  const { state, appendCondition } = buildDecisionModel({
-    courseExists: courseExists(command.courseId),
-  })
-  if (state.courseExists) {
-    throw new Error(`Course with id "${command.courseId}" already exists`)
-  }
-  appendEvent(
-    {
-      type: "CourseDefined",
-      data: {"courseId":"command.courseId","capacity":"command.capacity"},
-      tags: ["course:command.courseId"],
-    },
-    appendCondition
-  )
 }
 
-// event fixture:
+// decision models:
 
-appendEvents([
-  {
-    type: "CourseDefined",
-    data: {"courseId":"c1","capacity":10},
-    tags: ["course:c1"],
+const decisionModels = {
+  courseExists: (courseId) => ({
+    initialState: false,
+    handlers: {
+      CourseDefined: (state, event) => true,
+    },
+    tagFilter: [`course:${courseId}`],
+  }),
+}
+
+// command handlers:
+
+const commandHandlers = {
+  defineCourse: (command) => {
+    const { state, appendCondition } = buildDecisionModel({
+      courseExists: decisionModels.courseExists(command.courseId),
+    })
+    if (state.courseExists) {
+      throw new Error(`Course with id "${command.courseId}" already exists`)
+    }
+    appendEvent(
+      {
+        type: "CourseDefined",
+        data: { courseId: command.courseId, capacity: command.capacity },
+      },
+      appendCondition
+    )
   },
-])
+}
 
 // test cases:
 
-test([  {
+test([
+  {
     description: "Define course with existing id",
-    test: () => defineCourse({ courseId: "c1", capacity: 15}),
-    expectedError: "Course with id \"c1\" already exists",
+    given: {
+      events: [
+        {
+          type: "CourseDefined",
+          data: { courseId: "c1", capacity: 10 },
+        },
+      ],
+    },
+    when: {
+      command: {
+        type: "defineCourse",
+        data: { courseId: "c1", capacity: 15 },
+      },
+    },
+    then: {
+      expectedError: 'Course with id "c1" already exists',
+    },
   },
   {
     description: "Define course with new id",
-    test: () => defineCourse({ courseId: "c2", capacity: 15}),
+    when: {
+      command: {
+        type: "defineCourse",
+        data: { courseId: "c1", capacity: 15 },
+      },
+    },
+    then: {
+      expectedEvent: {
+        type: "CourseDefined",
+        data: { courseId: "c1", capacity: 15 },
+      },
+    },
   },
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
 
 ### Feature 2: Change course capacity
 
-```js
-// decision models:
+The second implementation extends the first by a `changeCourseCapacity` command that allows to change the maximum number of seats for a given course:
 
-const courseExists = (courseId) => ({
-  initialState: false,
-  handlers: {
-    CourseDefined: (state, event) => true,
+```js hl_lines="7-9 22-29 36-46"
+// event type definitions:
+
+const eventTypes = {
+  CourseDefined: {
+    tagResolver: (data) => [`course:${data.courseId}`],
   },
-  tagFilter: [`course:${courseId}`],
-})
-
-const courseCapacity = (courseId) => ({
-  initialState: 0,
-  handlers: {
-    CourseDefined: (state, event) => event.data.capacity,
-    CourseCapacityChanged: (state, event) => event.data.newCapacity,
+  CourseCapacityChanged: {
+    tagResolver: (data) => [`course:${data.courseId}`],
   },
-  tagFilter: [`course:${courseId}`],
-})
-
-// command handler:
-
-const changeCourseCapacity = (command) => {
-  const { state, appendCondition } = buildDecisionModel({
-    courseExists: courseExists(command.courseId),
-    courseCapacity: courseCapacity(command.courseId),
-  })
-  if (!state.courseExists) {
-    throw new Error(`Course "${command.courseId}" does not exist`)
-  }
-  if (state.courseCapacity === command.newCapacity) {
-    throw new Error(`New capacity ${command.newCapacity} is the same as the current capacity`)
-  }
-  appendEvent(
-    {
-      type: "CourseCapacityChanged",
-      data: {"courseId":"command.courseId","newCapacity":"command.newCapacity"},
-      tags: ["course:command.courseId"],
-    },
-    appendCondition
-  )
 }
 
-// event fixture:
+// decision models:
 
-appendEvents([
-  {
-    type: "CourseDefined",
-    data: {"courseId":"c1","capacity":10},
-    tags: ["course:c1"],
+const decisionModels = {
+  courseExists: (courseId) => ({
+    initialState: false,
+    handlers: {
+      CourseDefined: (state, event) => true,
+    },
+    tagFilter: [`course:${courseId}`],
+  }),
+  courseCapacity: (courseId) => ({
+    initialState: 0,
+    handlers: {
+      CourseDefined: (state, event) => event.data.capacity,
+      CourseCapacityChanged: (state, event) => event.data.newCapacity,
+    },
+    tagFilter: [`course:${courseId}`],
+  }),
+}
+
+// command handlers:
+
+const commandHandlers = {
+  // ...
+  changeCourseCapacity: (command) => {
+    const { state, appendCondition } = buildDecisionModel({
+      courseExists: decisionModels.courseExists(command.courseId),
+      courseCapacity: decisionModels.courseCapacity(command.courseId),
+    })
+    if (!state.courseExists) {
+      throw new Error(`Course "${command.courseId}" does not exist`)
+    }
+    if (state.courseCapacity === command.newCapacity) {
+      throw new Error(`Course capacity was not changed`)
+    }
+    appendEvent(
+      {
+        type: "CourseCapacityChanged",
+        data: { courseId: command.courseId, newCapacity: command.newCapacity },
+      },
+      appendCondition
+    )
   },
-  {
-    type: "CourseCapacityChanged",
-    data: {"courseId":"c1","newCapacity":12},
-    tags: ["course:c1"],
-  },
-])
+}
 
 // test cases:
 
-test([  {
+test([
+  // ...
+  {
     description: "Change capacity of a non-existing course",
-    test: () => changeCourseCapacity({ courseId: "c0", newCapacity: 15}),
-    expectedError: "Course \"c0\" does not exist",
+    when: {
+      command: {
+        type: "changeCourseCapacity",
+        data: { courseId: "c0", newCapacity: 15 },
+      },
+    },
+    then: {
+      expectedError: 'Course "c0" does not exist',
+    },
   },
   {
-    description: "Change capacity of a course to the current value",
-    test: () => changeCourseCapacity({ courseId: "c1", newCapacity: 12}),
-    expectedError: "New capacity 12 is the same as the current capacity",
+    description: "Define course with new id",
+    given: {
+      events: [
+        {
+          type: "CourseDefined",
+          data: { courseId: "c1", capacity: 12 },
+        },
+      ],
+    },
+    when: {
+      command: {
+        type: "changeCourseCapacity",
+        data: { courseId: "c1", newCapacity: 12 },
+      },
+    },
+    then: {
+      expectedError: "Course capacity was not changed",
+    },
   },
   {
     description: "Change capacity of a course to a new value",
-    test: () => changeCourseCapacity({ courseId: "c1", newCapacity: 15}),
+    given: {
+      events: [
+        {
+          type: "CourseDefined",
+          data: { courseId: "c1", capacity: 12 },
+        },
+      ],
+    },
+    when: {
+      command: {
+        type: "changeCourseCapacity",
+        data: { courseId: "c1", newCapacity: 15 },
+      },
+    },
+    then: {
+      expectedEvent: {
+        type: "CourseCapacityChanged",
+        data: { courseId: "c1", newCapacity: 15 },
+      },
+    },
   },
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
 
 ### Feature 3: Subscribe student to course
 
-```js
-// decision models:
+The last implementation contains the core example that requires constraint checks across multiple entities, adding a `subscribeStudentToCourse` command with a corresponding handler that checks...
 
-const courseExists = (courseId) => ({
-  initialState: false,
-  handlers: {
-    CourseDefined: (state, event) => true,
+- ...whether the course with the specified id exists
+- ...whether the specified course still has available seats
+- ...whether the student with the specified id is not yet subscribed to given course
+- ...whether the student is not subscribed to more than 5 courses already
+
+```js hl_lines="10-15 36-56 63-91"
+// event type definitions:
+
+const eventTypes = {
+  CourseDefined: {
+    tagResolver: (data) => [`course:${data.courseId}`],
   },
-  tagFilter: [`course:${courseId}`],
-})
-
-const courseCapacity = (courseId) => ({
-  initialState: 0,
-  handlers: {
-    CourseDefined: (state, event) => event.data.capacity,
-    CourseCapacityChanged: (state, event) => event.data.newCapacity,
+  CourseCapacityChanged: {
+    tagResolver: (data) => [`course:${data.courseId}`],
   },
-  tagFilter: [`course:${courseId}`],
-})
-
-const studentAlreadySubscribed = (studentId, courseId) => ({
-  initialState: false,
-  handlers: {
-    StudentSubscribedToCourse: (state, event) => true,
+  StudentSubscribedToCourse: {
+    tagResolver: (data) => [
+      `student:${data.studentId}`,
+      `course:${data.courseId}`
+    ],
   },
-  tagFilter: [`student:${studentId}`, `course:${courseId}`],
-})
-
-const numberOfCourseSubscriptions = (courseId) => ({
-  initialState: 0,
-  handlers: {
-    StudentSubscribedToCourse: (state, event) => state + 1,
-  },
-  tagFilter: [`course:${courseId}`],
-})
-
-const numberOfStudentSubscriptions = (studentId) => ({
-  initialState: true,
-  handlers: {
-    StudentSubscribedToCourse: (state, event) => state + 1,
-  },
-  tagFilter: [`student:${studentId}`],
-})
-
-// command handler:
-
-const subscribeStudentToCourse = (command) => {
-  const { state, appendCondition } = buildDecisionModel({
-    courseExists: courseExists(command.courseId),
-    courseCapacity: courseCapacity(command.courseId),
-    numberOfCourseSubscriptions: numberOfCourseSubscriptions(command.courseId),
-    numberOfStudentSubscriptions: numberOfStudentSubscriptions(command.studentId),
-    studentAlreadySubscribed: studentAlreadySubscribed(command.studentId, command.courseId),
-  })
-  if (!state.courseExists) {
-    throw new Error(`Course "${command.courseId}" does not exist`)
-  }
-  if (state.numberOfCourseSubscriptions >= state.courseCapacity) {
-    throw new Error(`Course "${command.courseId}" is already fully booked`)
-  }
-  if (state.studentAlreadySubscribed) {
-    throw new Error(`Student "${command.studentId}" is already subscribed to course "${command.courseId}"`)
-  }
-  if (state.numberOfStudentSubscriptions >= 5) {
-    throw new Error(`Student "${command.studentId}" is already subscribed to the maximum number of courses`)
-  }
-  appendEvent(
-    {
-      type: "StudentSubscribedToCourse",
-      data: {"studentId":"command.studentId","courseId":"command.courseId"},
-      tags: ["student:command.studentId","course:command.courseId"],
-    },
-    appendCondition
-  )
 }
 
-// event fixture:
+// decision models:
 
-appendEvents([
-  {
-    type: "CourseDefined",
-    data: {"courseId":"c1","capacity":10},
-    tags: ["course:c1"],
+const decisionModels = {
+  courseExists: (courseId) => ({
+    initialState: false,
+    handlers: {
+      CourseDefined: (state, event) => true,
+    },
+    tagFilter: [`course:${courseId}`],
+  }),
+  courseCapacity: (courseId) => ({
+    initialState: 0,
+    handlers: {
+      CourseDefined: (state, event) => event.data.capacity,
+      CourseCapacityChanged: (state, event) => event.data.newCapacity,
+    },
+    tagFilter: [`course:${courseId}`],
+  }),
+  studentAlreadySubscribed: (studentId, courseId) => ({
+    initialState: false,
+    handlers: {
+      StudentSubscribedToCourse: (state, event) => true,
+    },
+    tagFilter: [`student:${studentId}`, `course:${courseId}`],
+  }),
+  numberOfCourseSubscriptions: (courseId) => ({
+    initialState: 0,
+    handlers: {
+      StudentSubscribedToCourse: (state, event) => state + 1,
+    },
+    tagFilter: [`course:${courseId}`],
+  }),
+  numberOfStudentSubscriptions: (studentId) => ({
+    initialState: true,
+    handlers: {
+      StudentSubscribedToCourse: (state, event) => state + 1,
+    },
+    tagFilter: [`student:${studentId}`],
+  }),
+}
+
+// command handlers:
+
+const commandHandlers = {
+  // ...
+  subscribeStudentToCourse: (command) => {
+    const { state, appendCondition } = buildDecisionModel({
+      courseExists: decisionModels.courseExists(command.courseId),
+      courseCapacity: decisionModels.courseCapacity(command.courseId),
+      numberOfCourseSubscriptions:
+        decisionModels.numberOfCourseSubscriptions(command.courseId),
+      numberOfStudentSubscriptions:
+        decisionModels.numberOfStudentSubscriptions(command.studentId),
+      studentAlreadySubscribed: decisionModels.studentAlreadySubscribed(
+        command.studentId,
+        command.courseId
+      ),
+    })
+    if (!state.courseExists) {
+      throw new Error(`Course "${command.courseId}" does not exist`)
+    }
+    if (state.numberOfCourseSubscriptions >= state.courseCapacity) {
+      throw new Error(`Course "${command.courseId}" is already fully booked`)
+    }
+    if (state.studentAlreadySubscribed) {
+      throw new Error(
+        `Student already subscribed to this course`
+      )
+    }
+    if (state.numberOfStudentSubscriptions >= 5) {
+      throw new Error(
+        `Student already subscribed to 5 courses`
+      )
+    }
+    appendEvent(
+      {
+        type: "StudentSubscribedToCourse",
+        data: { studentId: command.studentId, courseId: command.courseId },
+      },
+      appendCondition
+    )
   },
-  {
-    type: "CourseDefined",
-    data: {"courseId":"c2","capacity":2},
-    tags: ["course:c2"],
-  },
-  {
-    type: "CourseDefined",
-    data: {"courseId":"c3","capacity":10},
-    tags: ["course:c3"],
-  },
-  {
-    type: "StudentSubscribedToCourse",
-    data: {"studentId":"s1","courseId":"c1"},
-    tags: ["student:s1","course:c1"],
-  },
-  {
-    type: "StudentSubscribedToCourse",
-    data: {"studentId":"s1","courseId":"c2"},
-    tags: ["student:s1","course:c2"],
-  },
-  {
-    type: "StudentSubscribedToCourse",
-    data: {"studentId":"s2","courseId":"c2"},
-    tags: ["student:s2","course:c2"],
-  },
-  {
-    type: "StudentSubscribedToCourse",
-    data: {"studentId":"s1","courseId":"c4"},
-    tags: ["student:s1","course:c4"],
-  },
-  {
-    type: "StudentSubscribedToCourse",
-    data: {"studentId":"s1","courseId":"c5"},
-    tags: ["student:s1","course:c5"],
-  },
-  {
-    type: "StudentSubscribedToCourse",
-    data: {"studentId":"s1","courseId":"c6"},
-    tags: ["student:s1","course:c6"],
-  },
-])
+}
 
 // test cases:
 
-test([  {
+test([
+  // ...
+  {
     description: "Subscribe student to non-existing course",
-    test: () => subscribeStudentToCourse({ studentId: "s1", courseId: "c0"}),
-    expectedError: "Course \"c0\" does not exist",
+    when: {
+      command: {
+        type: "subscribeStudentToCourse",
+        data: { studentId: "s1", courseId: "c0" },
+      },
+    },
+    then: {
+      expectedError: 'Course "c0" does not exist',
+    },
   },
   {
     description: "Subscribe student to fully booked course",
-    test: () => subscribeStudentToCourse({ studentId: "s3", courseId: "c2"}),
-    expectedError: "Course \"c2\" is already fully booked",
+    given: {
+      events: [
+        {
+          type: "CourseDefined",
+          data: { courseId: "c1", capacity: 3 },
+        },
+        {
+          type: "StudentSubscribedToCourse",
+          data: { studentId: "s1", courseId: "c1" },
+        },
+        {
+          type: "StudentSubscribedToCourse",
+          data: { studentId: "s2", courseId: "c1" },
+        },
+        {
+          type: "StudentSubscribedToCourse",
+          data: { studentId: "s3", courseId: "c1" },
+        },
+      ],
+    },
+    when: {
+      command: {
+        type: "subscribeStudentToCourse",
+        data: { studentId: "s4", courseId: "c1" },
+      },
+    },
+    then: {
+      expectedError: 'Course "c1" is already fully booked',
+    },
   },
   {
     description: "Subscribe student to the same course twice",
-    test: () => subscribeStudentToCourse({ studentId: "s1", courseId: "c1"}),
-    expectedError: "Student \"s1\" is already subscribed to course \"c1\"",
+    given: {
+      events: [
+        {
+          type: "CourseDefined",
+          data: { courseId: "c1", capacity: 10 },
+        },
+        {
+          type: "StudentSubscribedToCourse",
+          data: { studentId: "s1", courseId: "c1" },
+        },
+      ],
+    },
+    when: {
+      command: {
+        type: "subscribeStudentToCourse",
+        data: { studentId: "s1", courseId: "c1" },
+      },
+    },
+    then: {
+      expectedError: 'Student already subscribed to this course',
+    },
   },
   {
     description: "Subscribe student to more than 5 courses",
-    test: () => subscribeStudentToCourse({ studentId: "s1", courseId: "c3"}),
-    expectedError: "Student \"s1\" is already subscribed to the maximum number of courses",
+    given: {
+      events: [
+        {
+          type: "CourseDefined",
+          data: { courseId: "c6", capacity: 10 },
+        },
+        {
+          type: "StudentSubscribedToCourse",
+          data: { studentId: "s1", courseId: "c1" },
+        },
+        {
+          type: "StudentSubscribedToCourse",
+          data: { studentId: "s1", courseId: "c2" },
+        },
+        {
+          type: "StudentSubscribedToCourse",
+          data: { studentId: "s1", courseId: "c3" },
+        },
+        {
+          type: "StudentSubscribedToCourse",
+          data: { studentId: "s1", courseId: "c4" },
+        },
+        {
+          type: "StudentSubscribedToCourse",
+          data: { studentId: "s1", courseId: "c5" },
+        },
+      ],
+    },
+    when: {
+      command: {
+        type: "subscribeStudentToCourse",
+        data: { studentId: "s1", courseId: "c6" },
+      },
+    },
+    then: {
+      expectedError: 'Student already subscribed to 5 courses',
+    },
   },
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
 
 ### Other implementations
 

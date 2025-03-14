@@ -34,186 +34,265 @@ With DCB all events that affect the unique contraint (the username in this examp
 This example is the most simple one just checking whether a given username is claimed
 
 ```js
-// decision models:
+// event type definitions:
 
-const isUsernameClaimed = (username) => ({
-  initialState: false,
-  handlers: {
-    AccountRegistered: (state, event) => true,
+const eventTypes = {
+  AccountRegistered: {
+    tagResolver: (data) => [`username:${data.username}`],
   },
-  tagFilter: [`username:${username}`],
-})
-
-// command handler:
-
-const registerAccount = (command) => {
-  const { state, appendCondition } = buildDecisionModel({
-    isUsernameClaimed: isUsernameClaimed(command.username),
-  })
-  if (state.isUsernameClaimed) {
-    throw new Error(`Username "${command.username}" is claimed`)
-  }
-  appendEvent(
-    {
-      type: "AccountRegistered",
-      data: { username: "command.username" },
-      tags: ["username:command.username"],
-    },
-    appendCondition
-  )
 }
 
-// event fixture:
+// decision models:
 
-appendEvents([
-  {
-    type: "AccountRegistered",
-    data: { username: "u1" },
-    tags: ["username:u1"],
+const decisionModels = {
+  isUsernameClaimed: (username) => ({
+    initialState: false,
+    handlers: {
+      AccountRegistered: (state, event) => true,
+    },
+    tagFilter: [`username:${username}`],
+  }),
+}
+
+// command handlers:
+
+const commandHandlers = {
+  registerAccount: (command) => {
+    const { state, appendCondition } = buildDecisionModel({
+      isUsernameClaimed: decisionModels.isUsernameClaimed(command.username),
+    })
+    if (state.isUsernameClaimed) {
+      throw new Error(`Username "${command.username}" is claimed`)
+    }
+    appendEvent(
+      {
+        type: "AccountRegistered",
+        data: { username: command.username },
+      },
+      appendCondition
+    )
   },
-])
+}
 
 // test cases:
 
 test([
   {
     description: "Register account with claimed username",
-    test: () => registerAccount({ username: "u1" }),
-    expectedError: 'Username "u1" is claimed',
+    given: {
+      events: [
+        {
+          type: "AccountRegistered",
+          data: { username: "u1" },
+        },
+      ],
+    },
+    when: {
+      command: {
+        type: "registerAccount",
+        data: { username: "u1" },
+      },
+    },
+    then: {
+      expectedError: 'Username "u1" is claimed',
+    },
   },
   {
     description: "Register account with unused username",
-    test: () => registerAccount({ username: "u2" }),
+    when: {
+      command: {
+        type: "registerAccount",
+        data: { username: "u1" },
+      },
+    },
+    then: {
+      expectedEvent: {
+        type: "AccountRegistered",
+        data: { username: "u1" },
+      },
+    },
   },
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
 
 ### 02: Release usernames
 
 This example extends the previous one to show how a previously claimed username could be released whent the corresponding account is suspended
 
-```js hl_lines="7"
-// decision models:
+```js hl_lines="7-9 19"
+// event type definitions:
 
-const isUsernameClaimed = (username) => ({
-  initialState: false,
-  handlers: {
-    AccountRegistered: (state, event) => true,
-    AccountSuspended: (state, event) => false,
+const eventTypes = {
+  AccountRegistered: {
+    tagResolver: (data) => [`username:${data.username}`],
   },
-  tagFilter: [`username:${username}`],
-})
-
-// command handler:
-
-const registerAccount = (command) => {
-  const { state, appendCondition } = buildDecisionModel({
-    isUsernameClaimed: isUsernameClaimed(command.username),
-  })
-  if (state.isUsernameClaimed) {
-    throw new Error(`Username "${command.username}" is claimed`)
-  }
-  appendEvent(
-    {
-      type: "AccountRegistered",
-      data: { username: "command.username" },
-      tags: ["username:command.username"],
-    },
-    appendCondition
-  )
+  AccountSuspended: {
+    tagResolver: (data) => [`username:${data.username}`],
+  },
 }
 
-// event fixture:
+// decision models:
 
-appendEvents([
-  {
-    type: "AccountRegistered",
-    data: { username: "u1" },
-    tags: ["username:u1"],
+const decisionModels = {
+  isUsernameClaimed: (username) => ({
+    initialState: false,
+    handlers: {
+      AccountRegistered: (state, event) => true,
+      AccountSuspended: (state, event) => false,
+    },
+    tagFilter: [`username:${username}`],
+  }),
+}
+
+// command handlers:
+
+const commandHandlers = {
+  registerAccount: (command) => {
+    const { state, appendCondition } = buildDecisionModel({
+      isUsernameClaimed: decisionModels.isUsernameClaimed(command.username),
+    })
+    if (state.isUsernameClaimed) {
+      throw new Error(`Username "${command.username}" is claimed`)
+    }
+    appendEvent(
+      {
+        type: "AccountRegistered",
+        data: { username: command.username },
+      },
+      appendCondition
+    )
   },
-  {
-    type: "AccountSuspended",
-    data: { username: "u1" },
-    tags: ["username:u1"],
-  },
-])
+}
 
 // test cases:
 
 test([
+  // ...
   {
-    description: "Register account with released username",
-    test: () => registerAccount({ username: "u1" }),
+    description: "Register account with username of suspended account",
+    given: {
+      events: [
+        {
+          type: "AccountRegistered",
+          data: { username: "u1" },
+        },
+        {
+          type: "AccountSuspended",
+          data: { username: "u1" },
+        },
+      ],
+    },
+    when: {
+      command: {
+        type: "registerAccount",
+        data: { username: "u1" },
+      },
+    },
+    then: {
+      expectedEvent: {
+        type: "AccountRegistered",
+        data: { username: "u1" },
+      },
+    },
   },
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
 
 ### 03: Allow changing of usernames
 
 This example extends the previous one to show how the username of an active account could be changed
 
-```js hl_lines="8"
-// decision models:
+```js hl_lines="10-15 26"
+// event type definitions:
 
-const isUsernameClaimed = (username) => ({
-  initialState: false,
-  handlers: {
-    AccountRegistered: (state, event) => true,
-    AccountSuspended: (state, event) => false,
-    UsernameChanged: (state, event) => event.data.newUsername === username,
+const eventTypes = {
+  AccountRegistered: {
+    tagResolver: (data) => [`username:${data.username}`],
   },
-  tagFilter: [`username:${username}`],
-})
-
-// command handler:
-
-const registerAccount = (command) => {
-  const { state, appendCondition } = buildDecisionModel({
-    isUsernameClaimed: isUsernameClaimed(command.username),
-  })
-  if (state.isUsernameClaimed) {
-    throw new Error(`Username "${command.username}" is claimed`)
-  }
-  appendEvent(
-    {
-      type: "AccountRegistered",
-      data: { username: "command.username" },
-      tags: ["username:command.username"],
-    },
-    appendCondition
-  )
+  AccountSuspended: {
+    tagResolver: (data) => [`username:${data.username}`],
+  },
+  UsernameChanged: {
+    tagResolver: (data) => [
+      `username:${data.oldUsername}`,
+      `username:${data.newUsername}`
+    ],
+  },
 }
 
-// event fixture:
+// decision models:
 
-appendEvents([
-  {
-    type: "AccountRegistered",
-    data: { username: "u1" },
-    tags: ["username:u1"],
+const decisionModels = {
+  isUsernameClaimed: (username) => ({
+    initialState: false,
+    handlers: {
+      AccountRegistered: (state, event) => true,
+      AccountSuspended: (state, event) => false,
+      UsernameChanged: (state, event) => event.data.newUsername === username,
+    },
+    tagFilter: [`username:${username}`],
+  }),
+}
+
+// command handlers:
+
+const commandHandlers = {
+  registerAccount: (command) => {
+    const { state, appendCondition } = buildDecisionModel({
+      isUsernameClaimed: decisionModels.isUsernameClaimed(command.username),
+    })
+    if (state.isUsernameClaimed) {
+      throw new Error(`Username "${command.username}" is claimed`)
+    }
+    appendEvent(
+      {
+        type: "AccountRegistered",
+        data: { username: command.username },
+      },
+      appendCondition
+    )
   },
-  {
-    type: "UsernameChanged",
-    data: { oldUsername: "u1", newUsername: "u1changed" },
-    tags: ["username:u1", "username:u1changed"],
-  },
-])
+}
 
 // test cases:
 
 test([
+  // ...
   {
-    description: "Register account with changed username",
-    test: () => registerAccount({ username: "u1" }),
+    description: "Register changed username",
+    given: {
+      events: [
+        {
+          type: "AccountRegistered",
+          data: { username: "u1" },
+        },
+        {
+          type: "UsernameChanged",
+          data: { oldUsername: "u1", newUsername: "u1changed" },
+        },
+      ],
+    },
+    when: {
+      command: {
+        type: "registerAccount",
+        data: { username: "u1" },
+      },
+    },
+    then: {
+      expectedEvent: {
+        type: "AccountRegistered",
+        data: { username: "u1" },
+      },
+    },
   },
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
 
 ### 04: Release unused usernames with a configurable delay
 
@@ -223,109 +302,174 @@ This example extends the previous one to show how the release of a username coul
 
     The `daysAgo` property of the `event` is a simplification. Typically, a timestamp representing the event's recording time is stored within the event's payload or metadata. This timestamp can be compared to the current date to determine the event's age in the decision model.
 
-```js hl_lines="7 8"
-// decision models:
+```js hl_lines="25-27"
+// event type definitions:
 
-const isUsernameClaimed = (username) => ({
-  initialState: false,
-  handlers: {
-    AccountRegistered: (state, event) => true,
-    AccountSuspended: (state, event) => event.daysAgo <= 3,
-    UsernameChanged: (state, event) => event.data.newUsername === username || event.daysAgo <= 3,
+const eventTypes = {
+  AccountRegistered: {
+    tagResolver: (data) => [`username:${data.username}`],
   },
-  tagFilter: [`username:${username}`],
-})
-
-// command handler:
-
-const registerAccount = (command) => {
-  const { state, appendCondition } = buildDecisionModel({
-    isUsernameClaimed: isUsernameClaimed(command.username),
-  })
-  if (state.isUsernameClaimed) {
-    throw new Error(`Username "${command.username}" is claimed`)
-  }
-  appendEvent(
-    {
-      type: "AccountRegistered",
-      data: { username: "command.username" },
-      tags: ["username:command.username"],
-    },
-    appendCondition
-  )
+  AccountSuspended: {
+    tagResolver: (data) => [`username:${data.username}`],
+  },
+  UsernameChanged: {
+    tagResolver: (data) => [
+      `username:${data.oldUsername}`,
+      `username:${data.newUsername}`
+    ],
+  },
 }
 
-// event fixture:
+// decision models:
 
-appendEvents([
-  {
-    type: "AccountRegistered",
-    data: { username: "u1" },
-    tags: ["username:u1"],
+const decisionModels = {
+  isUsernameClaimed: (username) => ({
+    initialState: false,
+    handlers: {
+      AccountRegistered: (state, event) => true,
+      AccountSuspended: (state, event) => event.metadata.daysAgo <= 3,
+      UsernameChanged: (state, event) =>
+        event.data.newUsername === username || event.metadata.daysAgo <= 3,
+    },
+    tagFilter: [`username:${username}`],
+  }),
+}
+
+// command handlers:
+
+const commandHandlers = {
+  registerAccount: (command) => {
+    const { state, appendCondition } = buildDecisionModel({
+      isUsernameClaimed: decisionModels.isUsernameClaimed(command.username),
+    })
+    if (state.isUsernameClaimed) {
+      throw new Error(`Username "${command.username}" is claimed`)
+    }
+    appendEvent(
+      {
+        type: "AccountRegistered",
+        data: { username: command.username },
+      },
+      appendCondition
+    )
   },
-  {
-    type: "AccountRegistered",
-    data: { username: "u3" },
-    tags: ["username:u3"],
-  },
-  {
-    type: "AccountRegistered",
-    data: { username: "u4" },
-    tags: ["username:u4"],
-  },
-  {
-    type: "AccountRegistered",
-    data: { username: "u5" },
-    tags: ["username:u5"],
-  },
-  {
-    type: "AccountSuspended",
-    data: { username: "u1" },
-    tags: ["username:u1"],
-    daysAgo: 4,
-  },
-  {
-    type: "UsernameChanged",
-    data: { oldUsername: "u2", newUsername: "u2changed" },
-    tags: ["username:u2", "username:u2changed"],
-    daysAgo: 4,
-  },
-  {
-    type: "AccountSuspended",
-    data: { username: "u3" },
-    tags: ["username:u3"],
-    daysAgo: 3,
-  },
-  {
-    type: "UsernameChanged",
-    data: { oldUsername: "u4", newUsername: "u4changed" },
-    tags: ["username:u4", "username:u4changed"],
-    daysAgo: 3,
-  },
-])
+}
 
 // test cases:
 
 test([
+  // ...
   {
-    description: "Register account with username of suspended account before grace period",
-    test: () => registerAccount({ username: "u3" }),
-    expectedError: 'Username "u3" is claimed',
+    description: "Register username of suspended account before grace period",
+    given: {
+      events: [
+        {
+          type: "AccountRegistered",
+          data: { username: "u1" },
+          metadata: { daysAgo: 4 },
+        },
+        {
+          type: "AccountSuspended",
+          data: { username: "u1" },
+          metadata: { daysAgo: 3 },
+        },
+      ],
+    },
+    when: {
+      command: {
+        type: "registerAccount",
+        data: { username: "u1" },
+      },
+    },
+    then: {
+      expectedError: 'Username "u1" is claimed',
+    },
   },
   {
-    description: "Register account with released username before grace period",
-    test: () => registerAccount({ username: "u4" }),
-    expectedError: 'Username "u4" is claimed',
+    description: "Register changed username before grace period",
+    given: {
+      events: [
+        {
+          type: "AccountRegistered",
+          data: { username: "u1" },
+          metadata: { daysAgo: 4 },
+        },
+        {
+          type: "UsernameChanged",
+          data: { oldUsername: "u1", newUsername: "u1changed" },
+          metadata: { daysAgo: 3 },
+        },
+      ],
+    },
+    when: {
+      command: {
+        type: "registerAccount",
+        data: { username: "u1" },
+      },
+    },
+    then: {
+      expectedError: 'Username "u1" is claimed',
+    },
   },
   {
-    description: "Register account with username of suspended account after grace period",
-    test: () => registerAccount({ username: "u1" }),
+    description: "Register username of suspended account after grace period",
+    given: {
+      events: [
+        {
+          type: "AccountRegistered",
+          data: { username: "u1" },
+          metadata: { daysAgo: 4 },
+        },
+        {
+          type: "AccountSuspended",
+          data: { username: "u1" },
+          metadata: { daysAgo: 4 },
+        },
+      ],
+    },
+    when: {
+      command: {
+        type: "registerAccount",
+        data: { username: "u1" },
+      },
+    },
+    then: {
+      expectedEvent: {
+        type: "AccountRegistered",
+        data: { username: "u1" },
+      },
+    },
   },
   {
-    description: "Register account with released username after grace period",
-    test: () => registerAccount({ username: "u2" }),
+    description: "Register changed username after grace period",
+    given: {
+      events: [
+        {
+          type: "AccountRegistered",
+          data: { username: "u1" },
+          metadata: { daysAgo: 4 },
+        },
+        {
+          type: "UsernameChanged",
+          data: { oldUsername: "u1", newUsername: "u1changed" },
+          metadata: { daysAgo: 4 },
+        },
+      ],
+    },
+    when: {
+      command: {
+        type: "registerAccount",
+        data: { username: "u1" },
+      },
+    },
+    then: {
+      expectedEvent: {
+        type: "AccountRegistered",
+        data: { username: "u1" },
+      },
+    },
   },
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
