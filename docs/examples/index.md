@@ -22,4 +22,4 @@ Due to the flexibility of DCB, it can sometimes replace entire Read Models, for 
 ## Idempotency
 
 Double submission is a common problem. It can usually be worked around by creating IDs on the client side, but sometimes that's not an option.
-DCB allows to use a dedicated itempotency id in order to prevent [Prevent record duplication](prevent-record-duplication.md).
+DCB allows to use a dedicated itempotency id in order to [prevent record duplication](prevent-record-duplication.md).
