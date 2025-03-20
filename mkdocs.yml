@@ -43,6 +43,7 @@ nav:
   - Advanced topics:
       - advanced/index.md
       - Aggregates (tbd): advanced/aggregates.md
+      - Composing projections: advanced/composing-projections.md
       - DCB vs Outbox Pattern (tbd): advanced/dcb-vs-outbox-pattern.md
       - DCB with a traditional Event Store (tbd): advanced/dcb-with-a-traditional-event-store.md
       - DCB without Event Sourcing (tbd): advanced/dcb-without-event-sourcing.md
@@ -76,6 +77,7 @@ markdown_extensions:
   - pymdownx.details
   - abbr
   - attr_list
+  - pymdownx.blocks.caption
 extra:
   #generator: false
   social:
