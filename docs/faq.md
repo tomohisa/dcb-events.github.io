@@ -1,5 +1,9 @@
 Some common questions and misconceptions about DCB:
 
+## Who are you and what is this website all about?
+
+See [about](about.md)
+
 ## Does it promote lack of modeling?
 
 *tbd:* no :)
