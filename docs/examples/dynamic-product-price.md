@@ -123,7 +123,7 @@ test([
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
 ### 02: Changing product prices
 
@@ -330,7 +330,7 @@ test([
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
 ### 03: Multiple products (shopping cart)
 
@@ -557,4 +557,4 @@ test([
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>

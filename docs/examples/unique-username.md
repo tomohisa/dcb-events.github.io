@@ -115,7 +115,7 @@ test([
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
 ### 02: Release usernames
 
@@ -200,7 +200,7 @@ test([
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
 ### 03: Allow changing of usernames
 
@@ -292,7 +292,7 @@ test([
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
 ### 04: Release unused usernames with a configurable delay
 
@@ -472,4 +472,4 @@ test([
 ])
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>

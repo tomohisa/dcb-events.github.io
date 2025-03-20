@@ -116,7 +116,7 @@ The first implementation just allows to specify new courses and make sure that t
       }, 
     ])
     ```
-    <codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
+    <codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
 === "TypeScript (WIP)"
     ??? example "Experimental: 3rd party library"
@@ -278,7 +278,7 @@ The second implementation extends the first by a `changeCourseCapacity` command 
       }, 
     ])
     ```
-    <codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
+    <codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
 === "TypeScript (WIP)"
     ??? example "Experimental: 3rd party library"
@@ -570,7 +570,7 @@ The last implementation contains the core example that requires constraint check
       }, 
     ])
     ```
-    <codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib-v2.js"></codapi-snippet>
+    <codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
 
 === "TypeScript (WIP)"
     ??? example "Experimental: 3rd party library"
