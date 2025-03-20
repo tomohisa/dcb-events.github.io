@@ -35,6 +35,10 @@ With DCB the challenge can be solved simply by adding a [Tag](../libraries/speci
 The first implementation just allows to specify new courses and make sure that they have a unique id:
 
 === "JavaScript"
+    ??? info
+        This example uses [composed projections](../advanced/composing-projections.md) to build decision models.
+        
+        The actual implementation is just an in-memory dummy (see [source code](../assets/js/lib.js){:target="_blank"})
     ```js
     // event type definitions:
     
