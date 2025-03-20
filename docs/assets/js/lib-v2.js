@@ -27,7 +27,7 @@ const compositeProjection = (projections) => ({
       if (!projection.handlers.hasOwnProperty(event.type)) {
         continue
       }
-      if (!projection.tagFilter.every((tag) => event.tags.includes(tag))) {
+      if (projection.tagFilter && !projection.tagFilter.every((tag) => event.tags.includes(tag))) {
         continue
       }
       state[projectionName] = projection.handlers[event.type](state[projectionName] ?? null, event)
