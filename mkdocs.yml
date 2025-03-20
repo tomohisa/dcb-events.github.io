@@ -15,7 +15,6 @@ theme:
     - search.highlight
     - search.suggest
     - content.tooltips
-    - content.tabs.link
 
   palette:
     - scheme: slate
