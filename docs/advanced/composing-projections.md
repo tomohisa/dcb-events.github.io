@@ -177,7 +177,7 @@ const courseCapacityProjection = (courseId) => ({
 console.log(runProjection(courseCapacityProjection("c1"), events))
 console.log(runProjection(courseCapacityProjection("c2"), events))
 ```
-<codapi-snippet engine="browser" sandbox="javascript" depends-on="example3 example5"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" depends-on="example3 example5 example6"></codapi-snippet>
 
 ## Composing projections
 
