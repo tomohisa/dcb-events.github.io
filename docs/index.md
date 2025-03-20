@@ -65,7 +65,7 @@ the following query items can be specified (pseudo code):
   },
   {
     "event_type": "student registered",
-    "tags": "student:s1"
+    "tag": "student:s1"
   },
   {
     "event_type": "student subscribed to course",
@@ -73,7 +73,7 @@ the following query items can be specified (pseudo code):
   },
   {
     "event_type": "student subscribed to course",
-    "tags": "student:s1"
+    "tag": "student:s1"
   }
 ]
 ```
