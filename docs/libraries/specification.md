@@ -66,9 +66,9 @@ The following example query would match events that are either...
 An optional parameter to `EventStore.read()` that allows for cursor-based pagination of events.
 It has two parameters:
 
-- `from`, an optional [SequencePosition](#sequenceposition) to start streaming events from (depending on the `backwards` flag, this is either a _minimum_ or _maximum_ sequence number of the resulting stream)
-- `backwards`, a flag that, if set to `true`, returns the events in reverse order (default: `false`)
-- `limit`, an optional number that, if set, limits the event stream to a maximum number of events. This can be useful for retrieving only the last event, for example.
+- `from`: an optional [SequencePosition](#sequenceposition) to start streaming events from (depending on the `backwards` flag, this is either a _minimum_ or _maximum_ sequence number of the resulting stream)
+- `backwards`: a flag that, if set to `true`, returns the events in reverse order (default: `false`)
+- `limit`: an optional number that, if set, limits the event stream to a maximum number of events. This can be useful for retrieving only the last event, for example.
 
 ```
 ReadOptions {
