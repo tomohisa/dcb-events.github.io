@@ -41,11 +41,11 @@ Specialized storage system for events that ensures they are stored sequentially 
 
 ## Eventual Consistency
 
-Consistency model that prioritizes availability and partition tolerance over immediate consistency.
+Consistency model that prioritizes availability and partition tolerance over immediate consistency
 
 ## Optimistic Locking
 
-A concurrency control mechanism that prevents conflicts by allowing multiple transactions to read and update data but checking for changes before committing. If another transaction has modified the data in the meantime, the update is rejected.
+A concurrency control mechanism that prevents conflicts by allowing multiple transactions to read and update data but checking for changes before committing. If another transaction has modified the data in the meantime, the update is rejected
 
 ## Pessimistic Locking
 
@@ -98,4 +98,4 @@ See [Read Model](#read-model)
 
 ## Write Side
 
-Part of a system responsible for changing the state of the system.
+Part of a system responsible for changing the state of the system
