@@ -12,6 +12,14 @@ EventStore {
 }
 ```
 
+## Read Events
+
+
+
+## Append Events
+
+- It _MUST_ fail if the EventStore contains at least one Event after the Safe Position that matches the Query 
+
 ## Query
 
 The `Query` describes constraints that must be matched by [Event](#event)s in the [EventStore](../glossary.md#event-store)
