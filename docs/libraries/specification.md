@@ -82,7 +82,7 @@ ReadOptions {
 
 When reading from the [EventStore](../glossary.md#event-store), an `EventStream` is returned.
 
-- It _MUST_ provide the retrieved [SequencedEvents](#sequencedevent)
+- It _MUST_ provide the queried [SequencedEvents](#sequencedevent)
 - It _SHOULD_ be implemented as an iterable or as a reactive stream 
 
 ## SequencedEvent 
