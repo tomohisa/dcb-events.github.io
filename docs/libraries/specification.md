@@ -148,15 +148,11 @@ A *potential* JSON representation of an Event:
 
 ## EventType
 
-Type of the event
-
-- It _MUST_ satisfy the regular expression `^[\w\.\:\-]{1,200}$`
+Type of the event used to filter events in the [Query](#query).
 
 ## EventData
 
 Opaque payload of an [Event](#event)
-
-- It _SHOULD_ have a reasonably large enough maximum size
 
 ## Tags
 
