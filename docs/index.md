@@ -4,16 +4,16 @@ Dynamic Consistency Boundary (DCB) is a technique for enforcing consistency in e
 
 Traditional systems use strict constraints to maintain immediate consistency, while event-driven architectures embrace eventual consistency for scalability and resilience. However, this flexibility raises challenges in defining where and how consistency should be enforced.
 
-Introduced by Sara Pellegrini in her blog post "[Killing the Aggregate](https://sara.event-thinking.io/2023/04/kill-aggregate-chapter-1-I-am-here-to-kill-the-aggregate.html)", DCB provides a pragmatic approach to balancing strong consistency with flexibility. Unlike eventual consistency, which allows temporary inconsistencies across system components, DCB selectively enforces strong consistency where needed, particularly for operations spanning multiple entities. This ensures critical business processes and cross-entity invariants remain reliable while avoiding the constraints of traditional transactional models. By defining context-sensitive consistency boundaries, DCB helps teams optimize performance, scalability, and operational correctness.
+Introduced by Sara Pellegrini in her blog post "[Killing the Aggregate](https://sara.event-thinking.io/2023/04/kill-aggregate-chapter-1-I-am-here-to-kill-the-aggregate.html)", DCB provides a pragmatic approach to balancing strong consistency with flexibility. Unlike eventual consistency, which allows temporary inconsistencies across system components, DCB selectively enforces strong consistency where needed, particularly for operations spanning multiple entities. This ensures critical business processes and cross-entity invariants remain reliable while avoiding the constraints of traditional transactional models. DCB helps teams optimize performance, scalability, and operational correctness by defining context-sensitive consistency boundaries.
 
 ## How it works
 
-To illustrate how DCB works, it makes sense to first explain the traditional Event Sourcing approach and its main issue:
+To illustrate how DCB works, it makes sense first to explain the traditional Event Sourcing approach and its main issue:
 
-In her blog post Sara describes an example application that allows students to subscribe to courses.
-Restrictions apply to students and courses to ensure their integrity so it is obvious to implement these as [Aggregates](glossary.md#aggregate).
+In her blog post, Sara describes an example application that allows students to subscribe to courses.
+In this example, we assume the constraints applied to the student and the course to ensure their integrity are invariants. In other words, those constraints must always be satisfied before transitioning to a new state. For this reason, the student and the course are typically implemented as [Aggregates](glossary.md#aggregate).
 
-But then constraints are added that affect both entities, namely:
+But then, constraints that affect both entities are introduced, namely:
 
 - a course cannot accept more than n students
 - a student cannot subscribe to more than 10 courses
@@ -22,8 +22,8 @@ But then constraints are added that affect both entities, namely:
 
 In many contexts, it is impossible to update two aggregates with a single transaction; for this reason, such requirements are usually solved with a [Saga](glossary.md#saga) that coordinates the process:
 
-1. Subscribe the student by publishing an event to the Event Stream of the student
-2. Potentially in parallel, book the seat in the course by publishing an event to the Event Stream of the affected course
+1. Mark the student to be subscribed by publishing an event to the Event Stream of the student
+2. Potentially in parallel, mark the course by publishing an event to the Event Stream of the affected course
 3. If one of the two previous operations fails due to constraint violations (e.g. because another student was subscribed to the same course in the meantime), append some compensating event 
 
 ![Traditional](assets/img/example_traditional.png)
