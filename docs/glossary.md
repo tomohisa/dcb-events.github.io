@@ -80,10 +80,6 @@ Part of a system responsible for querying and presenting data, typically optimiz
 
 Refers to a design pattern used to temporarily hold or reserve a resource or state until the process is completed
 
-## Saga
-
-Potentially long-running [Process Manager](#process-manager) that coordinates distributed business workflows. TO BE CHANGED
-
 ## Sequence
 
 Ordered series of events that represent changes over time
