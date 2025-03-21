@@ -5,11 +5,11 @@
 
 ## Aggregate
 
-Entity that manages state changes exclusively through domain events and enforces consistency via optimistic locking
+An AGGREGATE is a cluster of associated objects that we treat as a unit for the purpose of data changes. 
 
 ## Command
 
-Instruction to perform a specific action or change in a system, typically resulting in one or more events if successfully processed
+Instruction to perform a specific action or change in a system, typically resulting in a modification of the state of the system
 
 ## CQRS (Command Query Responsibility Segregation)
 
@@ -17,19 +17,19 @@ Pattern that separates the responsibilities of handling commands (write operatio
 
 ## Decision Model
 
-Representation of the rules and logic used to process commands and decide which events should be generated in response
+Representation of the system's current state, used to enforce integrity constraints before moving the system to a new state.
 
 ## Domain-Driven Design
 
-Software design approach that focuses on modeling a system based on the core domain, using the language and concepts of domain experts
+Software design approach that focuses on modelling a system based on the core domain, using the language and concepts of domain experts
 
 ## Event
 
-Record of a change or action that has occurred in the past, capturing significant domain-relevant information
+Record of a fact that has occurred in the past, capturing significant domain-relevant information
 
 ## Event Sourcing
 
-Pattern where changes are stored as a sequence of [events](#event), rather than overwriting the current [state](#state)
+Pattern where changes are stored as a sequence of [events](#event) rather than overwriting the current [state](#state)
 
 !!! info
 
@@ -41,27 +41,28 @@ Specialized storage system for events that ensures they are stored sequentially 
 
 ## Eventual Consistency
 
-State where data across a distributed system becomes consistent over time, without requiring immediate synchronization
+Consistency model that prioritizes availability and partition tolerance over immediate consistency.
 
 ## Optimistic Locking
 
-Concurrency control mechanism that prevents conflicts by allowing multiple transactions to read and update data but checking for changes before committing. If the data has been modified by another transaction in the meantime, the update is rejected
+A concurrency control mechanism that prevents conflicts by allowing multiple transactions to read and update data but checking for changes before committing. If another transaction has modified the data in the meantime, the update is rejected.
 
 ## Pessimistic Locking
 
-Concurrency control mechanism that prevents conflicts by locking a resource for a transaction, blocking others from modifying it until the lock is released
+A concurrency control mechanism that prevents conflicts by locking a resource for a transaction, blocking others from modifying it until the lock is released
 
 ## Process Manager
 
-Component that orchestrates complex workflows by reacting to events, maintaining state, and dispatching commands to coordinate
+Component that orchestrates complex workflows by reacting to events, maintaining state, and dispatching commands to coordinate. TO BE CHANGED
 
 ## Projection
 
 Deriving [state](#state) from a series of events
 
+----- THIS is not a DEFINITION - TO BE MOVED SOMEWHERE ELSE ----
 Projections can be used to persist [read models](#read-model); however, since DCB primarily focuses on the write side, this website typically refers to projections used to construct an in-memory [decision model](#decision-model).
 
-Essentially, a projection can be implemented as a function that takes the current state and an [event](#event) as inputs and returns the updated state:
+Essentially, a projection can be implemented as a set of functions that takes the current state and an [event](#event) as inputs and returns the updated state:
 
 ```haskell
 fn (state, event) => state
@@ -81,7 +82,7 @@ Refers to a design pattern used to temporarily hold or reserve a resource or sta
 
 ## Saga
 
-Potentially long-running [Process Manager](#process-manager) that coordinates distributied business workflows
+Potentially long-running [Process Manager](#process-manager) that coordinates distributed business workflows. TO BE CHANGED
 
 ## Sequence
 
@@ -89,11 +90,7 @@ Ordered series of events that represent changes over time
 
 ## Sequence Number
 
-Unique, incremental identifier assigned to events, ensuring their correct order within a stream
-
-## State
-
-Current condition or snapshot of a system or entity, derived from a sequence of past events
+A unique, incremental identifier assigned to events in the same context, ensuring their correct order within a stream
 
 ## View Model
 
@@ -101,4 +98,4 @@ See [Read Model](#read-model)
 
 ## Write Side
 
-Part of a system that processes commands, enforces business rules, and generates events
+Part of a system responsible for changing the state of the system.
