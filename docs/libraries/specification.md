@@ -103,7 +103,8 @@ The following example shows a *potential* JSON representation of a Sequenced Eve
   "event": {
     ...
   },
-  "sequence_position": 1234
+  "sequence_position": 1234,
+  ...
 }
 ```
 
