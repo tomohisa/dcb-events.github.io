@@ -156,9 +156,8 @@ Opaque payload of an [Event](#event)
 
 ## Tags
 
-A set of [Tag](#tag) instances.
+A set of [Tag](#tag)s.
 
-- It _MUST_ contain at least one [Tag](#tag)
 - It _SHOULD_ not contain multiple [Tag](#tag)s with the same value
 
 ## Tag
