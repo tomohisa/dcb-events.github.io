@@ -82,8 +82,8 @@ ReadOptions {
 
 When reading from the [EventStore](../glossary.md#event-store), an `EventStream` is returned.
 
-- It provides the retrieved [SequencedEvents](#sequencedevent)
-- It could be implemented as an iterable or as a reactive stream 
+- It _MUST_ provide the retrieved [SequencedEvents](#sequencedevent)
+- It _SHOULD_ be implemented as an iterable or as a reactive stream 
 
 ## SequencedEvent 
 
@@ -101,11 +101,9 @@ The following example shows a *potential* JSON representation of a Sequenced Eve
 ```json
 {
   "event": {
-    "type": "SomeEventType",
-    "data": "{\"some\":\"data\"}",
-    "tags": ["tag1", "tag2"]
+    ...
   },
-  "sequence_number": 1234
+  "sequence_position": 1234
 }
 ```
 
