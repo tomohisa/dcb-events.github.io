@@ -21,7 +21,7 @@ Representation of the system's current state, used to enforce integrity constrai
 
 ## Domain-Driven Design
 
-Software design approach that focuses on modelling a system based on the core domain, using the language and concepts of domain experts
+Software design approach that focuses on modeling a system based on the core domain, using the language and concepts of domain experts
 
 ## Event
 
