@@ -45,7 +45,7 @@ Consistency model that prioritizes availability and partition tolerance over imm
 
 ## Optimistic Locking
 
-A concurrency control mechanism that prevents conflicts by allowing multiple transactions to read and update data but checking for changes before committing. If another transaction has modified the data in the meantime, the update is rejected
+Concurrency control mechanism that prevents conflicts by allowing multiple transactions to read and update data but checking for changes before committing. If another transaction has modified the data in the meantime, the update is rejected
 
 ## Pessimistic Locking
 
