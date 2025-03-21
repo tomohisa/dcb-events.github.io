@@ -110,13 +110,12 @@ The following example shows a *potential* JSON representation of a Sequenced Eve
 
 ## SequencePosition
 
-When an [Event](#event) is appended, the [EventStore](../glossary.md#event-store) assigns a  `SequencePosition` to the event.
+When an [Event](#event) is appended, the [EventStore](../glossary.md#event-store) assigns a  `SequencePosition` to it.
 
 It...
 
-- _MUST_ be unique for each bounded context in the EventStore
-- _MUST_ be monotonic increasing in the scope of the same bounded context
-- _MUST_ have an allowed minimum value of `1`
+- _MUST_ be unique in the Event Store
+- _MUST_ be monotonic increasing 
 - _MAY_ contain gaps 
 
 ## Events
