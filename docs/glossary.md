@@ -57,16 +57,11 @@ Component that orchestrates complex workflows by reacting to events, maintaining
 
 ## Projection
 
-Deriving [state](#state) from a series of events
+Deriving state from a series of events
 
------ THIS is not a DEFINITION - TO BE MOVED SOMEWHERE ELSE ----
-Projections can be used to persist [read models](#read-model); however, since DCB primarily focuses on the write side, this website typically refers to projections used to construct an in-memory [decision model](#decision-model).
+!!! info
 
-Essentially, a projection can be implemented as a set of functions that takes the current state and an [event](#event) as inputs and returns the updated state:
-
-```haskell
-fn (state, event) => state
-```
+    Projections can be used to persist [read models](#read-model); however, since DCB primarily focuses on the write side, this website typically refers to projections used to construct an in-memory [decision model](#decision-model)
 
 ## Read Model
 
