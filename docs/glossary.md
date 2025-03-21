@@ -5,11 +5,11 @@
 
 ## Aggregate
 
-Entity that manages state changes exclusively through domain events and enforces consistency via optimistic locking
+Cluster of associated objects that we treat as a unit for the purpose of data changes
 
 ## Command
 
-Instruction to perform a specific action or change in a system, typically resulting in one or more events if successfully processed
+Instruction to perform a specific action or change in a system, typically resulting in a modification of the state of the system
 
 ## CQRS (Command Query Responsibility Segregation)
 
@@ -17,7 +17,7 @@ Pattern that separates the responsibilities of handling commands (write operatio
 
 ## Decision Model
 
-Representation of the rules and logic used to process commands and decide which events should be generated in response
+Representation of the system's current state, used to enforce integrity constraints before moving the system to a new state
 
 ## Domain-Driven Design
 
@@ -25,11 +25,11 @@ Software design approach that focuses on modeling a system based on the core dom
 
 ## Event
 
-Record of a change or action that has occurred in the past, capturing significant domain-relevant information
+Record of a fact that has occurred in the past, capturing significant domain-relevant information
 
 ## Event Sourcing
 
-Pattern where changes are stored as a sequence of [events](#event), rather than overwriting the current [state](#state)
+Pattern where changes are stored as a sequence of [events](#event) rather than overwriting the current [state](#state)
 
 !!! info
 
@@ -41,11 +41,11 @@ Specialized storage system for events that ensures they are stored sequentially 
 
 ## Eventual Consistency
 
-State where data across a distributed system becomes consistent over time, without requiring immediate synchronization
+Consistency model that prioritizes availability and partition tolerance over immediate consistency
 
 ## Optimistic Locking
 
-Concurrency control mechanism that prevents conflicts by allowing multiple transactions to read and update data but checking for changes before committing. If the data has been modified by another transaction in the meantime, the update is rejected
+Concurrency control mechanism that prevents conflicts by allowing multiple transactions to read and update data but checking for changes before committing. If another transaction has modified the data in the meantime, the update is rejected
 
 ## Pessimistic Locking
 
@@ -57,15 +57,11 @@ Component that orchestrates complex workflows by reacting to events, maintaining
 
 ## Projection
 
-Deriving [state](#state) from a series of events
+Deriving state from a series of events
 
-Projections can be used to persist [read models](#read-model); however, since DCB primarily focuses on the write side, this website typically refers to projections used to construct an in-memory [decision model](#decision-model).
+!!! info
 
-Essentially, a projection can be implemented as a function that takes the current state and an [event](#event) as inputs and returns the updated state:
-
-```haskell
-fn (state, event) => state
-```
+    Projections can be used to persist [read models](#read-model); however, since DCB primarily focuses on the write side, this website typically refers to projections used to construct an in-memory [decision model](#decision-model)
 
 ## Read Model
 
@@ -79,21 +75,13 @@ Part of a system responsible for querying and presenting data, typically optimiz
 
 Refers to a design pattern used to temporarily hold or reserve a resource or state until the process is completed
 
-## Saga
-
-Potentially long-running [Process Manager](#process-manager) that coordinates distributied business workflows
-
 ## Sequence
 
 Ordered series of events that represent changes over time
 
 ## Sequence Number
 
-Unique, incremental identifier assigned to events, ensuring their correct order within a stream
-
-## State
-
-Current condition or snapshot of a system or entity, derived from a sequence of past events
+A unique, incremental identifier assigned to events in the same context, ensuring their correct order within a stream
 
 ## View Model
 
@@ -101,4 +89,4 @@ See [Read Model](#read-model)
 
 ## Write Side
 
-Part of a system that processes commands, enforces business rules, and generates events
+Part of a system responsible for changing the state of the system
