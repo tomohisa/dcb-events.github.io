@@ -1,7 +1,7 @@
 An EventStore that supports DCB provides a way to:
 
 - **read** an [EventStream](#eventstream) matching a [Query](#query), optionally starting from a specified [SequencePosition](#sequenceposition)
-- **append** an [Event(s)](#events), optionally specifiying an [AppendCondition](#appendcondition) to enforce consistency
+- **append** an [Event(s)](#events), optionally specifying an [AppendCondition](#appendcondition) to enforce consistency
 
 A typical interface of the `EventStore` (pseudo-code):
 
@@ -20,7 +20,7 @@ It effectively allows for filtering events by their [type](#eventtype) and/or [t
 - It _MUST_ contain a set of [QueryItems](#queryitem) with at least one item or represent a query that matches all events
 - All QueryItems are effectively combined with an **OR**, e.g. adding an extra QueryItem will likely result in more events being returned
 
-To differentiate the two query variants, dedicated factory methods might be useful:
+To differentiate the two query variants, dedicated factory methods might be helpful:
 
 ```
 Query.fromItems(items)
@@ -31,7 +31,7 @@ Query.all()
 
 Each item of a [Query](#query) allows to target events by their [type](#eventtype) and/or [tags](#tags)
 
-An event, in order to match a specific QueryItem, needs to have the following characteristics:
+An event, to match a specific QueryItem, needs to have the following characteristics:
 
 - the [type](#eventtype) _MUST_ match **one** of the provided types of the QueryItem
 - the [tags](#tags) _MUST_ contain **all** of the tags specified by the QueryItem
@@ -66,9 +66,9 @@ The following example query would match events that are either...
 An optional parameter to `EventStore.read()` that allows for cursor-based pagination of events.
 It has two parameters:
 
-- `from` an optional [SequencePosition](#sequenceposition) to start streaming events from (depending on the `backwards` flag this is either a _minimum_ or _maximum_ sequence number of the resulting stream)
-- `backwards` a flag that, if set to `true`, returns the events in reverse order (default: `false`)
-- `limit` an optional number that, if set, limits the event stream to a maximum number of events. This can be useful to only retrieve the last event for example.
+- `from`, an optional [SequencePosition](#sequenceposition) to start streaming events from (depending on the `backwards` flag, this is either a _minimum_ or _maximum_ sequence number of the resulting stream)
+- `backwards`, a flag that, if set to `true`, returns the events in reverse order (default: `false`)
+- `limit`, an optional number that, if set, limits the event stream to a maximum number of events. This can be useful for retrieving only the last event, for example.
 
 ```
 ReadOptions {
@@ -80,27 +80,23 @@ ReadOptions {
 
 ## EventStream
 
-When reading from the [EventStore](../glossary.md#event-store) an `EventStream` is returned.
+When reading from the [EventStore](../glossary.md#event-store), an `EventStream` is returned.
 
-- It _MUST_ be iterable (e.g. via generator or reactive pattern, depending on the specific implementation)
-- It _MUST_ return an [EventEnvelope](#eventenvelope) for every iteration
-- It _CAN_ include new events if they occur during iteration
-- Batches of events _MAY_ be loaded from the underlying storage at once for performance optimization
-- It _CAN_ provide additional functionality, e.g. a `subscribe()` function to realize reactive behavior
+- It provides the retrieved [SequencedEvents](#sequencedevent)
+- It could be implemented as an iterable or as a reactive stream 
 
-## EventEnvelope
+## SequencedEvent 
 
-Each item in the [EventStream](#eventstream) is an `EventEnvelope` that consists of the underlying event and metadata, like the [SequencePosition](#sequenceposition) that was added during the `append()` call.
-
-It...
+Each item in the [EventStream](#eventstream) is an `Event` that consists of the underlying event, like the [SequencePosition](#sequenceposition) that was added during the `append()` call.
 
 - It _MUST_ contain the [SequencePosition](#sequenceposition)
 - It _MUST_ contain the [Event](#event)
-- It _CAN_ include more fields, like timestamps or metadata
+- It _MAY_ contain further fields, like metadata defined by the Event Store
+
 
 ### Example
 
-The following example shows a *potential* JSON representation of an Event Envelope:
+The following example shows a *potential* JSON representation of a Sequenced Event:
 
 ```json
 {
@@ -109,22 +105,20 @@ The following example shows a *potential* JSON representation of an Event Envelo
     "data": "{\"some\":\"data\"}",
     "tags": ["tag1", "tag2"]
   },
-  "sequence_number": 1234,
-  "recorded_at": "2024-12-10 14:02:40"
+  "sequence_number": 1234
 }
 ```
 
 ## SequencePosition
 
-When an [Event](#event) is appended to the [EventStore](../glossary.md#event-store) a global `SequencePosition` is assigned to it.
+When an [Event](#event) is appended,the [EventStore](../glossary.md#event-store) assignes it a  `SequencePosition`.
 
 It...
 
-- _MUST_ be unique for one EventStore
-- _MUST_ be monotonic increasing
+- _MUST_ be unique for each bounded context in the EventStore
+- _MUST_ be monotonic increasing in the scope of the same bounded context
 - _MUST_ have an allowed minimum value of `1`
-- _CAN_ contain gaps
-- _SHOULD_ have a reasonably high maximum value (depending on programming language and environment)
+- _MAY_ contain gaps 
 
 ## Events
 
@@ -140,7 +134,7 @@ It...
 - It _MUST_ contain an [EventType](#eventtype)
 - It _MUST_ contain [EventData](#eventdata)
 - It _MAY_ contain [Tags](#tags)
-- It _MAY_ contain further fields, like metadata
+- It _MAY_ contain further fields, like metadata defined by the client
 
 ### Example
 
@@ -156,17 +150,15 @@ A *potential* JSON representation of an Event:
 
 ## EventType
 
-String based type of the event
+Type of the event
 
 - It _MUST_ satisfy the regular expression `^[\w\.\:\-]{1,200}$`
 
 ## EventData
 
-String based, opaque payload of an [Event](#event)
+Opaque payload of an [Event](#event)
 
-- It _SHOULD_ have a reasonable large enough maximum length (depending on language and environment)
-- It _MAY_ contain [JSON](https://www.json.org/)
-- It _MAY_ be serialized into an empty string
+- It _SHOULD_ have a reasonably large enough maximum size
 
 ## Tags
 
@@ -177,22 +169,21 @@ A set of [Tag](#tag) instances.
 
 ## Tag
 
-A `Tag` can add domain specific metadata to an event allowing for custom partitioning
-Usually a tag represents a concept of the domain, e.g. the type and id of an entity like `product:p123`
+A `Tag` can add domain-specific metadata to an event, allowing for custom partitioning.
+Usually, a tag represents a concept of the domain, e.g. the type and id of an entity like `product:p123`
 
-- It _MUST_ satisfy the regular expression `/^[[:alnum:]\-\_\:]{1,150}`
 - It _CAN_ represent a key/value pair such as `product:123` but that is irrelevant to the Event Store
 
 ## AppendCondition
 
 - It _MUST_ contain a [Query](#query)
-- It _MUST_ contain the "expected ceiling" that is _either_ a
-  - [SequencePosition](#sequenceposition) - representing the highest position that the client was aware of while building the decision model. *Note:* This number can be _higher_ than the position of the last event matching the Query.
+- It _MUST_ contain the "safe point" that is _either_ a
+  - [SequencePosition](#sequenceposition) - representing the highest position the client was aware of while building the decision model. The Event Store must disregard the events before the Safe Point while checking the condition for appending events. *Note:* This number can be _higher_ than the position of the last event matching the Query.
   - `NONE` - no event must match the specified [Query](#query)
 
 ```
 AppendCondition {
   query: Query
-  expectedCeiling: SequencePosition|NONE
+  safePoint: SequencePosition|NONE
 }
 ```
