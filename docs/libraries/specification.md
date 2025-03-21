@@ -170,13 +170,13 @@ Usually, a tag represents a concept of the domain, e.g. the type and id of an en
 ## AppendCondition
 
 - It _MUST_ contain a [Query](#query)
-- It _MUST_ contain the "safe point" that is _either_ a
-  - [SequencePosition](#sequenceposition) - representing the highest position the client was aware of while building the decision model. The Event Store must disregard the events before the Safe Point while checking the condition for appending events. *Note:* This number can be _higher_ than the position of the last event matching the Query.
+- It _MUST_ contain the "safe position" that is _either_ a
+  - [SequencePosition](#sequenceposition) - representing the highest position the client was aware of while building the decision model. The Event Store _MUST_ ignore the events before the Safe Position while checking the condition for appending events. *Note:* This number can be _higher_ than the position of the last event matching the Query.
   - `NONE` - no event must match the specified [Query](#query)
 
 ```
 AppendCondition {
   query: Query
-  safePoint: SequencePosition|NONE
+  safe-position: SequencePosition|NONE
 }
 ```
