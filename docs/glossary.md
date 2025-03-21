@@ -17,7 +17,7 @@ Pattern that separates the responsibilities of handling commands (write operatio
 
 ## Decision Model
 
-Representation of the system's current state, used to enforce integrity constraints before moving the system to a new state.
+Representation of the system's current state, used to enforce integrity constraints before moving the system to a new state
 
 ## Domain-Driven Design
 
