@@ -110,7 +110,7 @@ The following example shows a *potential* JSON representation of a Sequenced Eve
 
 ## SequencePosition
 
-When an [Event](#event) is appended,the [EventStore](../glossary.md#event-store) assignes it a  `SequencePosition`.
+When an [Event](#event) is appended, the [EventStore](../glossary.md#event-store) assigns a  `SequencePosition` to the event.
 
 It...
 
