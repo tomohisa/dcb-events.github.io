@@ -20,7 +20,7 @@ But then, constraints that affect both entities are introduced, namely:
 
 ### Traditional approach
 
-In many contexts, it is impossible to update two aggregates with a single transaction; for this reason, such requirements are usually solved with a [Saga](glossary.md#saga) that coordinates the process:
+In many contexts, it is impossible to update two aggregates with a single transaction; for this reason, such requirements are usually solved with a Saga or [Process Manager](glossary.md#process-manager) that coordinates the process:
 
 1. Mark the student to be subscribed by publishing an event to the Event Stream of the student
 2. Potentially in parallel, mark the course by publishing an event to the Event Stream of the affected course

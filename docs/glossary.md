@@ -29,7 +29,7 @@ Record of a fact that has occurred in the past, capturing significant domain-rel
 
 ## Event Sourcing
 
-Pattern where changes are stored as a sequence of [events](#event) rather than overwriting the current [state](#state)
+Pattern where changes are stored as a sequence of [events](#event) rather than overwriting the current state
 
 !!! info
 

@@ -21,7 +21,7 @@ There are a couple of common strategies to achieve global uniqueness in event-dr
 - Create a dedicated storage for allocated usernames and make the write side insert a record when the corresponding Event is recorded
     - This adds a source of error and potentially locked usernames unless Event and storage update can be done in a single transaction
 - Use the [Reservation pattern](../glossary.md#reservation-pattern) to lock a username and only continue if the locking succeeded
-    - This works but adds quite a lot of complexity and additional events and the need for [Sagas](../glossary.md#saga) or multiple writes in a single request
+    - This works but adds quite a lot of complexity and additional events and the need for Sagas/[Process Managers](../glossary.md#process-manager) or multiple writes in a single request
 
 ## DCB approach
 

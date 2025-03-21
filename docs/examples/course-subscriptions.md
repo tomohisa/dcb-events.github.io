@@ -21,7 +21,7 @@ There are several potential strategies to solve this without DCB:
     - This is of course a potential solution, with or without DCB, but it falls outside the scope of these examples
 - Create an aggregate that spans course and student subscriptions
     - This is not a viable solution because it leads to huge aggregates and restricts parallel bookings
-- Create an aggregate for each, courses and students, enforcing their constraints and use a [Saga](../glossary.md#saga) to coordinate them
+- Create an aggregate for each, courses and students, enforcing their constraints and use a Saga or [Process Manager](../glossary.md#process-manager) to coordinate them
     - This works, but it leads to a lot of complexity and potentially invalid states for a period of time
 
 ## DCB approach
