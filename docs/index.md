@@ -20,11 +20,11 @@ But then constraints are added that affect both entities, namely:
 
 ### Traditional approach
 
-Since it is impossible to update two aggregates with a single transaction, such requirements are usually solved with a [Saga](glossary.md#saga) that coordinates the process:
+In many contexts, it is impossible to update two aggregates with a single transaction; for this reason, such requirements are usually solved with a [Saga](glossary.md#saga) that coordinates the process:
 
-1. Mark student subscribed by publishing an event to the Event Stream of the student
-2. If successful, mark seat in course reserved by publishing an event to the Event Stream of the affected course
-3. If that fails due to constraint violations (e.g. because another student was subscribed to the same course in the meantime) append some compensating event to the student's Event Stream
+1. Subscribe the student by publishing an event to the Event Stream of the student
+2. Potentially in parallel, book the seat in the course by publishing an event to the Event Stream of the affected course
+3. If one of the two previous operations fails due to constraint violations (e.g. because another student was subscribed to the same course in the meantime), append some compensating event 
 
 ![Traditional](assets/img/example_traditional.png)
 
