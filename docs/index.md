@@ -28,16 +28,16 @@ In many contexts, it is impossible to update two aggregates with a single transa
 
 ![Traditional](assets/img/example_traditional.png)
 
-This approach poses some issues in terms of added complexity and unwanted side-effects (e.g. the state of the system being incorrect for a short period of time).
+This approach poses some issues in terms of added complexity and unwanted side effects (e.g. the state of the system being incorrect for a short period of time).
 
-But even for the happy path, the implementation leads to **two events** being published that represent **the same occurrence**.
+But even for the happy path, the implementation leads to **two events** being published that represent **the same fact**.
 
 ### DCB approach
 
 DCB solves this issue by allowing events to be tagged when they are published.
-This allows one event to affect **multiple** entities/concepts in the system.
+This allows one event to affect **multiple** entities/concepts in the same bounded context.
 
-As a result, there is only a single global Event Stream and the example above can be simplified to:
+As a result, there is only a single Event Stream per bounded context, and the example above can be simplified to:
 
 ![Traditional](assets/img/example_dcb.png)
 
