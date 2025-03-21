@@ -49,11 +49,11 @@ Concurrency control mechanism that prevents conflicts by allowing multiple trans
 
 ## Pessimistic Locking
 
-A concurrency control mechanism that prevents conflicts by locking a resource for a transaction, blocking others from modifying it until the lock is released
+Concurrency control mechanism that prevents conflicts by locking a resource for a transaction, blocking others from modifying it until the lock is released
 
 ## Process Manager
 
-Component that orchestrates complex workflows by reacting to events, maintaining state, and dispatching commands to coordinate. TO BE CHANGED
+Component that orchestrates complex workflows by reacting to events, maintaining state, and dispatching commands to coordinate
 
 ## Projection
 
