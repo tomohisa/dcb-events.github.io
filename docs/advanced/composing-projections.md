@@ -1,4 +1,12 @@
-Projections can be used to persist [read models](../glossary.md#read-model); however, since DCB primarily focuses on the write side, this website typically refers to projections used to construct an in-memory [decision model](../glossary.md#decision-model).
+A Projection is a derived representation of a specific state, built by replaying the sequence of events that describe how this state changed over time.
+
+In other words, it's the result of reading and transforming events into a model.
+
+Projections are typically used for the [read models](../glossary.md#read-model).
+
+However, while using Event Sourcing, we can state that the decision model is also a projection, as it is a model of the system’s state obtained by reading and transforming all the events that have modified that state in the past.
+
+Since DCB primarily focuses on ensuring the consistency of the event store during write operations, this website typically refers to projections used to construct an in-memory [decision model](../glossary.md#decision-model).
 
 This article explains, how projections can be written such that a DCB-capable Event Store can [query](../libraries/specification.md#query) the corresponding events and how they can be composed in order to keep them simple and reusable.
 
