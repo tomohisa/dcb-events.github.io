@@ -1,6 +1,6 @@
 A Projection is deriving a specific state by replaying a sequence of relevant events.
 
-In other words, it's the result of reading and transforming events into a model.
+In other words, it's reading and transforming events into a model built for a specific need.
 
 Projections are typically used for the [read models](../glossary.md#read-model).
 
