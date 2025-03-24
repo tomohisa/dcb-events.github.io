@@ -1,4 +1,4 @@
-A Projection is a derived representation of a specific state, built by replaying the sequence of events that describe how this state changed over time.
+A Projection is deriving a specific state by replaying a sequence of relevant events.
 
 In other words, it's the result of reading and transforming events into a model.
 
