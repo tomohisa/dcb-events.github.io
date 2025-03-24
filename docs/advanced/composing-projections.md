@@ -53,9 +53,15 @@ console.log({numberOfCourses})
 
 ## Query only relevant events
 
-In the above example the reducer iterates over all events even though it only changes the state for `CourseDefined` events. This is not an issue for this simple example. But in reality those events are not stored in memory and there can be many of them. So obviously they should be filtered _before_ they are read from the Event Store.
+In the above example, the reducer iterates over all events even though it only changes the state for `CourseDefined` events... This is not an issue for this simple example. But in reality, those events are not stored in memory, and there can be many of them. So obviously, they should be filtered _before_ they are read from the Event Store.
 
-By defining the event handlers more declaratively, the handled event types can be determined from the projection definition:
+### Filter events by type
+
+The Event Type is the main criteria for filtering events before reading them from an Event Store.
+
+Events of the same type are typically handled using the same code and business rules. For this reason, it feels natural to partition the function that processes the state into a more declarative format, where business rules are defined based on the types of events they handle.
+
+By defining the event handlers more declaratively, the handled event types can be determined from the projection definition itself:
 
 ```js
 const projection = {
@@ -78,11 +84,16 @@ console.log({numberOfCourses})
 ```
 <codapi-snippet engine="browser" sandbox="javascript" depends-on="example1 example2"></codapi-snippet>
 
-## Filter events by tags
+### Filter events by tags
 
-Counting the number of entities is nothing an in-memory projection should do. Event with the filter in place, there could be thousands of corresponding events.
+As previously mentioned, in the context of DCB, projections are typically used to reconstruct the minimal model required to validate a business decision the system needs to make — usually in response to a command issued by a user.
 
-A more realistic in-memory projection would be one that determines whether a course with a specific id exists at all.
+Given that the system should ensure a performant response to user input, it becomes clear how paramount it is to minimize the time and effort needed to rebuild the [decision model](../glossary.md#decision-model).
+The most effective approach, then, is to limit the reconstruction to the absolute minimum, by rebuilding the state of only the business entities involved in validating the received command.
+
+To do this efficiently, we filter the relevant events using tags associated with those entities.
+
+In our example, a more realistic in-memory projection would be one that determines whether a course with a specific id exists at all.
 By only looking at the event type, this could be done with a projection like this:
 ```js
 const courseExistsProjection = (courseId) => ({
