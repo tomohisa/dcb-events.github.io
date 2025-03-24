@@ -2,9 +2,9 @@ A Projection is deriving a specific state by replaying a sequence of relevant ev
 
 In other words, it's reading and transforming events into a model built for a specific need.
 
-These models are typically used for the [read side](../glossary.md#read-model).
+These models are commonly used for the [read side](../glossary.md#read-model) of the system.
 
-However, while using Event Sourcing, we can state that the decision model is also a projection, as it is a model of the system’s state obtained by reading and transforming all the events that have modified that state in the past.
+In Event Sourcing, however, projections are also typically used to build the [decision models](../glossary.md#decision-model) needed to enforce integrity constraints.
 
 Since DCB primarily focuses on ensuring the consistency of the event store during write operations, this website typically refers to projections used to construct an in-memory [decision model](../glossary.md#decision-model).
 
