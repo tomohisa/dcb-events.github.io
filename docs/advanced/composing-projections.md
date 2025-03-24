@@ -4,9 +4,9 @@ In other words, it's reading and transforming events into a model built for a sp
 
 These models are commonly used for the [read side](../glossary.md#read-model) of the system.
 
-In Event Sourcing, however, projections are also typically used to build the [decision models](../glossary.md#decision-model) needed to enforce integrity constraints.
+In Event Sourcing, however, projections are also typically used to build the [decision models](../glossary.md#decision-model) needed to enforce consistency constraints. 
 
-Since DCB primarily focuses on ensuring the consistency of the event store during write operations, this website typically refers to projections used to construct an in-memory [decision model](../glossary.md#decision-model).
+This website typically refers to this latter kind of projection since DCB primarily focuses on ensuring the consistency of the event store during write operations.
 
 This article explains, how projections can be written such that a DCB-capable Event Store can [query](../libraries/specification.md#query) the corresponding events and how they can be composed in order to keep them simple and reusable.
 
