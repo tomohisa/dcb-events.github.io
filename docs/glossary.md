@@ -29,7 +29,7 @@ Record of a fact that has occurred in the past, capturing significant domain-rel
 
 ## Event Sourcing
 
-Pattern where changes are stored as a sequence of [events](#event) rather than overwriting the current state
+Pattern where changes are stored as a sequence of [Events](#event) rather than overwriting the current state
 
 !!! info
 
@@ -37,7 +37,7 @@ Pattern where changes are stored as a sequence of [events](#event) rather than o
 
 ## Event Store
 
-Specialized storage system for events that ensures they are stored sequentially and can be retrieved efficiently
+Specialized storage system for Events that ensures they are stored sequentially and can be retrieved efficiently
 
 ## Eventual Consistency
 
@@ -53,11 +53,11 @@ Concurrency control mechanism that prevents conflicts by locking a resource for 
 
 ## Process Manager
 
-Component that orchestrates complex workflows by reacting to events, maintaining state, and dispatching commands to coordinate
+Component that orchestrates complex workflows by reacting to Events, maintaining state, and dispatching commands to coordinate
 
 ## Projection
 
-Deriving state from a series of events
+Deriving state from a series of Events
 
 !!! info
 
@@ -77,11 +77,11 @@ Refers to a design pattern used to temporarily hold or reserve a resource or sta
 
 ## Sequence
 
-Ordered series of events that represent changes over time
+Ordered series of Events that represent changes over time
 
 ## Sequence Number
 
-A unique, incremental identifier assigned to events in the same context, ensuring their correct order within a stream
+A unique, incremental identifier assigned to Events in the same context, ensuring their correct order within a stream
 
 ## View Model
 

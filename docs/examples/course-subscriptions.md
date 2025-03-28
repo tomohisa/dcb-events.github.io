@@ -7,13 +7,13 @@ The following example showcases the imagined application from Sara Pellegrini's 
 The goal is an application that allows students to subscribe to courses, with the following hard constraints:
 
 - A course cannot accept more than N students
-- N, the Course capacity, can change at any time to any positive integer different from the current one
+- N, the course capacity, can change at any time to any positive integer different from the current one
 - The course title can change at any time to any title different from the current one
 - The student cannot join more than 10 courses
 
 ## Traditional approaches
 
-The first and last constraints, in particular, make this example difficult to implement using traditional Event Sourcing, as they cause the `STUDENT_SUBSCRIBED_TO_COURSE` event to impact two separate entities, each with its own constraints.
+The first and last constraints, in particular, make this example difficult to implement using traditional Event Sourcing, as they cause the `student subscribed to course` Event to impact two separate entities, each with its own constraints.
 
 There are several potential strategies to solve this without DCB:
 
@@ -26,7 +26,7 @@ There are several potential strategies to solve this without DCB:
 
 ## DCB approach
 
-With DCB the challenge can be solved simply by adding a [Tag](../libraries/specification.md#tag) for each, the affected course *and* student to the `STUDENT_SUBSCRIBED_TO_COURSE`:
+With DCB the challenge can be solved simply by adding a [Tag](../libraries/specification.md#tag) for each, the affected course *and* student to the `student subscribed to course`:
 
 ![course subscriptions example](img/course-subscriptions-01.png)
 
@@ -36,7 +36,7 @@ The first implementation just allows to specify new courses and make sure that t
 
 === "JavaScript"
     ??? info
-        This example uses [composed projections](../advanced/composing-projections.md) to build decision models.
+        This example uses [composed projections](../advanced/composing-projections.md) to build Decision Models.
         
         The actual implementation is just an in-memory dummy (see [source code](../assets/js/lib.js){:target="_blank"})
     ```js

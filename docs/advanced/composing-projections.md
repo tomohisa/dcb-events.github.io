@@ -1,14 +1,14 @@
-A Projection is deriving a specific state by replaying a sequence of relevant events.
+A Projection is deriving a specific state by replaying a sequence of relevant Events.
 
-In other words, it's reading and transforming events into a model built for a specific need.
+In other words, it's reading and transforming Events into a model built for a specific need.
 
-These models are commonly used for the [read side](../glossary.md#read-model) of the system.
+The result is commonly used for persistent [Read Models](../glossary.md#read-model).
 
-In Event Sourcing, however, projections are also typically used to build the [decision models](../glossary.md#decision-model) needed to enforce consistency constraints. 
+In Event Sourcing, however, projections are also used to build the [Decision Model](../glossary.md#decision-model) needed to enforce consistency constraints. 
 
-This website typically refers to this latter kind of projection since DCB primarily focuses on ensuring the consistency of the event store during write operations.
+This website typically refers to this latter kind of projection since DCB primarily focuses on ensuring the consistency of the Event Store during write operations.
 
-This article explains, how projections can be written such that a DCB-capable Event Store can [query](../libraries/specification.md#query) the corresponding events and how they can be composed in order to keep them simple and reusable.
+This article explains, how projections can be written such that a DCB-capable Event Store can [query](../libraries/specification.md#query) the corresponding Events and how they can be composed in order to keep them simple and reusable.
 
 ## What is a Projection
 
@@ -19,7 +19,7 @@ In 2013 Greg Young posted the following minimal definition of a projection:
 Greg Young, 2013 on [Twitter/X](https://x.com/gregyoung/status/313358540821647360){:target="_blank"}
 ///
 
-In TypeScript the equivalent type definition could be:
+In TypeScript the equivalent Type definition could be:
 
 ```ts
 type Projection<S, E> = (state: S, event: E) => S
@@ -27,19 +27,19 @@ type Projection<S, E> = (state: S, event: E) => S
 
 ### Example
 
-To use a common theme, we use events from the [Course subscription example](../examples/course-subscriptions.md).
+To use a common theme, we use Events from the [Course subscription example](../examples/course-subscriptions.md).
 
 !!! note
     We use JavaScript in the examples below, but the main ideas are applicable to all programming languages
 
-To start of simple, we can implement events a simple string array:
+To start of simple, we can implement Events a simple string array:
 
 ```js
 const events = ["CourseDefined", "CourseDefined", "StudentRegistered", "CourseDefined"]
 ```
 <codapi-snippet id="example1" engine="browser"></codapi-snippet>
 
-In order to find out how many courses there are in total, the following simple projection could be defined and we can use JavaScripts [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce){:target="_blank"} function to aggregate all events creating a single state, starting with the `initialState`:
+In order to find out how many courses there are in total, the following simple projection could be defined and we can use JavaScripts [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce){:target="_blank"} function to aggregate all Events creating a single state, starting with the `initialState`:
 
 ```js
 // ...
@@ -51,17 +51,17 @@ console.log({numberOfCourses})
 ```
 <codapi-snippet engine="browser" sandbox="javascript" depends-on="example1"></codapi-snippet>
 
-## Query only relevant events
+## Query only relevant Events
 
-In the above example, the reducer iterates over all events even though it only changes the state for `CourseDefined` events... This is not an issue for this simple example. But in reality, those events are not stored in memory, and there can be many of them. So obviously, they should be filtered _before_ they are read from the Event Store.
+In the above example, the reducer iterates over all Events even though it only changes the state for `CourseDefined` Events... This is not an issue for this simple example. But in reality, those Events are not stored in memory, and there can be many of them. So obviously, they should be filtered _before_ they are read from the Event Store.
 
-### Filter events by type
+### Filter Events by Type
 
-The Event Type is the main criteria for filtering events before reading them from an Event Store.
+The Event Type is the main criteria for filtering Events before reading them from an Event Store.
 
-Events of the same type are typically handled using the same code and business rules. For this reason, it feels natural to partition the function that processes the state into a more declarative format, where business rules are defined based on the types of events they handle.
+Events of the same Type are typically handled using the same code and business rules. For this reason, it feels natural to partition the function that processes the state into a more declarative format, where business rules are defined based on the Types of Events they handle.
 
-By defining the event handlers more declaratively, the handled event types can be determined from the projection definition itself:
+By defining the Event handlers more declaratively, the handled Event Types can be determined from the projection definition itself:
 
 ```js
 const projection = {
@@ -73,7 +73,7 @@ const projection = {
 ```
 <codapi-snippet id="example2" engine="browser" sandbox="javascript" depends-on="example1"></codapi-snippet>
 
-With that, we can now filter the events before applying them to the projection:
+With that, we can now filter the Events before applying them to the projection:
 
 ```js
 const numberOfCourses = events
@@ -84,17 +84,17 @@ console.log({numberOfCourses})
 ```
 <codapi-snippet engine="browser" sandbox="javascript" depends-on="example1 example2"></codapi-snippet>
 
-### Filter events by tags
+### Filter Events by Tags
 
 As previously mentioned, in the context of DCB, projections are typically used to reconstruct the minimal model required to validate a business decision the system needs to make — usually in response to a command issued by a user.
 
 Given that the system should ensure a performant response to user input, it becomes clear how paramount it is to minimize the time and effort needed to rebuild the [decision model](../glossary.md#decision-model).
 The most effective approach, then, is to limit the reconstruction to the absolute minimum, by rebuilding the state of only the business entities involved in validating the received command.
 
-To do this efficiently, we filter the relevant events using tags associated with those entities.
+To do this efficiently, we filter the relevant Events using Tags associated with those entities.
 
 In our example, a more realistic in-memory projection would be one that determines whether a course with a specific id exists at all.
-By only looking at the event type, this could be done with a projection like this:
+By only looking at the Event Type, this could be done with a projection like this:
 ```js
 const courseExistsProjection = (courseId) => ({
   initialState: false,
@@ -103,12 +103,12 @@ const courseExistsProjection = (courseId) => ({
   }
 })
 ```
-But this is not a good idea because all `CourseDefined` events would have to be loaded still.
+But this is not a good idea because all `CourseDefined` Events would have to be loaded still.
 
-A traditional [Event Store](../glossary.md#event-store) usually allows to filter events by their type and event stream (sometimes called _subject_).
-In DCB there is no concept of multiple streams, events are stored in a single global sequence, but they can be tagged and it is essential to be able to filter them by their tags.
+A traditional [Event Store](../glossary.md#event-store) usually allows to filter Events by their Type and Event Stream (sometimes called _subject_).
+In DCB there is no concept of multiple streams, Events are stored in a single global sequence, but they can be tagged and it is essential to be able to filter them by their Tags.
 
-To demonstrate that, we add data and tags to the example events:
+To demonstrate that, we add Data and Tags to the example Events:
 
 ```js
 const events = [
@@ -144,7 +144,7 @@ const courseExistsProjection = (courseId) => ({
 ```
 <codapi-snippet id="example4" engine="browser"></codapi-snippet>
 
-With that, events can be filtered by their type _and_ specific tags:
+With that, Events can be filtered by their Type _and_ specific Tags:
 
 ```js hl_lines="5"
 const projection = courseExistsProjection("c1")
@@ -288,7 +288,7 @@ console.log(projection.initialState)
 
 <codapi-snippet engine="browser" sandbox="javascript" depends-on="example4 example6 example7"></codapi-snippet>
 
-Finally, in order to be able to filter the events, we can add a function that evaluates the event types and tags of all projections:
+Finally, in order to be able to filter the Events, we can add a function that evaluates the event Types and tags of all projections:
 
 ```js hl_lines="24-29"
 const compositeProjection = (projections) => {
@@ -325,7 +325,7 @@ const compositeProjection = (projections) => {
 ```
 <codapi-snippet id="example8" engine="browser"></codapi-snippet>
 
-Now, we can filter events that are relevant for _any_ of the composed projections:
+Now, we can filter Events that are relevant for _any_ of the composed projections:
 
 ```js
 const projection = compositeProjection({
@@ -376,6 +376,6 @@ console.log(
 ## How to use this with DCB
 
 The complexity of above examples might be daunting.
-In an actual project, the composability would be provided by some generic [library](../libraries/index.md). Unlike here, an actual implementation would not filter the events in memory, but build a [query object](../libraries/specification.md#query) from the given projections that allows to performantly fetch only relevant events from the Event Store.
+In an actual project, the composability would be provided by some generic [library](../libraries/index.md). Unlike here, an actual implementation would not filter the Events in memory, but build a [query object](../libraries/specification.md#query) from the given projections that allows to performantly fetch only relevant Events from the Event Store.
 
 Most of the [examples](../examples/index.md) use this technique.

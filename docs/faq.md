@@ -26,9 +26,9 @@ See [about](about.md)
 
 ## Does it increase chances of lock collisions?
 
-*tbd:* no, chances for collisions are _smaller_ because optimistic lock only around required event types / tags
+*tbd:* no, chances for collisions are _smaller_ because optimistic lock only around required Event Types / Tags
 
-## How can it be used with a "classical" event store?
+## How can it be used with a "traditional" Event Store?
 
 *tbd:* link to [DCB with a traditional Event Store](advanced/dcb-with-a-traditional-event-store.md)
 
@@ -38,6 +38,6 @@ See [about](about.md)
 
 ## Nothing comes for free. What are limitations/drawbacks of DCB?
 
-DCB guarantees consistency only inside the scope of the global [Sequence Position](libraries/specification.md#sequenceposition). Thus, events must be ordered to allow the conditional appending.
-As a result, it's not (easily) possible to delete or partition events.
+DCB guarantees consistency only inside the scope of the global [Sequence Position](libraries/specification.md#sequence-position). Thus, Events must be ordered to allow the conditional appending.
+As a result, it's not (easily) possible to delete or partition Events.
 Furthermore, DCB leads to some additional complexity in the Event Store implementation (see [Specification](libraries/specification.md) and [Performance considerations](advanced/performance.md))

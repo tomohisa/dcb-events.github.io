@@ -22,31 +22,31 @@ But then, constraints that affect both entities are introduced, namely:
 
 In many contexts, it is impossible to update two aggregates with a single transaction; for this reason, such requirements are usually solved with a Saga or [Process Manager](glossary.md#process-manager) that coordinates the process:
 
-1. Mark the student to be subscribed by publishing an event to the Event Stream of the student
-2. Potentially in parallel, mark the course by publishing an event to the Event Stream of the affected course
-3. If one of the two previous operations fails due to constraint violations (e.g. because another student was subscribed to the same course in the meantime), append some compensating event 
+1. Mark the student to be subscribed by publishing an Event to the Event Stream of the student
+2. Potentially in parallel, mark the course by publishing an Event to the Event Stream of the affected course
+3. If one of the two previous operations fails due to constraint violations (e.g. because another student was subscribed to the same course in the meantime), append some compensating Event 
 
 ![Traditional](assets/img/example_traditional.png)
 
 This approach poses some issues in terms of added complexity and unwanted side effects (e.g. the state of the system being incorrect for a short period of time).
 
-But even for the happy path, the implementation leads to **two events** being published that represent **the same fact**.
+But even for the happy path, the implementation leads to **two Events** being published that represent **the same fact**.
 
 ### DCB approach
 
-DCB solves this issue by allowing events to be tagged when they are published.
-This allows one event to affect **multiple** entities/concepts in the same bounded context.
+DCB solves this issue by allowing Events to be tagged when they are published.
+This allows one Event to affect **multiple** entities/concepts in the same bounded context.
 
 As a result, there is only a single Event Stream per bounded context, and the example above can be simplified to:
 
 ![Traditional](assets/img/example_dcb.png)
 
-#### Reading events
+#### Reading Events
 
-A DCB compliant Event Store allows to filter events by their type and/or tags.
+A DCB compliant Event Store allows to filter Events by their Type and/or Tags.
 
-To determine how many students are enrolled in a course, simply count the subscription events tagged with that course's identifier.
-Similarly, to find out how many courses a student is subscribed to, count the subscription events tagged with that student's identifier.
+To determine how many students are enrolled in a course, simply count the subscription Events tagged with that course's identifier.
+Similarly, to find out how many courses a student is subscribed to, count the subscription Events tagged with that student's identifier.
 
 Those queries can be combined. To find out...
 
@@ -78,10 +78,10 @@ the following query items can be specified (pseudo code):
 ]
 ```
 
-As a result, only the events matching the specified query will be returned:
+As a result, only the Events matching the specified query will be returned:
 
-- one for the `course defined` event (if the course exists)
-- one for the `student registered` event (if the student was registered)
+- one for the `course defined` Event (if the course exists)
+- one for the `student registered` Event (if the student was registered)
 - one for each subscription to the course
 - one for each subscription of the student
 
@@ -89,13 +89,13 @@ As a result, only the events matching the specified query will be returned:
 
     Usually those queries wouldn't be "hard coded". Instead, they can be derived from an in-memory projection (aka "decision model") as demonstrated by some of the [Examples](examples/index.md)
 
-#### Writing events
+#### Writing Events
 
-Similar to a traditional Event Store, DCB can enforce consistency when persisting events using [Optimistic Locking](glossary.md#optimistic-locking).
+Similar to a traditional Event Store, DCB can enforce consistency when persisting Events using [Optimistic Locking](glossary.md#optimistic-locking).
 
-However, unlike the traditional approach, DCB does not rely on streams or revisions. Instead, it passes the *same query* used to read events for building the in-memory decision model along with the position of the last event consumed by the client. The DCB Event Store then ensures that no new events matching the same query were added in the meantime.
+However, unlike the traditional approach, DCB does not rely on streams or revisions. Instead, it passes the *same query* used to read Events for building the in-memory decision model along with the position of the last Event consumed by the client. The DCB Event Store then ensures that no new Events matching the same query were added in the meantime.
 
-This can be compared to the "expected revision" mechanism of traditional Event Stores but does not require the event streams to be split-up in order to allow for parallel, unrelated, writes.
+This can be compared to the "expected revision" mechanism of traditional Event Stores but does not require the Event Streams to be split-up in order to allow for parallel, unrelated, writes.
 
 ## Getting started
 

@@ -16,7 +16,7 @@ The goal is an application that allows customers to purchase products, ensuring 
 There are several potential strategies to solve this without DCB:
 
 - For the single product use case an [Aggregate](../glossary.md#aggregate) could be used
-    - That only works if product change and -purchase events are stored in the same event stream, which is unlikely to be a good idea
+    - That only works if product change and -purchase Events are stored in the same Event Stream, which is unlikely to be a good idea
 - Use the [Read Model](../glossary.md#read-model) to verify the prices in the command handler
     - That works, but the last requirement (changing prices) forces the model to keep track of historic data even though there might be no (other) use case for it to be kept. A separate, dedicated, model could be created of course but that adds complexity
 
@@ -133,7 +133,7 @@ Complexity increases if the product price can be changed and previous prices sha
 
 !!! note
 
-    The `minutesAgo` property of the event metadata is a simplification. Typically, a timestamp representing the event's recording time is stored within the event's payload or metadata. This timestamp can be compared to the current date to determine the event's age in the decision model.
+    The `minutesAgo` property of the Event metadata is a simplification. Typically, a timestamp representing the Event's recording time is stored within the Event's payload or metadata. This timestamp can be compared to the current date to determine the Event's age in the decision model.
 
 ```js hl_lines="19-32 44-49"
 // event type definitions:

@@ -1,32 +1,32 @@
-An EventStore that supports DCB provides a way to:
+An Event Store that supports DCB provides a way to:
 
-- **read** an [EventStream](#eventstream) matching a [Query](#query), optionally starting from a specified [SequencePosition](#sequenceposition)
-- **append** an [Event(s)](#events), optionally specifying an [AppendCondition](#appendcondition) to enforce consistency
+- **read** an [Event Stream](#event-stream) matching a [Query](#query), optionally starting from a specified [Sequence Position](#sequence-position)
+- **append** [Event](#events)(s), optionally specifying an [Append Condition](#append-condition) to enforce consistency
 
-A typical interface of the `EventStore` (pseudo-code):
+A typical interface of the Event Store (pseudo-code):
 
 ```
 EventStore {
   read(query: Query, options?: ReadOptions): EventStream
-  append(events: Events|Event, condition?: AppendCondition): void
+  append(events: Events|Event, condition?: Append Condition): void
 }
 ```
 
-## Read Events
+# Reading Events
 
 
 
-## Append Events
+# Writing Events
 
-- It _MUST_ fail if the EventStore contains at least one Event after the Safe Position that matches the Query 
+- It _MUST_ fail if the Event Store contains at least one Event after the Safe Position that matches the Query 
 
 ## Query
 
-The `Query` describes constraints that must be matched by [Event](#event)s in the [EventStore](../glossary.md#event-store)
-It effectively allows for filtering events by their [type](#eventtype) and/or [tags](#tags).
+The `Query` describes constraints that must be matched by [Event](#event)s in the Event Store.
+It effectively allows for filtering Events by their [Type](#event-type) and/or [Tags](#tags).
 
-- It _MUST_ contain a set of [QueryItems](#queryitem) with at least one item or represent a query that matches all events
-- All QueryItems are effectively combined with an **OR**, e.g. adding an extra QueryItem will likely result in more events being returned
+- It _MUST_ contain a set of [Query Item](#query-item)s with at least one item or represent a query that matches all Events
+- All Query Items are effectively combined with an **OR**, e.g. adding an extra Query Item will likely result in more Events being returned
 
 To differentiate the two query variants, dedicated factory methods might be helpful:
 
@@ -35,18 +35,18 @@ Query.fromItems(items)
 Query.all()
 ```
 
-### QueryItem
+### Query Item
 
-Each item of a [Query](#query) allows to target events by their [type](#eventtype) and/or [tags](#tags)
+Each item of a [Query](#query) allows to target Events by their [Type](#event-type) and/or [Tags](#tags)
 
-An event, to match a specific QueryItem, needs to have the following characteristics:
+An event, to match a specific Query Item, needs to have the following characteristics:
 
-- the [type](#eventtype) _MUST_ match **one** of the provided types of the QueryItem
-- the [tags](#tags) _MUST_ contain **all** of the tags specified by the QueryItem
+- the [Type](#event-type) _MUST_ match **one** of the provided Types of the Query Item
+- the [Tags](#tags) _MUST_ contain **all** of the Tags specified by the Query Item
 
 #### Example
 
-The following example query would match events that are either...
+The following example query would match Events that are either...
 
 - ...of type `EventType1` **OR** `EventType2`
 - ...tagged `tag1` **AND** `tag2`
@@ -69,14 +69,14 @@ The following example query would match events that are either...
 }
 ```
 
-## ReadOptions
+## Read Options
 
-An optional parameter to `EventStore.read()` that allows for cursor-based pagination of events.
+An optional parameter to `EventStore.read()` that allows for cursor-based pagination of Events.
 It has two parameters:
 
-- `from`: an optional [SequencePosition](#sequenceposition) to start streaming events from (depending on the `backwards` flag, this is either a _minimum_ or _maximum_ sequence number of the resulting stream)
-- `backwards`: a flag that, if set to `true`, returns the events in reverse order (default: `false`)
-- `limit`: an optional number that, if set, limits the event stream to a maximum number of events. This can be useful for retrieving only the last event, for example.
+- `from`: an optional [Sequence Position](#sequence-position) to start streaming Events from (depending on the `backwards` flag, this is either a _minimum_ or _maximum_ sequence number of the resulting stream)
+- `backwards`: a flag that, if set to `true`, returns the Events in reverse order (default: `false`)
+- `limit`: an optional number that, if set, limits the event stream to a maximum number of Events. This can be useful for retrieving only the last event, for example.
 
 ```
 ReadOptions {
@@ -86,18 +86,18 @@ ReadOptions {
 }
 ```
 
-## EventStream
+## Event Stream
 
-When reading from the [EventStore](../glossary.md#event-store), an `EventStream` is returned.
+When reading from the Event Store, an `Event Stream` is returned.
 
-- It _MUST_ provide the queried [SequencedEvents](#sequencedevent)
+- It _MUST_ provide the queried [Sequenced Event](#sequenced-event)s
 - It _SHOULD_ be implemented as an iterable or as a reactive stream 
 
-## SequencedEvent 
+## Sequenced Event 
 
-Each item in the [EventStream](#eventstream) is an `Event` that consists of the underlying event, like the [SequencePosition](#sequenceposition) that was added during the `append()` call.
+Each item in the [Event Stream](#event-stream) is an `Event` that consists of the underlying event, like the [Sequence Position](#sequence-position) that was added during the `append()` call.
 
-- It _MUST_ contain the [SequencePosition](#sequenceposition)
+- It _MUST_ contain the [Sequence Position](#sequence-position)
 - It _MUST_ contain the [Event](#event)
 - It _MAY_ contain further fields, like metadata defined by the Event Store
 
@@ -116,9 +116,9 @@ The following example shows a *potential* JSON representation of a Sequenced Eve
 }
 ```
 
-## SequencePosition
+## Sequence Position
 
-When an [Event](#event) is appended, the [EventStore](../glossary.md#event-store) assigns a  `SequencePosition` to it.
+When an [Event](#event) is appended, the Event Store assigns a `Sequence Position` to it.
 
 It...
 
@@ -128,7 +128,7 @@ It...
 
 ## Events
 
-A set of [Event](#event) instances that is passed to the `append()` method of the [EventStore](../glossary.md#event-store)
+A set of [Event](#event) instances that is passed to the `append()` method of the Event Store
 
 It...
 
@@ -137,8 +137,8 @@ It...
 
 ## Event
 
-- It _MUST_ contain an [EventType](#eventtype)
-- It _MUST_ contain [EventData](#eventdata)
+- It _MUST_ contain an [Event Type](#event-type)
+- It _MUST_ contain [Event Data](#event-data)
 - It _MAY_ contain [Tags](#tags)
 - It _MAY_ contain further fields, like metadata defined by the client
 
@@ -154,11 +154,11 @@ A *potential* JSON representation of an Event:
 }
 ```
 
-## EventType
+## Event Type
 
-Type of the event used to filter events in the [Query](#query).
+Type of the event used to filter Events in the [Query](#query).
 
-## EventData
+## Event Data
 
 Opaque payload of an [Event](#event)
 
@@ -171,16 +171,16 @@ A set of [Tag](#tag)s.
 ## Tag
 
 A `Tag` can add domain-specific metadata to an event, allowing for custom partitioning.
-Usually, a tag represents a concept of the domain, e.g. the type and id of an entity like `product:p123`
+Usually, a Tag represents a concept of the domain, e.g. the type and id of an entity like `product:p123`
 
 - It _CAN_ represent a key/value pair such as `product:123` but that is irrelevant to the Event Store
 
-## AppendCondition
+## Append Condition
 
 - It _MUST_ contain a [Query](#query)
 - It _MUST_ contain the "safe position" that is _either_ a
-  - [SequencePosition](#sequenceposition) - representing the highest position the client was aware of while building the decision model. The Event Store _MUST_ ignore the events before the Safe Position while checking the condition for appending events. *Note:* This number can be _higher_ than the position of the last event matching the Query.
-  - `NONE` - no event must match the specified [Query](#query)
+  - [Sequence Position](#sequence-position) - representing the highest position the client was aware of while building the Decision Model. The Event Store _MUST_ ignore the Events before the Safe Position while checking the condition for appending Events. *Note:* This number can be _higher_ than the position of the last Event matching the Query.
+  - `NONE` - no Event must match the specified [Query](#query)
 
 ```
 AppendCondition {

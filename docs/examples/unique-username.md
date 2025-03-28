@@ -20,12 +20,12 @@ There are a couple of common strategies to achieve global uniqueness in event-dr
     - This is of course a potential solution, with or without DCB, but it falls outside the scope of these examples
 - Create a dedicated storage for allocated usernames and make the write side insert a record when the corresponding Event is recorded
     - This adds a source of error and potentially locked usernames unless Event and storage update can be done in a single transaction
-- Use the [Reservation pattern](../glossary.md#reservation-pattern) to lock a username and only continue if the locking succeeded
-    - This works but adds quite a lot of complexity and additional events and the need for Sagas/[Process Managers](../glossary.md#process-manager) or multiple writes in a single request
+- Use the [Reservation Pattern](../glossary.md#reservation-pattern) to lock a username and only continue if the locking succeeded
+    - This works but adds quite a lot of complexity and additional Events and the need for Sagas/[Process Managers](../glossary.md#process-manager) or multiple writes in a single request
 
 ## DCB approach
 
-With DCB all events that affect the unique contraint (the username in this example) can be tagged with the corresponding value (or a hash of it):
+With DCB all Events that affect the unique contraint (the username in this example) can be tagged with the corresponding value (or a hash of it):
 
 ![unique username example](img/unique-username-01.png)
 
@@ -300,7 +300,7 @@ This example extends the previous one to show how the release of a username coul
 
 !!! note
 
-    The `daysAgo` property of the `event` is a simplification. Typically, a timestamp representing the event's recording time is stored within the event's payload or metadata. This timestamp can be compared to the current date to determine the event's age in the decision model.
+    The `daysAgo` property of the `event` is a simplification. Typically, a timestamp representing the event's recording time is stored within the event's payload or metadata. This timestamp can be compared to the current date to determine the Event's age in the decision model.
 
 ```js hl_lines="25-27"
 // event type definitions:
