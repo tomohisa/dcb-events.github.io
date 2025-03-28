@@ -36,7 +36,7 @@ The first implementation just allows to specify new courses and make sure that t
 
 === "JavaScript"
     ??? info
-        This example uses [composed projections](../advanced/composing-projections.md) to build Decision Models.
+        This example uses [composed projections](../advanced/projections.md) to build Decision Models.
         
         The actual implementation is just an in-memory dummy (see [source code](../assets/js/lib.js){:target="_blank"})
     ```js

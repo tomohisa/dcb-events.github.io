@@ -27,39 +27,61 @@ type Projection<S, E> = (state: S, event: E) => S
 
 ### Example
 
-To use a common theme, we use Events from the [Course subscription example](../examples/course-subscriptions.md).
+To use a common theme, we refer to Events from the [course subscription example](../examples/course-subscriptions.md):
+
+- new courses can be added (`CourseDefined`)
+- courses can be archived (`CourseArchived`)
+- courses can be renamed (`CourseRenamed`)
 
 !!! note
     We use JavaScript in the examples below, but the main ideas are applicable to all programming languages
 
-To start of simple, we can implement Events a simple string array:
+To start simple, we can implement Events a simple string array:
 
 ```js
-const events = ["CourseDefined", "CourseDefined", "StudentRegistered", "CourseDefined"]
+const events = [
+  "CourseDefined",
+  "CourseDefined",
+  "CourseRenamed",
+  "CourseArchived",
+  "CourseDefined"
+]
 ```
 <codapi-snippet id="example1" engine="browser"></codapi-snippet>
 
-In order to find out how many courses there are in total, the following simple projection could be defined and we can use JavaScripts [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce){:target="_blank"} function to aggregate all Events creating a single state, starting with the `initialState`:
+In order to find out how many active courses there are in total, the following simple projection could be defined and we can use JavaScripts [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce){:target="_blank"} function to aggregate all Events creating a single state, starting with the `initialState`:
 
 ```js
 // ...
-const projection = (state, event) => (event === "CourseDefined" ? state + 1 : state)
+const projection = (state, event) => {
+  switch (event) {
+    case 'CourseDefined':
+      return state + 1;
+    case 'CourseArchived':
+      return state - 1;
+    default:
+      return state;
+  }
+}
 const initialState = 0
-const numberOfCourses = events.reduce(projection, initialState)
+const numberOfActiveCourses = events.reduce(projection, initialState)
 
-console.log({numberOfCourses})
+console.log({numberOfActiveCourses})
 ```
 <codapi-snippet engine="browser" sandbox="javascript" depends-on="example1"></codapi-snippet>
 
 ## Query only relevant Events
 
-In the above example, the reducer iterates over all Events even though it only changes the state for `CourseDefined` Events... This is not an issue for this simple example. But in reality, those Events are not stored in memory, and there can be many of them. So obviously, they should be filtered _before_ they are read from the Event Store.
+In the above example, the reducer iterates over all Events even though it only changes the state for `CourseDefined` and `CourseArchived` events. This is not an issue for this simple example. But in reality, those events are not stored in memory, and there can be many of them. So obviously, they should be filtered _before_ they are read from the Event Store.
+
+As previously mentioned, in the context of DCB, projections are typically used to reconstruct the minimal model required to validate constaints the system needs to enforce — usually in response to a command issued by a user.
+
+Given that the system should ensure a performant response to user input, it becomes clear how paramount it is to minimize the time and effort needed to rebuild the [Decision Model](../glossary.md#decision-model).
+The most effective approach, then, is to limit the reconstruction to the absolute minimum, by loading only the Events that are relevant to validating the received command.
 
 ### Filter Events by Type
 
 The Event Type is the main criteria for filtering Events before reading them from an Event Store.
-
-Events of the same Type are typically handled using the same code and business rules. For this reason, it feels natural to partition the function that processes the state into a more declarative format, where business rules are defined based on the Types of Events they handle.
 
 By defining the Event handlers more declaratively, the handled Event Types can be determined from the projection definition itself:
 
@@ -67,46 +89,48 @@ By defining the Event handlers more declaratively, the handled Event Types can b
 const projection = {
     initialState: 0,
     handlers: {
-        CourseDefined: (state, event) => state + 1
+        CourseDefined: (state, event) => state + 1,
+        CourseArchived: (state, event) => state - 1,
     }
 }
 ```
-<codapi-snippet id="example2" engine="browser" sandbox="javascript" depends-on="example1"></codapi-snippet>
+<codapi-snippet id="example2" depends-on="example1"></codapi-snippet>
 
-With that, we can now filter the Events before applying them to the projection:
+With that, Events can be filtered before applying them to the projection:
 
 ```js
-const numberOfCourses = events
+const numberOfActiveCourses = events
   .filter(event => event in projection.handlers)
-  .reduce((state, event) => projection.handlers[event](state, event), projection.initialState)
+  .reduce((state, event) =>
+    projection.handlers[event](state, event),
+    projection.initialState
+  )
 
-console.log({numberOfCourses})
+console.log({numberOfActiveCourses})
 ```
 <codapi-snippet engine="browser" sandbox="javascript" depends-on="example1 example2"></codapi-snippet>
 
 ### Filter Events by Tags
 
-As previously mentioned, in the context of DCB, projections are typically used to reconstruct the minimal model required to validate a business decision the system needs to make — usually in response to a command issued by a user.
+Decision Models are usually only concerned about specific entities. E.g. in order to determine whether a course with a specific id exists, it's not appropriate to read _all_ `CourseDefined` events but only those related to the course in question.
 
-Given that the system should ensure a performant response to user input, it becomes clear how paramount it is to minimize the time and effort needed to rebuild the [decision model](../glossary.md#decision-model).
-The most effective approach, then, is to limit the reconstruction to the absolute minimum, by rebuilding the state of only the business entities involved in validating the received command.
-
-To do this efficiently, we filter the relevant Events using Tags associated with those entities.
-
-In our example, a more realistic in-memory projection would be one that determines whether a course with a specific id exists at all.
 By only looking at the Event Type, this could be done with a projection like this:
 ```js
 const courseExistsProjection = (courseId) => ({
   initialState: false,
   handlers: {
-      CourseDefined: (state, event) => event.data.courseId === courseId ? true : state,
+    CourseDefined: (state, event) => event.data.courseId === courseId ? true : state,
+    CourseArchived: (state, event) => event.data.courseId === courseId ? false : state,
   }
 })
 ```
 But this is not a good idea because all `CourseDefined` Events would have to be loaded still.
 
-A traditional [Event Store](../glossary.md#event-store) usually allows to filter Events by their Type and Event Stream (sometimes called _subject_).
-In DCB there is no concept of multiple streams, Events are stored in a single global sequence, but they can be tagged and it is essential to be able to filter them by their Tags.
+A traditional [Event Store](../glossary.md#event-store) usually allows to partition Events into Event Streams (sometimes called _subject_).
+
+In DCB there is no concept of multiple streams, Events are stored in a single global sequence.
+Instead, with DCB Events can be associated with entities (or other domain concepts) using Tags.
+And a compliant Event Store allows to filter Events by their Tags, in addition to their Type.
 
 To demonstrate that, we add Data and Tags to the example Events:
 
@@ -138,6 +162,7 @@ const courseExistsProjection = (courseId) => ({
   initialState: false,
   handlers: {
     CourseDefined: (state, event) => true,
+    CourseArchived: (state, event) => false,
   },
   tagFilter: [`course:${courseId}`],
 })
@@ -198,12 +223,31 @@ console.log(runProjection(courseCapacityProjection("c2"), events))
 ```
 <codapi-snippet engine="browser" sandbox="javascript" depends-on="example3 example5 example6"></codapi-snippet>
 
+### Only load the last matching Event
+
+Another possible performance optimization offered by a DCB-compliant Event Store is the ability to query only the most recent Event that matches the specified Types or Tags:
+
+```js hl_lines="8"
+const courseExistsProjection = (courseId) => ({
+  initialState: false,
+  handlers: {
+    CourseDefined: (state, event) => true,
+    CourseArchived: (state, event) => false,
+  },
+  tagFilter: [`course:${courseId}`],
+  onlyLastEvent: true,
+})
+```
+
+With that, only a single `CourseDefined` or `CourseArchived` Event would be applied, whichever comes last.
+This is especially useful when the projection is not related to a specific entity, e.g. to create [consecutive sequences](../examples/invoice-number.md).
+
 ## Composing projections
 
-As mentioned above, these in-memory projections can be used to build [decision model](../glossary.md#decision-model) that can be used to enforce hard constraints.
+As mentioned above, these in-memory projections can be used to build [Decision Model](../glossary.md#decision-model) that can be used to enforce hard constraints.
 
 So far, the example projections in this article were only concerned about a very specific question, e.g. whether a given course exists. Usually, there are _multiple_ hard constraints though.
-For example: In the [Course subscription example](../examples/course-subscriptions.md) in order to change a courses capacity, we have to ensure that...
+For example: In the [course subscription example](../examples/course-subscriptions.md) in order to change a courses capacity, we have to ensure that...
 
 - ...the course exists
 - ...and that the specified new capacity is different from the current capacity
