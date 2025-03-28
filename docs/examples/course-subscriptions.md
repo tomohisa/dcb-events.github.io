@@ -131,10 +131,9 @@ The first implementation just allows to specify new courses and make sure that t
     // event type definitions:
     
     export class CourseDefined implements DcbEvent {
-      public type: "courseDefined" = "courseDefined"
+      public type = "courseDefined" as const
       public tags: Tags
       public data: { courseId: string; capacity: number }
-      public metadata: unknown = {}
     
       constructor({ courseId, capacity }: { courseId: string; capacity: number }) {
         this.tags = Tags.from([`course:${courseId}`])
@@ -144,7 +143,7 @@ The first implementation just allows to specify new courses and make sure that t
     
     // decision models:
     
-    export const CourseExists = (courseId): EventHandlerWithState<CourseDefined, boolean> => ({
+    export const CourseExists = (courseId: string): EventHandlerWithState<CourseDefined, boolean> => ({
       tagFilter: Tags.from([`course:${courseId}`]),
       init: false,
       when: {
@@ -178,15 +177,19 @@ The first implementation just allows to specify new courses and make sure that t
         This example uses an unofficial, work-in-progress, library to visualize Given/When/Then scenarios
     <dcb-scenario
       style="font-size: xx-small"
-      eventDefinitions="[{&quot;name&quot;:&quot;CourseDefined&quot;,&quot;propertyDefinitions&quot;:[{&quot;name&quot;:&quot;courseId&quot;,&quot;type&quot;:&quot;string&quot;,&quot;required&quot;:true},{&quot;name&quot;:&quot;capacity&quot;,&quot;type&quot;:&quot;integer&quot;,&quot;required&quot;:true}],&quot;tagResolvers&quot;:[&quot;course:{data.courseId}&quot;],&quot;icon&quot;:null}]"
-      testCases="[{&quot;description&quot;:&quot;Define course with existing id&quot;,&quot;givenEvents&quot;:[{&quot;type&quot;:&quot;CourseDefined&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:10},&quot;metadata&quot;:[]}],&quot;whenCommand&quot;:{&quot;type&quot;:&quot;defineCourse&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:15}},&quot;thenExpectedEvent&quot;:null,&quot;thenExpectedError&quot;:&quot;Course with id \&quot;c1\&quot; already exists&quot;},{&quot;description&quot;:&quot;Define course with new id&quot;,&quot;givenEvents&quot;:null,&quot;whenCommand&quot;:{&quot;type&quot;:&quot;defineCourse&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:15}},&quot;thenExpectedEvent&quot;:{&quot;type&quot;:&quot;CourseDefined&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:15},&quot;metadata&quot;:[]},&quot;thenExpectedError&quot;:null}]"></dcb-scenario>
+      eventDefinitions="[{&quot;name&quot;:&quot;CourseDefined&quot;,&quot;schema&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;courseId&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;capacity&quot;:{&quot;type&quot;:&quot;number&quot;}}},&quot;tagResolvers&quot;:[&quot;course:{data.courseId}&quot;]}]"
+      testCases="[{&quot;description&quot;:&quot;Define course with existing id&quot;,&quot;givenEvents&quot;:[{&quot;type&quot;:&quot;CourseDefined&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:10}}],&quot;whenCommand&quot;:{&quot;type&quot;:&quot;defineCourse&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:15}},&quot;thenExpectedError&quot;:&quot;Course with id \&quot;c1\&quot; already exists&quot;},{&quot;description&quot;:&quot;Define course with new id&quot;,&quot;givenEvents&quot;:null,&quot;whenCommand&quot;:{&quot;type&quot;:&quot;defineCourse&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:15}},&quot;thenExpectedEvent&quot;:{&quot;type&quot;:&quot;CourseDefined&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:15}}}]"></dcb-scenario>
 
 ### Feature 2: Change course capacity
 
 The second implementation extends the first by a `changeCourseCapacity` command that allows to change the maximum number of seats for a given course:
 
 === "JavaScript"
-    ```js hl_lines="7-9 22-29 36-46"
+    ??? info
+        This example uses [composed projections](../advanced/projections.md) to build Decision Models.
+        
+        The actual implementation is just an in-memory dummy (see [source code](../assets/js/lib.js){:target="_blank"})
+    ```js
     // event type definitions:
     
     const eventTypes = {
@@ -293,10 +296,9 @@ The second implementation extends the first by a `changeCourseCapacity` command 
     // event type definitions:
     
     export class CourseDefined implements DcbEvent {
-      public type: "courseDefined" = "courseDefined"
+      public type = "courseDefined" as const
       public tags: Tags
       public data: { courseId: string; capacity: number }
-      public metadata: unknown = {}
     
       constructor({ courseId, capacity }: { courseId: string; capacity: number }) {
         this.tags = Tags.from([`course:${courseId}`])
@@ -304,10 +306,9 @@ The second implementation extends the first by a `changeCourseCapacity` command 
       }
     }
     export class CourseCapacityChanged implements DcbEvent {
-      public type: "courseCapacityChanged" = "courseCapacityChanged"
+      public type = "courseCapacityChanged" as const
       public tags: Tags
       public data: { courseId: string; newCapacity: number }
-      public metadata: unknown = {}
     
       constructor({ courseId, newCapacity }: { courseId: string; newCapacity: number }) {
         this.tags = Tags.from([`course:${courseId}`])
@@ -317,14 +318,14 @@ The second implementation extends the first by a `changeCourseCapacity` command 
     
     // decision models:
     
-    export const CourseExists = (courseId): EventHandlerWithState<CourseDefined, boolean> => ({
+    export const CourseExists = (courseId: string): EventHandlerWithState<CourseDefined, boolean> => ({
       tagFilter: Tags.from([`course:${courseId}`]),
       init: false,
       when: {
         courseDefined: ({}) => true,
       },
     })
-    export const CourseCapacity = (courseId): EventHandlerWithState<CourseDefined | CourseCapacityChanged, number> => ({
+    export const CourseCapacity = (courseId: string): EventHandlerWithState<CourseDefined | CourseCapacityChanged, number> => ({
       tagFilter: Tags.from([`course:${courseId}`]),
       init: 0,
       when: {
@@ -341,7 +342,7 @@ The second implementation extends the first by a `changeCourseCapacity` command 
           this.eventStore = eventStore
       }
     
-      async changeCourseCapacity(command: { courseId: string; newCapacity: number }) {
+      async changeCourseCapacity(command: { studentId: string; newCapacity: number }) {
         const { state, appendCondition } = await buildDecisionModel(this.eventStore, {
           courseExists: CourseExists(command.courseId),
           courseCapacity: CourseCapacity(command.courseId),
@@ -361,8 +362,8 @@ The second implementation extends the first by a `changeCourseCapacity` command 
         This example uses an unofficial, work-in-progress, library to visualize Given/When/Then scenarios
     <dcb-scenario
       style="font-size: xx-small"
-      eventDefinitions="[{&quot;name&quot;:&quot;CourseDefined&quot;,&quot;propertyDefinitions&quot;:[{&quot;name&quot;:&quot;courseId&quot;,&quot;type&quot;:&quot;string&quot;,&quot;required&quot;:true},{&quot;name&quot;:&quot;capacity&quot;,&quot;type&quot;:&quot;integer&quot;,&quot;required&quot;:true}],&quot;tagResolvers&quot;:[&quot;course:{data.courseId}&quot;],&quot;icon&quot;:null},{&quot;name&quot;:&quot;CourseCapacityChanged&quot;,&quot;propertyDefinitions&quot;:[{&quot;name&quot;:&quot;courseId&quot;,&quot;type&quot;:&quot;string&quot;,&quot;required&quot;:true},{&quot;name&quot;:&quot;newCapacity&quot;,&quot;type&quot;:&quot;integer&quot;,&quot;required&quot;:true}],&quot;tagResolvers&quot;:[&quot;course:{data.courseId}&quot;],&quot;icon&quot;:null}]"
-      testCases="[{&quot;description&quot;:&quot;Change capacity of a non-existing course&quot;,&quot;givenEvents&quot;:null,&quot;whenCommand&quot;:{&quot;type&quot;:&quot;changeCourseCapacity&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c0&quot;,&quot;newCapacity&quot;:15}},&quot;thenExpectedEvent&quot;:null,&quot;thenExpectedError&quot;:&quot;Course \&quot;c0\&quot; does not exist&quot;},{&quot;description&quot;:&quot;Change capacity of a course to a new value&quot;,&quot;givenEvents&quot;:[{&quot;type&quot;:&quot;CourseDefined&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:12},&quot;metadata&quot;:[]}],&quot;whenCommand&quot;:{&quot;type&quot;:&quot;changeCourseCapacity&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;newCapacity&quot;:15}},&quot;thenExpectedEvent&quot;:{&quot;type&quot;:&quot;CourseCapacityChanged&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;newCapacity&quot;:15},&quot;metadata&quot;:[]},&quot;thenExpectedError&quot;:null}]"></dcb-scenario>
+      eventDefinitions="[{&quot;name&quot;:&quot;CourseDefined&quot;,&quot;schema&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;courseId&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;capacity&quot;:{&quot;type&quot;:&quot;number&quot;}}},&quot;tagResolvers&quot;:[&quot;course:{data.courseId}&quot;]},{&quot;name&quot;:&quot;CourseCapacityChanged&quot;,&quot;schema&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;courseId&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;newCapacity&quot;:{&quot;type&quot;:&quot;number&quot;}}},&quot;tagResolvers&quot;:[&quot;course:{data.courseId}&quot;]}]"
+      testCases="[{&quot;description&quot;:&quot;Change capacity of a non-existing course&quot;,&quot;givenEvents&quot;:null,&quot;whenCommand&quot;:{&quot;type&quot;:&quot;changeCourseCapacity&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c0&quot;,&quot;newCapacity&quot;:15}},&quot;thenExpectedError&quot;:&quot;Course \&quot;c0\&quot; does not exist&quot;},{&quot;description&quot;:&quot;Change capacity of a course to a new value&quot;,&quot;givenEvents&quot;:[{&quot;type&quot;:&quot;CourseDefined&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:12}}],&quot;whenCommand&quot;:{&quot;type&quot;:&quot;changeCourseCapacity&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;newCapacity&quot;:15}},&quot;thenExpectedEvent&quot;:{&quot;type&quot;:&quot;CourseCapacityChanged&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;newCapacity&quot;:15}}}]"></dcb-scenario>
 
 ### Feature 3: Subscribe student to course
 
@@ -374,7 +375,11 @@ The last implementation contains the core example that requires constraint check
 - ...whether the student is not subscribed to more than 5 courses already
 
 === "JavaScript"
-    ```js hl_lines="10-12 33-53 63-65 70-78"
+    ??? info
+        This example uses [composed projections](../advanced/projections.md) to build Decision Models.
+        
+        The actual implementation is just an in-memory dummy (see [source code](../assets/js/lib.js){:target="_blank"})
+    ```js
     // event type definitions:
     
     const eventTypes = {
@@ -571,6 +576,28 @@ The last implementation contains the core example that requires constraint check
         then: {
           expectedError: "Student already subscribed to 5 courses",
         }
+      },   {
+        description: "Subscribe student to course with capacity",
+        given: {
+          events: [
+            {
+              type: "CourseDefined",
+              data: {"courseId":"c1","capacity":10},
+            },
+          ],
+        },
+        when: {
+          command: {
+            type: "subscribeStudentToCourse",
+            data: {"studentId":"s1","courseId":"c1"},
+          }
+        },
+        then: {
+          expectedEvent: {
+            type: "StudentSubscribedToCourse",
+            data: {"studentId":"s1","courseId":"c1"},
+          }
+        }
       }, 
     ])
     ```
@@ -585,10 +612,9 @@ The last implementation contains the core example that requires constraint check
     // event type definitions:
     
     export class CourseDefined implements DcbEvent {
-      public type: "courseDefined" = "courseDefined"
+      public type = "courseDefined" as const
       public tags: Tags
       public data: { courseId: string; capacity: number }
-      public metadata: unknown = {}
     
       constructor({ courseId, capacity }: { courseId: string; capacity: number }) {
         this.tags = Tags.from([`course:${courseId}`])
@@ -596,10 +622,9 @@ The last implementation contains the core example that requires constraint check
       }
     }
     export class CourseCapacityChanged implements DcbEvent {
-      public type: "courseCapacityChanged" = "courseCapacityChanged"
+      public type = "courseCapacityChanged" as const
       public tags: Tags
       public data: { courseId: string; newCapacity: number }
-      public metadata: unknown = {}
     
       constructor({ courseId, newCapacity }: { courseId: string; newCapacity: number }) {
         this.tags = Tags.from([`course:${courseId}`])
@@ -607,10 +632,9 @@ The last implementation contains the core example that requires constraint check
       }
     }
     export class StudentSubscribedToCourse implements DcbEvent {
-      public type: "studentSubscribedToCourse" = "studentSubscribedToCourse"
+      public type = "studentSubscribedToCourse" as const
       public tags: Tags
       public data: { studentId: string; courseId: string }
-      public metadata: unknown = {}
     
       constructor({ studentId, courseId }: { studentId: string; courseId: string }) {
         this.tags = Tags.from([`student:${studentId}`, `course:${courseId}`])
@@ -620,14 +644,14 @@ The last implementation contains the core example that requires constraint check
     
     // decision models:
     
-    export const CourseExists = (courseId): EventHandlerWithState<CourseDefined, boolean> => ({
+    export const CourseExists = (courseId: string): EventHandlerWithState<CourseDefined, boolean> => ({
       tagFilter: Tags.from([`course:${courseId}`]),
       init: false,
       when: {
         courseDefined: ({}) => true,
       },
     })
-    export const CourseCapacity = (courseId): EventHandlerWithState<CourseDefined | CourseCapacityChanged, number> => ({
+    export const CourseCapacity = (courseId: string): EventHandlerWithState<CourseDefined | CourseCapacityChanged, number> => ({
       tagFilter: Tags.from([`course:${courseId}`]),
       init: 0,
       when: {
@@ -635,21 +659,21 @@ The last implementation contains the core example that requires constraint check
         courseCapacityChanged: ({ event }) => event.data.newCapacity,
       },
     })
-    export const StudentAlreadySubscribed = (studentId, courseId): EventHandlerWithState<StudentSubscribedToCourse, boolean> => ({
+    export const StudentAlreadySubscribed = (studentId: string, courseId: string): EventHandlerWithState<StudentSubscribedToCourse, boolean> => ({
       tagFilter: Tags.from([`student:${studentId}`, `course:${courseId}`]),
       init: false,
       when: {
         studentSubscribedToCourse: ({}) => true,
       },
     })
-    export const NumberOfCourseSubscriptions = (courseId): EventHandlerWithState<StudentSubscribedToCourse, number> => ({
+    export const NumberOfCourseSubscriptions = (courseId: string): EventHandlerWithState<StudentSubscribedToCourse, number> => ({
       tagFilter: Tags.from([`course:${courseId}`]),
       init: 0,
       when: {
         studentSubscribedToCourse: ({}, state) => state + 1,
       },
     })
-    export const NumberOfStudentSubscriptions = (studentId): EventHandlerWithState<StudentSubscribedToCourse, number> => ({
+    export const NumberOfStudentSubscriptions = (studentId: string): EventHandlerWithState<StudentSubscribedToCourse, number> => ({
       tagFilter: Tags.from([`student:${studentId}`]),
       init: 0,
       when: {
@@ -690,8 +714,8 @@ The last implementation contains the core example that requires constraint check
         This example uses an unofficial, work-in-progress, library to visualize Given/When/Then scenarios
     <dcb-scenario
       style="font-size: xx-small"
-      eventDefinitions="[{&quot;name&quot;:&quot;CourseDefined&quot;,&quot;propertyDefinitions&quot;:[{&quot;name&quot;:&quot;courseId&quot;,&quot;type&quot;:&quot;string&quot;,&quot;required&quot;:true},{&quot;name&quot;:&quot;capacity&quot;,&quot;type&quot;:&quot;integer&quot;,&quot;required&quot;:true}],&quot;tagResolvers&quot;:[&quot;course:{data.courseId}&quot;],&quot;icon&quot;:null},{&quot;name&quot;:&quot;CourseCapacityChanged&quot;,&quot;propertyDefinitions&quot;:[{&quot;name&quot;:&quot;courseId&quot;,&quot;type&quot;:&quot;string&quot;,&quot;required&quot;:true},{&quot;name&quot;:&quot;newCapacity&quot;,&quot;type&quot;:&quot;integer&quot;,&quot;required&quot;:true}],&quot;tagResolvers&quot;:[&quot;course:{data.courseId}&quot;],&quot;icon&quot;:null},{&quot;name&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;propertyDefinitions&quot;:[{&quot;name&quot;:&quot;studentId&quot;,&quot;type&quot;:&quot;string&quot;,&quot;required&quot;:true},{&quot;name&quot;:&quot;courseId&quot;,&quot;type&quot;:&quot;string&quot;,&quot;required&quot;:true}],&quot;tagResolvers&quot;:[&quot;student:{data.studentId}&quot;,&quot;course:{data.courseId}&quot;],&quot;icon&quot;:null}]"
-      testCases="[{&quot;description&quot;:&quot;Subscribe student to non-existing course&quot;,&quot;givenEvents&quot;:null,&quot;whenCommand&quot;:{&quot;type&quot;:&quot;subscribeStudentToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c0&quot;}},&quot;thenExpectedEvent&quot;:null,&quot;thenExpectedError&quot;:&quot;Course \&quot;c0\&quot; does not exist&quot;},{&quot;description&quot;:&quot;Subscribe student to fully booked course&quot;,&quot;givenEvents&quot;:[{&quot;type&quot;:&quot;CourseDefined&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:3},&quot;metadata&quot;:[]},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c1&quot;},&quot;metadata&quot;:[]},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s2&quot;,&quot;courseId&quot;:&quot;c1&quot;},&quot;metadata&quot;:[]},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s3&quot;,&quot;courseId&quot;:&quot;c1&quot;},&quot;metadata&quot;:[]}],&quot;whenCommand&quot;:{&quot;type&quot;:&quot;subscribeStudentToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s4&quot;,&quot;courseId&quot;:&quot;c1&quot;}},&quot;thenExpectedEvent&quot;:null,&quot;thenExpectedError&quot;:&quot;Course \&quot;c1\&quot; is already fully booked&quot;},{&quot;description&quot;:&quot;Subscribe student to the same course twice&quot;,&quot;givenEvents&quot;:[{&quot;type&quot;:&quot;CourseDefined&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:10},&quot;metadata&quot;:[]},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c1&quot;},&quot;metadata&quot;:[]}],&quot;whenCommand&quot;:{&quot;type&quot;:&quot;subscribeStudentToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c1&quot;}},&quot;thenExpectedEvent&quot;:null,&quot;thenExpectedError&quot;:&quot;Student already subscribed to this course&quot;},{&quot;description&quot;:&quot;Subscribe student to more than 5 courses&quot;,&quot;givenEvents&quot;:[{&quot;type&quot;:&quot;CourseDefined&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c6&quot;,&quot;capacity&quot;:10},&quot;metadata&quot;:[]},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c1&quot;},&quot;metadata&quot;:[]},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c2&quot;},&quot;metadata&quot;:[]},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c3&quot;},&quot;metadata&quot;:[]},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c4&quot;},&quot;metadata&quot;:[]},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c5&quot;},&quot;metadata&quot;:[]}],&quot;whenCommand&quot;:{&quot;type&quot;:&quot;subscribeStudentToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c6&quot;}},&quot;thenExpectedEvent&quot;:null,&quot;thenExpectedError&quot;:&quot;Student already subscribed to 5 courses&quot;}]"></dcb-scenario>
+      eventDefinitions="[{&quot;name&quot;:&quot;CourseDefined&quot;,&quot;schema&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;courseId&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;capacity&quot;:{&quot;type&quot;:&quot;number&quot;}}},&quot;tagResolvers&quot;:[&quot;course:{data.courseId}&quot;]},{&quot;name&quot;:&quot;CourseCapacityChanged&quot;,&quot;schema&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;courseId&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;newCapacity&quot;:{&quot;type&quot;:&quot;number&quot;}}},&quot;tagResolvers&quot;:[&quot;course:{data.courseId}&quot;]},{&quot;name&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;schema&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:{&quot;studentId&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;courseId&quot;:{&quot;type&quot;:&quot;string&quot;}}},&quot;tagResolvers&quot;:[&quot;student:{data.studentId}&quot;,&quot;course:{data.courseId}&quot;]}]"
+      testCases="[{&quot;description&quot;:&quot;Subscribe student to non-existing course&quot;,&quot;givenEvents&quot;:null,&quot;whenCommand&quot;:{&quot;type&quot;:&quot;subscribeStudentToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c0&quot;}},&quot;thenExpectedError&quot;:&quot;Course \&quot;c0\&quot; does not exist&quot;},{&quot;description&quot;:&quot;Subscribe student to fully booked course&quot;,&quot;givenEvents&quot;:[{&quot;type&quot;:&quot;CourseDefined&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:3}},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c1&quot;}},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s2&quot;,&quot;courseId&quot;:&quot;c1&quot;}},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s3&quot;,&quot;courseId&quot;:&quot;c1&quot;}}],&quot;whenCommand&quot;:{&quot;type&quot;:&quot;subscribeStudentToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s4&quot;,&quot;courseId&quot;:&quot;c1&quot;}},&quot;thenExpectedError&quot;:&quot;Course \&quot;c1\&quot; is already fully booked&quot;},{&quot;description&quot;:&quot;Subscribe student to the same course twice&quot;,&quot;givenEvents&quot;:[{&quot;type&quot;:&quot;CourseDefined&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:10}},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c1&quot;}}],&quot;whenCommand&quot;:{&quot;type&quot;:&quot;subscribeStudentToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c1&quot;}},&quot;thenExpectedError&quot;:&quot;Student already subscribed to this course&quot;},{&quot;description&quot;:&quot;Subscribe student to more than 5 courses&quot;,&quot;givenEvents&quot;:[{&quot;type&quot;:&quot;CourseDefined&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c6&quot;,&quot;capacity&quot;:10}},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c1&quot;}},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c2&quot;}},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c3&quot;}},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c4&quot;}},{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c5&quot;}}],&quot;whenCommand&quot;:{&quot;type&quot;:&quot;subscribeStudentToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c6&quot;}},&quot;thenExpectedError&quot;:&quot;Student already subscribed to 5 courses&quot;},{&quot;description&quot;:&quot;Subscribe student to course with capacity&quot;,&quot;givenEvents&quot;:[{&quot;type&quot;:&quot;CourseDefined&quot;,&quot;data&quot;:{&quot;courseId&quot;:&quot;c1&quot;,&quot;capacity&quot;:10}}],&quot;whenCommand&quot;:{&quot;type&quot;:&quot;subscribeStudentToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c1&quot;}},&quot;thenExpectedEvent&quot;:{&quot;type&quot;:&quot;StudentSubscribedToCourse&quot;,&quot;data&quot;:{&quot;studentId&quot;:&quot;s1&quot;,&quot;courseId&quot;:&quot;c1&quot;}}}]"></dcb-scenario>
 
 ### Other implementations
 
