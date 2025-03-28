@@ -177,14 +177,17 @@ Usually, a Tag represents a concept of the domain, e.g. the type and id of an en
 
 ## Append Condition
 
-- It _MUST_ contain a [Query](#query)
-- It _MUST_ contain the "safe position" that is _either_ a
-  - [Sequence Position](#sequence-position) - representing the highest position the client was aware of while building the Decision Model. The Event Store _MUST_ ignore the Events before the Safe Position while checking the condition for appending Events. *Note:* This number can be _higher_ than the position of the last Event matching the Query.
-  - `NONE` - no Event must match the specified [Query](#query)
+The Append Condition is used to enforce consistency, ensuring that between the time of building the Decision Model and appending the events no new events were stored by another client that match the same criteria.
+
+- It _MUST_ contain a `failIfEventsMatch` [Query](#query)
+  - this is usually the same Query that was used when building the Decision Model
+- It _CAN_ contain an `after` [Sequence Position](#sequence-position)
+  - this represents the highest position the client was aware of while building the Decision Model. The Event Store _MUST_ ignore the Events before the specified position while checking the condition for appending events. *Note:* This number can be _higher_ than the position of the last event matching the Query.
+  - if omitted, no Events will be ignored, effectively failing if _any_ Event matches the specified Query
 
 ```
-AppendCondition {
-  query: Query
-  safe-position: SequencePosition|NONE
+Append Condition {
+  failIfEventsMatch: Query
+  after?: SequencePosition
 }
 ```
