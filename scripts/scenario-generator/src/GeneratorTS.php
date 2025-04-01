@@ -127,7 +127,7 @@ final readonly class GeneratorTS
     {
         $result = '';
         foreach ($this->example->projections as $projection) {
-            $result .= 'export const ' . ucfirst($projection->name) . ' = (' . self::schemaToParameters($projection->parameterSchema) . '): EventHandlerWithState<' . self::eventTypes($projection->handlers->eventTypes()) . ', ' . self::schemaToTypeDefinition($projection->stateSchema) . '> => ({' . self::lb();
+            $result .= 'export const ' . lcfirst($projection->name) . ' = (' . self::schemaToParameters($projection->parameterSchema) . '): EventHandlerWithState<' . self::eventTypes($projection->handlers->eventTypes()) . ', ' . self::schemaToTypeDefinition($projection->stateSchema) . '> => ({' . self::lb();
             $result .= '  tagFilter: ' . self::tagResolvers($projection->tagFilters) . ',' . self::lb();
             $result .= '  init: ' . json_encode($projection->stateSchema->default, JSON_THROW_ON_ERROR) . ',' . self::lb();
             $result .= '  when: {' . self::lb();
