@@ -42,7 +42,7 @@ nav:
       - Prevent record duplication (tbd): examples/prevent-record-duplication.md
   - Advanced topics:
       - advanced/index.md
-      - Aggregates (tbd): advanced/aggregates.md
+      - Aggregates: advanced/aggregates.md
       - Projections: advanced/projections.md
       - DCB vs Outbox Pattern (tbd): advanced/dcb-vs-outbox-pattern.md
       - DCB with a traditional Event Store (tbd): advanced/dcb-with-a-traditional-event-store.md

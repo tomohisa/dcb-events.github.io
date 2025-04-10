@@ -5,7 +5,7 @@
 
 ## Aggregate
 
-Cluster of associated objects that we treat as a unit for the purpose of data changes
+Cluster of associated objects that we treat as a unit for the purpose of data changes (see article about [Aggregates](advanced/aggregates.md))
 
 ## Command
 

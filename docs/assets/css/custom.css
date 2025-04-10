@@ -1,3 +1,11 @@
 .md-typeset pre > code {
     max-height: 20rem;
 }
+
+.md-typeset blockquote {
+    margin-bottom: 2em;
+}
+.md-typeset blockquote .author {
+    float: right;
+    font-size: small;
+}
