@@ -87,4 +87,4 @@ for (const otp of ["000000", "111111", "222222", "333333"]) {
 }
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" editor="basic"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript"></codapi-snippet>

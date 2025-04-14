@@ -13,7 +13,7 @@ Enforcing globally unique values is one of the evergreen-topics of eventual cons
 
 ## Consecutive sequence
 
-Creating a monotinc sequence without gaps is a common requirement, for example in [invoice numbering](invoice-number.md).
+Creating a monotonic sequence without gaps is a common requirement, for example in [invoice numbering](invoice-number.md).
 
 ## Replacing Read Models
 
@@ -22,4 +22,4 @@ Due to the flexibility of DCB, it can sometimes replace entire Read Models, for 
 ## Idempotency
 
 Double submission is a common problem. It can usually be worked around by creating IDs on the client side, but sometimes that's not an option.
-DCB allows to use a dedicated itempotency id in order to [prevent record duplication](prevent-record-duplication.md).
+DCB allows to use a dedicated idempotency id in order to [prevent record duplication](prevent-record-duplication.md).

@@ -101,6 +101,6 @@ This can be compared to the "expected revision" mechanism of traditional Event S
 
 Visit the [Examples](examples/index.md) section to explore various use cases for DCB.
 
-The [Advanced topics](advanced/index.md) section provides in-depth articles on additional subjects related to DCB.
+The [related topics](topics/index.md) section provides in-depth articles on additional subjects related to DCB.
 
-To begin using DCB, refer to the [libraries](libraries/index.md) section.
+To begin using DCB, refer to the [libraries](resources/libraries.md) section.

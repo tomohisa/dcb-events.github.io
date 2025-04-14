@@ -5,7 +5,7 @@
 
 ## Aggregate
 
-Cluster of associated objects that we treat as a unit for the purpose of data changes (see article about [Aggregates](advanced/aggregates.md))
+Cluster of associated objects that we treat as a unit for the purpose of data changes (see article about [Aggregates](topics/aggregates.md)
 
 ## Command
 
@@ -33,7 +33,7 @@ Pattern where changes are stored as a sequence of [Events](#event) rather than o
 
 !!! info
 
-    DCB can be used without Event Sourcing, see [DCB without Event Sourcing](advanced/dcb-without-event-sourcing.md)
+    DCB can be used without Event Sourcing, see "DCB without Event Sourcing" (tbd)
 
 ## Event Store
 
