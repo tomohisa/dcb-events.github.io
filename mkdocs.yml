@@ -103,8 +103,7 @@ watch:
   - includes
 
 extra_javascript:
-  - https://unpkg.com/@antonz/codapi@0.19.10/dist/snippet.js
+  - assets/js/codapi-snippet.js
   - assets/js/dcb-scenario.bundle.js
 extra_css:
-  - https://unpkg.com/@antonz/codapi@0.19.10/dist/snippet.css
   - assets/css/custom.css
