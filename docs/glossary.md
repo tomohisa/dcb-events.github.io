@@ -1,7 +1,7 @@
 !!! info "Disclaimer"
 
     The definitions in this list merely reflect our personal take and are not meant to be authoritive!
-    However, feel free to report any invalid/missing information in the [bugtracker of this website](https://github.com/dcb-events/dcb-events.github.io/issues)
+    However, feel free to report any invalid/missing information in the [bugtracker of this website](https://github.com/dcb-events/dcb-events.github.io/issues){:target="_blank"}
 
 ## Aggregate
 
