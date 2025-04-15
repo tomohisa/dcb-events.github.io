@@ -334,7 +334,7 @@ test([
 
 ### 03: Multiple products (shopping cart)
 
-The previous stages could be implemented with a traditional event-sourced [Aggregate](../glossary.md#aggregate) in theory.
+The previous stages could be implemented with a traditional Event-Sourced [Aggregate](../glossary.md#aggregate) in theory.
 But with the requirement to be able to order *multiple products at once* with a dynamic price, the flexibility of DCB shines:
 
 ```js hl_lines="10-12 40-67"
@@ -558,3 +558,7 @@ test([
 ```
 
 <codapi-snippet engine="browser" sandbox="javascript" template="/assets/js/lib.js"></codapi-snippet>
+
+## Conclusion
+
+This example demonstrates the possibility to enforce consistency for a very dynamic set of entities

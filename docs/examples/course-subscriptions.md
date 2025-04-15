@@ -62,3 +62,7 @@ The last implementation contains the core example that requires constraint check
 ### Other implementations
 
 There is a working [JavaScript/TypeScript](https://github.com/sennentech/dcb-event-sourced/tree/main/examples/course-manager-cli){:target="_blank"} and [PHP](https://github.com/bwaidelich/dcb-example-courses){:target="_blank"} implementation
+
+## Conclusion
+
+The course subscription example demonstrates a typical requirement to enforce consistency that affects multiple entities that are not part of the same Aggregate. This document demonstrates how easy it is to achieve that with DCB
