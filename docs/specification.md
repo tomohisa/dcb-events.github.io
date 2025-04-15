@@ -1,7 +1,7 @@
 !!! note
 
     This document defines what we consider the *minimal feature set* an Event Store must provide to be DCB compliant.
-    
+
     While we introduce certain concepts and terminology, **implementations are not required to use the same terms** — as long as they offer equivalent functionality.
 
 An Event Store that supports DCB provides a way to:
@@ -15,7 +15,7 @@ The Event Store...
 
 - ... _MUST_ provide a way to filter Events based on their [Event Type](#event-type) and/or [Tag](#tags) (see [Query](#query))
 - ... _MUST_ provide a way to read Events from a given starting [Sequence Position](#sequence-position)
-- ... _CAN_ provide further filter options, e.g. for ordering or to limit the number of Events to load at once (see [Read Options](#read-options))
+- ... _MAY_ provide further filter options, e.g. for ordering or to limit the number of Events to load at once (see [Read Options](#read-options))
 
 A typical interface for reading events (pseudo-code):
 
@@ -63,9 +63,9 @@ Query.all()
 
 #### Query Item
 
-Each item of a [Query](#query) allows to target Events by their [Type](#event-type) and/or [Tags](#tags)
+Each item of a [Query](#query) allows to target Events by their [Type](#event-type) and/or [Tags](#tags).
 
-An event, to match a specific Query Item, needs to have the following characteristics:
+An Event, to match a specific Query Item, needs to have the following characteristics:
 
 - the [Type](#event-type) _MUST_ match **one** of the provided Types of the Query Item
 - the [Tags](#tags) _MUST_ contain **all** of the Tags specified by the Query Item
@@ -120,10 +120,9 @@ Contains or embeds all information of the original `Event` and its [Sequence Pos
 - It _MUST_ contain the [Event](#event)
 - It _MAY_ contain further fields, like metadata defined by the Event Store
 
-
 #### Example
 
-The following example shows a *potential* JSON representation of a Sequenced Event:
+The following example shows a _potential_ JSON representation of a Sequenced Event:
 
 ```{.json .no-copy}
 {
@@ -142,8 +141,8 @@ When an [Event](#event) is appended, the Event Store assigns a `Sequence Positio
 It...
 
 - _MUST_ be unique in the Event Store
-- _MUST_ be monotonic increasing 
-- _MAY_ contain gaps 
+- _MUST_ be monotonic increasing
+- _MAY_ contain gaps
 
 ### Events
 
@@ -163,7 +162,7 @@ It...
 
 #### Example
 
-A *potential* JSON representation of an Event:
+A _potential_ JSON representation of an Event:
 
 ```{.json .no-copy}
 {
@@ -192,7 +191,7 @@ A set of [Tag](#tag)s.
 A `Tag` can add domain-specific metadata to an event, allowing for custom partitioning.
 Usually, a Tag represents a concept of the domain, e.g. the type and id of an entity like `product:p123`
 
-- It _CAN_ represent a key/value pair such as `product:123` but that is irrelevant to the Event Store
+- It _MAY_ represent a key/value pair such as `product:123` but that is irrelevant to the Event Store
 
 ### Append Condition
 
@@ -200,9 +199,9 @@ The Append Condition is used to enforce consistency, ensuring that between the t
 
 - It _MUST_ contain a `failIfEventsMatch` [Query](#query)
   - this is typically the same Query that was used when building the Decision Model
-- It _CAN_ contain an `after` [Sequence Position](#sequence-position)
-    - this represents the highest position the client was aware of while building the Decision Model. The Event Store _MUST_ ignore the Events before the specified position while checking the condition for appending events. *Note:* This number can be _higher_ than the position of the last event matching the Query.
-    - if omitted, no Events will be ignored, effectively failing if _any_ Event matches the specified Query
+- It _MAY_ contain an `after` [Sequence Position](#sequence-position)
+  - this represents the highest position the client was aware of while building the Decision Model. The Event Store _MUST_ ignore the Events before the specified position while checking the condition for appending events. _Note:_ This number can be _higher_ than the position of the last event matching the Query.
+  - if omitted, no Events will be ignored, effectively failing if _any_ Event matches the specified Query
 
 ```{.haskell .no-copy}
 AppendCondition {
