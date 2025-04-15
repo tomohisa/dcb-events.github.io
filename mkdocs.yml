@@ -34,8 +34,9 @@ theme:
       accent: deep orange
 
 nav:
-  - DCB: index.md
-  - Specification: specification.md
+  - DCB:
+    - index.md
+    - Specification: specification.md
   - Examples:
       - examples/index.md
       - Course subscriptions: examples/course-subscriptions.md
