@@ -41,14 +41,14 @@ nav:
       - examples/index.md
       - Course subscriptions: examples/course-subscriptions.md
       - Unique username: examples/unique-username.md
+      - Prevent record duplication: examples/prevent-record-duplication.md
+      - Invoice number: examples/invoice-number.md
       - Dynamic product price: examples/dynamic-product-price.md
-      #- Opt-In Token (tbd): examples/opt-in-token.md
-      #- Invoice number (tbd): examples/invoice-number.md
-      #- Prevent record duplication (tbd): examples/prevent-record-duplication.md
+      - Event-Sourced Aggregate: examples/event-sourced-aggregate.md
+      - Opt-In Token: examples/opt-in-token.md
   - Related topics:
       - topics/index.md
       - Aggregates: topics/aggregates.md
-      - Event-Sourced Aggregate: topics/event-sourced-aggregate.md
       - Projections: topics/projections.md
       #- DCB vs Outbox Pattern (tbd): topics/dcb-vs-outbox-pattern.md
       #- DCB with a traditional Event Store (tbd): topics/dcb-with-a-traditional-event-store.md
