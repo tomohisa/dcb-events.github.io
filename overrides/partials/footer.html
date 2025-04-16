@@ -1,22 +1,27 @@
 <footer class="md-footer">
     {% if not (page.meta and page.meta.hide and "comments" in page.meta.hide) %}
-        <div class="md-footer__inner md-grid" style="margin-top: 1em">
+      <div class="comments">
+        <details>
+          <summary>Toggle comments</summary>
+          <div class="md-grid">
             <script src="https://giscus.app/client.js"
-                data-repo="dcb-events/dcb-events.github.io"
-                data-repo-id="R_kgDONmo9Nw"
-                data-category-id="DIC_kwDONmo9N84CpJa9"
-                data-mapping="pathname"
-                data-strict="0"
-                data-reactions-enabled="1"
-                data-emit-metadata="0"
-                data-input-position="bottom"
-                data-theme="dark_dimmed"
-                data-lang="en"
-                data-loading="lazy"
-                crossorigin="anonymous"
-                async>
+              data-repo="dcb-events/dcb-events.github.io"
+              data-repo-id="R_kgDONmo9Nw"
+              data-category-id="DIC_kwDONmo9N84CpJa9"
+              data-mapping="pathname"
+              data-strict="0"
+              data-reactions-enabled="1"
+              data-emit-metadata="0"
+              data-input-position="bottom"
+              data-theme="dark_dimmed"
+              data-lang="en"
+              data-loading="lazy"
+              crossorigin="anonymous"
+              async>
             </script>
-        </div>
+          </div>
+        </details>
+      </div>
     {% endif %}
     {% if "navigation.footer" in features %}
       {% if page.previous_page or page.next_page %}
