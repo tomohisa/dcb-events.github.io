@@ -21,31 +21,35 @@ We believe DCB can be a significant step forward in the design and management of
 
 <div class="three-col-grid" markdown>
 
-![Bastian Waidelich](assets/img/BastianWaidelich.jpg){data-title="Bastian Waidelich" style="border-radius:.5em; box-shadow: 0 2px 8px rgba(0,0,0,.3)"}
+![Bastian Waidelich](assets/img/BastianWaidelich.jpg){data-title="Bastian Waidelich" data-description="Self-employed Software Architect, Consultant"}
 /// caption
 **Bastian Waidelich**
 
 Self-employed Software Architect, Consultant
 
+[:fontawesome-brands-github:](https://github.com/bwaidelich){:target="_blank"} | 
 [:fontawesome-brands-linkedin:](https://www.linkedin.com/in/bastian-waidelich-84865221){:target="_blank"} | [:fontawesome-brands-twitter:](https://x.com/bwaidelich){:target="_blank"}
 ///
 
-![Sara Pellegrini](assets/img/SaraPellegrini.jpg){data-title="Sara Pellegrini" style="border-radius:.5em; box-shadow: 0 2px 8px rgba(0,0,0,.3)"}
+![Sara Pellegrini](assets/img/SaraPellegrini.jpg){data-title="Sara Pellegrini" data-description="Software Engineer, Continuous Learner, Free Thinker"}
 /// caption
 ***Sara Pellegrini***
 
-Software Engineer, Continuous Learner, Free Thinker.
+Software Engineer, Continuous Learner, Free Thinker
 
+[:fontawesome-brands-github:](https://github.com/saratry){:target="_blank"} | 
 [:fontawesome-brands-linkedin:](https://www.linkedin.com/in/sara-pellegrini-55a37913){:target="_blank"} | [:fontawesome-brands-twitter:](https://x.com/_sara_p_){:target="_blank"}
 ///
 
-![Paul Grimshaw](assets/img/PaulGrimshaw.jpg){data-title="Paul Grimshaw" style="border-radius:.5em; box-shadow: 0 2px 8px rgba(0,0,0,.3)"}
+![Paul Grimshaw](assets/img/PaulGrimshaw.jpg){data-title="Paul Grimshaw" data-description="Head of Tech for Generation, Kraken, Renewables"}
 /// caption
 ***Paul Grimshaw***
 
 Head of Tech for Generation, Kraken, Renewables
 
-[:fontawesome-brands-linkedin:](https://www.linkedin.com/in/pkgrimshaw){:target="_blank"} | [:fontawesome-brands-twitter:](https://x.com/Pkgrimshaw){:target="_blank"}
+[:fontawesome-brands-github:](https://github.com/PaulGrimshaw){:target="_blank"} | 
+[:fontawesome-brands-linkedin:](https://www.linkedin.com/in/pkgrimshaw){:target="_blank"} |
+[:fontawesome-brands-twitter:](https://x.com/Pkgrimshaw){:target="_blank"}
 ///
 
 </div>
