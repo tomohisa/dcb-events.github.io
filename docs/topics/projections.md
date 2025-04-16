@@ -420,6 +420,6 @@ console.log(
 ## How to use this with DCB
 
 The complexity of above examples might be daunting.
-In an actual project, the composability would be provided by some generic [library](../resources/libraries.md). Unlike here, an actual implementation would not filter the Events in memory, but build a [query object](../specification.md#query) from the given projections that allows to performantly fetch only relevant Events from the Event Store.
+In an actual project, the composability would be provided by some generic [library](../resources/libraries.md). Unlike here, an actual implementation would not filter the Events in memory, but build a [query object](../specification.md#query) from the given projections that allows to efficiently fetch only relevant Events from the Event Store.
 
 Most of the [examples](../examples/index.md) use this technique.
