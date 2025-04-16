@@ -18,6 +18,8 @@ theme:
     - content.tooltips
     - content.code.copy
     - content.code.annotate
+  
+  custom_dir: overrides
 
   palette:
     - scheme: slate
