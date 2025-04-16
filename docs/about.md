@@ -1,14 +1,12 @@
 # About this website 
 
-## Purpose of This Site
-
 This website was created with the aim of spreading awareness about the concept of the **Dynamic Consistency Boundary** (DCB).
 
 Our goals are threefold:
 
-1. **Explain the rationale** behind the DCB approach.
-2. **Provide a practical guide** for those who want to start applying it.
-3. **Collect and organize** as many resources as possible on this topic.
+1. **Explain the rationale** behind the DCB approach
+2. **Provide a practical guide** for those who want to start applying it
+3. **Collect and organize** as many resources as possible on this topic
 
 This is a **non-commercial project**. We have no financial interest or sponsorship: our motivation is purely educational and driven by a desire to contribute to the tech community.
 
