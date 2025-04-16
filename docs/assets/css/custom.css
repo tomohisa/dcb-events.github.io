@@ -83,7 +83,7 @@ codapi-output a[href="#close"] {
     transition: 0.2s;
 }
 
-.md-footer .comments > details:hover > summary::after {
+.md-footer .comments > details > summary:hover::after {
     border-top-color: var(--md-accent-fg-color);
 }
 
