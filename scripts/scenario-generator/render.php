@@ -37,7 +37,7 @@ echo <<<MD
     ??? info
         This example uses [composed projections](../topics/projections.md) to build Decision Models.
         
-        The actual implementation is just an in-memory dummy (see [source code](../assets/js/lib.js){:target="_blank"})
+        The actual implementation is just an in-memory dummy (see source code[:octicons-link-external-16:](../assets/js/lib.js){:target="_blank" .small})
     ```js
     $js
     ```
@@ -45,7 +45,7 @@ echo <<<MD
 
 === "TypeScript (WIP)"
     ??? example "Experimental: 3rd party library"
-        This example is based on the unofficial, work-in-progress, [@dcb-es/event-store](https://github.com/sennentech/dcb-event-sourced/wiki){:target="_blank"} package
+        This example is based on the unofficial, work-in-progress, `@dcb-es/event-store`[:octicons-link-external-16:](https://github.com/sennentech/dcb-event-sourced/wiki){:target="_blank" .small} package
     ```typescript
     $ts
     ```

@@ -4,7 +4,7 @@ The following sections demonstrate several of the numerous scenarios that can be
 
 ## Constraints affecting multiple entities
 
-The most popular use case for DCB is to enforce hard constraints that affect multiple domain entities/concepts since it was covered in the "[Killing the Aggregate](https://sara.event-thinking.io/2023/04/kill-aggregate-chapter-1-I-am-here-to-kill-the-aggregate.html){:target="_blank"}" blog post by Sara Pellegrini.
+The most popular use case for DCB is to enforce hard constraints that affect multiple domain entities/concepts since it was covered in the "Killing the Aggregate" blog post by Sara Pellegrini [:octicons-link-external-16:](https://sara.event-thinking.io/2023/04/kill-aggregate-chapter-1-I-am-here-to-kill-the-aggregate.html){:target="_blank" .small}.
 The [course subscriptions](course-subscriptions.md) example illustrates that scenario.
 
 ## Enforcing global uniqueness

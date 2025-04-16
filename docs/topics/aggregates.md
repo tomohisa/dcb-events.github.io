@@ -1,4 +1,4 @@
-The idea of DCB started with the goal of [killing the Aggregate](https://sara.event-thinking.io/2023/04/kill-aggregate-chapter-1-I-am-here-to-kill-the-aggregate.html){:target="_blank"}.
+The idea of DCB started with the goal of killing the Aggregate [:octicons-link-external-16:](https://sara.event-thinking.io/2023/04/kill-aggregate-chapter-1-I-am-here-to-kill-the-aggregate.html){:target="_blank" .small}.
 
 This article aims to explain our interpretation of the Aggregate pattern and why we consider it problematic.
 
@@ -7,7 +7,7 @@ This article aims to explain our interpretation of the Aggregate pattern and why
 An Aggregate, as described in <dfn title="Domain-Driven Design: Software design approach that focuses on modeling a system based on the core domain, using the language and concepts of domain experts">DDD</dfn> refers to:
 
 > "[...] a cluster of associated objects that we treat as a unit for the purpose of data changes"    
-> _– [Eric Evans, 2003](https://www.informit.com/store/domain-driven-design-tackling-complexity-in-the-heart-9780132181273){:target="_blank"}_{: .author}
+> _– Eric Evans, 2003 [:octicons-link-external-16:](https://www.informit.com/store/domain-driven-design-tackling-complexity-in-the-heart-9780132181273){:target="_blank" .small}_{: .author}
 
 Its primary role is to enforce consistency.
 
@@ -107,7 +107,7 @@ Or, as Eric Evans puts it:
 
 
 > "Any rule that spans Aggregates will not be expected to be always up to date. Through event processing, batch processing, or other update mechanisms, other dependencies can be resolved within some specified time. But the invariants applied within an Aggregate will be enforced with the completion of each transaction"    
-> _– [Eric Evans, 2003](https://www.informit.com/store/domain-driven-design-tackling-complexity-in-the-heart-9780132181273){:target="_blank"}_{: .author}
+> _– Eric Evans, 2003 [:octicons-link-external-16:](https://www.informit.com/store/domain-driven-design-tackling-complexity-in-the-heart-9780132181273){:target="_blank" .small}_{: .author}
 
 
 This restriction is acceptable as long as an operation impacts only the invariants encapsulated within a single Aggregate. However, there are scenarios where this assumption breaks down. Consider extending the previous example with an additional business rule:
@@ -125,7 +125,7 @@ In a traditional persistence model, one possible workaround would be to lock bot
 
 > "Relational databases allow various locking schemes, and special tests can be programmed. But these ad-hoc solutions
 quickly divert attention away from the model, and soon you are back to hacking and hoping."
-> _– [Eric Evans, 2003](https://www.informit.com/store/domain-driven-design-tackling-complexity-in-the-heart-9780132181273){:target="_blank"}_{: .author}
+> _– Eric Evans, 2003 [:octicons-link-external-16:](https://www.informit.com/store/domain-driven-design-tackling-complexity-in-the-heart-9780132181273){:target="_blank" .small}_{: .author}
 
 Instead, the typical solution in such cases is to decompose the process into a series of coordinated steps. This means dropping the strong consistency of all the invariants and accepting partial updates that will be eventually reverted by corrective Events if needed. While this approach can work, it introduces significant complexity and can lead to invalid intermediate states until the compensating action is executed. Moreover, in event-driven architectures, this strategy leads to the generation of additional Events that, although necessary from a technical perspective, don't correspond to meaningful business interactions.
 

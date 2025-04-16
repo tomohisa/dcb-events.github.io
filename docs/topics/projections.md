@@ -16,7 +16,7 @@ In 2013 Greg Young posted the following minimal definition of a projection:
 
 ![course subscriptions example](img/greg-young-tweet.png)
 /// caption
-Greg Young, 2013 on [Twitter/X](https://x.com/gregyoung/status/313358540821647360){:target="_blank"}
+Greg Young, 2013 on Twitter/X [:octicons-link-external-16:](https://x.com/gregyoung/status/313358540821647360){:target="_blank" .small}
 ///
 
 In TypeScript the equivalent Type definition could be:
@@ -49,7 +49,7 @@ const events = [
 ```
 <codapi-snippet id="example1" engine="browser"></codapi-snippet>
 
-In order to find out how many active courses there are in total, the following simple projection could be defined and we can use JavaScripts [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce){:target="_blank"} function to aggregate all Events creating a single state, starting with the `initialState`:
+In order to find out how many active courses there are in total, the following simple projection could be defined and we can use JavaScripts `reduce`[:octicons-link-external-16:](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce){:target="_blank" .small} function to aggregate all Events creating a single state, starting with the `initialState`:
 
 ```js
 // ...

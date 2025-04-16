@@ -235,7 +235,7 @@ class CourseRepository {
 
 <codapi-snippet id="example-repository" engine="browser" depends-on="example-event-sourced-aggregate"></codapi-snippet>
 
-It can be used with an [InMemoryEventStore.js](../assets/js/InMemoryEventStore.js){:target="_blank"}
+It can be used with an `InMemoryEventStore.js`[:octicons-link-external-16:](../assets/js/InMemoryEventStore.js){:target="_blank" .small}
 
 ```js
 // create and save a new instance:
@@ -286,7 +286,7 @@ class DcbCourseRepository {
 
 <codapi-snippet id="example-dcb-repository" engine="browser" depends-on="example-event-sourced-aggregate"></codapi-snippet>
 
-It can be used with an [InMemoryDcbEventStore.js](../assets/js/InMemoryDcbEventStore.js){:target="_blank"}
+It can be used with an `InMemoryDcbEventStore.js`[:octicons-link-external-16:](../assets/js/InMemoryDcbEventStore.js){:target="_blank" .small}
 
 ```js
 // create and save a new instance:

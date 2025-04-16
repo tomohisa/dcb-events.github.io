@@ -12,6 +12,10 @@ codapi-snippet{--toolbar-gap: 1em;--toolbar-margin-bottom: 1em;display:block}cod
     box-shadow: 0 2px 8px rgba(0,0,0,.3);
 }
 
+.md-content .small {
+    font-size: 80%;
+}
+
 .md-typeset pre > code {
     max-height: 20rem;
 }
