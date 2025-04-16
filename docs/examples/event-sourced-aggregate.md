@@ -4,7 +4,7 @@ Sometimes, however, an [Event-Sourced Aggregate](../topics/aggregates.md#event-s
 
 ## Challenge
 
-The goal is to implement an Event-Sourced Aggregate that works with a DCB compliant [Event Store](../glossary.md#event-store)
+The goal is to implement an Event-Sourced Aggregate that works with a DCB compliant <dfn title="Specialized storage system for Events that ensures they are stored sequentially and can be retrieved efficiently">Event Store</dfn>
 
 ## Traditional approaches
 
@@ -203,7 +203,7 @@ course.changeCapacity(15) // Error: Course "c1" already has a capacity of "15
 
 ### Repository
 
-Aggregates are often paired with a corresponding [Repository](../glossary.md#repository) that handles saving and retrieving instances.
+Aggregates are often paired with a corresponding <dfn title="Abstraction over data storage, providing a collection-like interface to access and manipulate domain entities">Repository</dfn> that handles saving and retrieving instances.
 
 The following shows a simple implementation that works with a traditional Event Store:
 

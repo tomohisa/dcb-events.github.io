@@ -15,9 +15,9 @@ The goal is an application that allows customers to purchase products, ensuring 
 
 There are several potential strategies to solve this without DCB:
 
-- For the single product use case an [Aggregate](../glossary.md#aggregate) could be used
+- For the single product use case an <dfn title="Cluster of associated objects that we treat as a unit for the purpose of data changes (see related article)">Aggregates</dfn> could be used
     - That only works if product change and -purchase Events are stored in the same Event Stream, which is unlikely to be a good idea
-- Use the [Read Model](../glossary.md#read-model) to verify the prices in the command handler
+- Use the <dfn title="Representation of data tailored for specific read operations, often denormalized for performance">Read Model</dfn> to verify the prices in the command handler
     - That works, but the last requirement (changing prices) forces the model to keep track of historic data even though there might be no (other) use case for it to be kept. A separate, dedicated, model could be created of course but that adds complexity
 
 ## DCB approach
@@ -334,7 +334,7 @@ test([
 
 ### 03: Multiple products (shopping cart)
 
-The previous stages could be implemented with a traditional Event-Sourced [Aggregate](../glossary.md#aggregate) in theory.
+The previous stages could be implemented with a traditional Event-Sourced Aggregate in theory.
 But with the requirement to be able to order *multiple products at once* with a dynamic price, the flexibility of DCB shines:
 
 ```js hl_lines="10-12 40-67"

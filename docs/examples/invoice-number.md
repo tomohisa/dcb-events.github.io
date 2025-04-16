@@ -100,7 +100,7 @@ With this approach, **every past `InvoiceCreated` event must be loaded** just to
 
 #### Snapshots
 
-One workaround would be to use a [Snapshot](../glossary.md#snapshot) to reduce the number of Events to load but this increases complexity and adds new infrastructure requirements. 
+One workaround would be to use a <dfn title="Periodic point-in-time representations of an Aggregate’s state, used to optimize performance by avoiding the need to replay all past events from the beginning">Snapshot</dfn> to reduce the number of Events to load but this increases complexity and adds new infrastructure requirements. 
 
 #### Only load a single Event
 

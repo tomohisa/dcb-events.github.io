@@ -4,7 +4,7 @@ This article aims to explain our interpretation of the Aggregate pattern and why
 
 ## What is an Aggregate?
 
-An Aggregate, as described in [Domain-Driven Design](../glossary.md#domain-driven-design) refers to:
+An Aggregate, as described in <dfn title="Domain-Driven Design: Software design approach that focuses on modeling a system based on the core domain, using the language and concepts of domain experts">DDD</dfn> refers to:
 
 > "[...] a cluster of associated objects that we treat as a unit for the purpose of data changes"    
 > _– [Eric Evans, 2003](https://www.informit.com/store/domain-driven-design-tackling-complexity-in-the-heart-9780132181273){:target="_blank"}_{: .author}
@@ -13,7 +13,7 @@ Its primary role is to enforce consistency.
 
 ### Consistency
 
-While consistency broadly refers to the **stability**, **coherence**, and **predictability** of a system's state, the Aggregate Pattern focuses on a more specific meaning: creating a [Decision Model](../glossary.md#decision-model) used to ensure that business invariants are consistently enforced, even when multiple operations or users interact with the system concurrently.
+While consistency broadly refers to the **stability**, **coherence**, and **predictability** of a system's state, the Aggregate Pattern focuses on a more specific meaning: creating a Decision Model used to ensure that business invariants are consistently enforced, even when multiple operations or users interact with the system concurrently.
 
 For example, let's assume that we want to ensure that a course must never be overbooked (sticking to the common theme of this website).
 

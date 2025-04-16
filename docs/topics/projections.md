@@ -2,9 +2,9 @@ A Projection is deriving a specific state by replaying a sequence of relevant Ev
 
 In other words, it's reading and transforming Events into a model built for a specific need.
 
-The result is commonly used for persistent [Read Models](../glossary.md#read-model).
+The result is commonly used for persistent <dfn title="Representation of data tailored for specific read operations, often denormalized for performance">Read Models</dfn>.
 
-In Event Sourcing, however, projections are also used to build the [Decision Model](../glossary.md#decision-model) needed to enforce consistency constraints. 
+In Event Sourcing, however, projections are also used to build the <dfn title="Representation of the system's current state, used to enforce integrity constraints before moving the system to a new state">Decision Model</dfn> needed to enforce consistency constraints. 
 
 This website typically refers to this latter kind of projection since DCB primarily focuses on ensuring the consistency of the Event Store during write operations.
 
@@ -74,9 +74,9 @@ console.log({numberOfActiveCourses})
 
 In the above example, the reducer iterates over all Events even though it only changes the state for `CourseDefined` and `CourseArchived` events. This is not an issue for this simple example. But in reality, those events are not stored in memory, and there can be many of them. So obviously, they should be filtered _before_ they are read from the Event Store.
 
-As previously mentioned, in the context of DCB, projections are typically used to reconstruct the minimal model required to validate constaints the system needs to enforce — usually in response to a command issued by a user.
+As previously mentioned, in the context of DCB, projections are typically used to reconstruct the minimal model required to validate constraints the system needs to enforce — usually in response to a command issued by a user.
 
-Given that the system should ensure a performant response to user input, it becomes clear how paramount it is to minimize the time and effort needed to rebuild the [Decision Model](../glossary.md#decision-model).
+Given that the system should ensure a performant response to user input, it becomes clear how paramount it is to minimize the time and effort needed to rebuild the Decision Model.
 The most effective approach, then, is to limit the reconstruction to the absolute minimum, by loading only the Events that are relevant to validating the received command.
 
 ### Filter Events by Type
@@ -126,7 +126,7 @@ const courseExistsProjection = (courseId) => ({
 ```
 But this is not a good idea because all `CourseDefined` Events would have to be loaded still.
 
-A traditional [Event Store](../glossary.md#event-store) usually allows to partition Events into Event Streams (sometimes called _subject_).
+A traditional <dfn title="Specialized storage system for Events that ensures they are stored sequentially and can be retrieved efficiently">Event Store</dfn> usually allows to partition Events into Event Streams (sometimes called _subject_).
 
 In DCB there is no concept of multiple streams, Events are stored in a single global sequence.
 Instead, with DCB Events can be associated with entities (or other domain concepts) using Tags.
@@ -203,7 +203,7 @@ console.log(runProjection(courseExistsProjection("c1"), events))
 ```
 <codapi-snippet engine="browser" sandbox="javascript" depends-on="example3 example4 example5"></codapi-snippet>
 
-Similarily a projection for the current `capacity` of a course:
+Similarly a projection for the current `capacity` of a course:
 
 ```js
 const courseCapacityProjection = (courseId) => ({
@@ -244,7 +244,7 @@ This is especially useful when the projection is not related to a specific entit
 
 ## Composing projections
 
-As mentioned above, these in-memory projections can be used to build [Decision Model](../glossary.md#decision-model) that can be used to enforce hard constraints.
+As mentioned above, these in-memory projections can be used to build Decision Model that can be used to enforce hard constraints.
 
 So far, the example projections in this article were only concerned about a very specific question, e.g. whether a given course exists. Usually, there are _multiple_ hard constraints though.
 For example: In the [course subscription example](../examples/course-subscriptions.md) in order to change a courses capacity, we have to ensure that...
@@ -289,7 +289,7 @@ Instead, we can create a generic _composite_ projection like this:
 // }
 const compositeProjection = (projections) => {
   return {
-    // comopsed initial state in the form
+    // composed initial state in the form
     // {"<projection1Name>": <projection1InitialState>, ...}
     initialState: Object.fromEntries(
       Object.entries(projections).map(([key, projection]) => [

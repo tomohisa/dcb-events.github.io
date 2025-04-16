@@ -16,7 +16,7 @@ Introduced by Sara Pellegrini in her blog post "[Killing the Aggregate](https://
 To illustrate how DCB works, it makes sense first to explain the traditional Event Sourcing approach and its main issue:
 
 In her blog post, Sara describes an example application that allows students to subscribe to courses.
-In this example, we assume the constraints applied to the student and the course to ensure their integrity are invariants. In other words, those constraints must always be satisfied before transitioning to a new state. For this reason, the student and the course are typically implemented as [Aggregates](glossary.md#aggregate).
+In this example, we assume the constraints applied to the student and the course to ensure their integrity are invariants. In other words, those constraints must always be satisfied before transitioning to a new state. For this reason, the student and the course are typically implemented as <dfn title="Cluster of associated objects that we treat as a unit for the purpose of data changes (see related article)">Aggregates</dfn>.
 
 But then, constraints that affect both entities are introduced, namely:
 
@@ -25,7 +25,7 @@ But then, constraints that affect both entities are introduced, namely:
 
 ### Traditional approach
 
-In many contexts, it is impossible to update two aggregates with a single transaction; for this reason, such requirements are usually solved with a Saga or [Process Manager](glossary.md#process-manager) that coordinates the process:
+In many contexts, it is impossible to update two aggregates with a single transaction; for this reason, such requirements are usually solved with a <dfn title="Coordinates a sequence of local transactions across multiple services, ensuring data consistency through compensating actions in case of failure">Saga</dfn> that coordinates the process:
 
 1. Mark the student to be subscribed by publishing an Event to the Event Stream of the student
 2. Potentially in parallel, mark the course by publishing an Event to the Event Stream of the affected course
@@ -96,7 +96,7 @@ As a result, only the Events matching the specified query will be returned:
 
 #### Writing Events
 
-Similar to a traditional Event Store, DCB can enforce consistency when persisting Events using [Optimistic Locking](glossary.md#optimistic-locking).
+Similar to a traditional Event Store, DCB can enforce consistency when persisting Events using <dfn title="Concurrency control mechanism that prevents conflicts by allowing multiple transactions to read and update data but checking for changes before committing. If another transaction has modified the data in the meantime, the update is rejected">Optimistic Locking</dfn>.
 
 However, unlike the traditional approach, DCB does not rely on streams or revisions. Instead, it passes the *same query* used to read Events for building the in-memory decision model along with the position of the last Event consumed by the client. The DCB Event Store then ensures that no new Events matching the same query were added in the meantime.
 

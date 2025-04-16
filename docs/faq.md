@@ -14,11 +14,11 @@ See [about](about.md)
 
 ## Does it promote using strong consistency everywhere?
 
-*tbd:* strong consistency _can_ be used in more places but DCB is not a replacement for [eventual consistency](glossary.md#eventual-consistency) 
+*tbd:* strong consistency _can_ be used in more places but DCB is not a replacement for eventual consistency
 
 ## How does it improve performance?
 
-*tbd:* performance is not the intention of DCB, for large scale & high performance [eventual consistency](glossary.md#eventual-consistency) is even required. Link to [performance](topics/performance.md)
+*tbd:* performance is not the intention of DCB, for large scale & high performance eventual consistency is even required. Link to [performance](topics/performance.md)
 
 ## How does it scale?
 

@@ -1,6 +1,6 @@
 # Unique username example
 
-Enforcing globally unique values is simple with strong consistency (thanks to tools like unique constraint indexes), but it becomes significantly more challenging with [eventual consistency](../glossary.md#eventual-consistency).
+Enforcing globally unique values is simple with strong consistency (thanks to tools like unique constraint indexes), but it becomes significantly more challenging with <dfn title="Consistency model that prioritizes availability and partition tolerance over immediate consistency">eventual consistency</dfn>.
 
 ## Challenge
 
@@ -16,12 +16,12 @@ As a bonus, this example is extended by adding the following features:
 
 There are a couple of common strategies to achieve global uniqueness in event-driven systems:
 
-- Use a [Read Model](../glossary.md#read-model) to check for uniqueness and handle a duplication due to race conditions after the fact (e.g. by deactivating the account or changing the username)
+- Use a <dfn title="Representation of data tailored for specific read operations, often denormalized for performance">Read Model</dfn> to check for uniqueness and handle a duplication due to race conditions after the fact (e.g. by deactivating the account or changing the username)
     - This is of course a potential solution, with or without DCB, but it falls outside the scope of these examples
 - Create a dedicated storage for allocated usernames and make the write side insert a record when the corresponding Event is recorded
     - This adds a source of error and potentially locked usernames unless Event and storage update can be done in a single transaction
-- Use the [Reservation Pattern](../glossary.md#reservation-pattern) to lock a username and only continue if the locking succeeded
-    - This works but adds quite a lot of complexity and additional Events and the need for Sagas/[Process Managers](../glossary.md#process-manager) or multiple writes in a single request
+- Use the <dfn title="Design pattern used to temporarily hold or reserve a resource or state until the process is completed">Reservation Pattern</dfn> to lock a username and only continue if the locking succeeded
+    - This works but adds quite a lot of complexity and additional Events and the need for <dfn title="Coordinates a sequence of local transactions across multiple services, ensuring data consistency through compensating actions in case of failure">Sagas</dfn> or multiple writes in a single request
 
 ## DCB approach
 

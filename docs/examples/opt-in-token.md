@@ -1,4 +1,4 @@
-This example demonstrates how DCB can be leveraged to replace a [Read Model](../glossary.md#read-model) when implementing a Double opt-in
+This example demonstrates how DCB can be leveraged to replace a <dfn title="Representation of data tailored for specific read operations, often denormalized for performance">Read Model</dfn> when implementing a Double opt-in
 
 ## Challenge
 
