@@ -10,5 +10,5 @@ A definition of the pattern and why we consider DCB an evolution of the core ide
 
 How DCB allows to compose projections in order to create dynamic Decision Models
 
-!!! note
+!!! tip
     We will add more articles over time, make sure to watch the Github Repository[:octicons-link-external-16:](https://github.com/dcb-events/dcb-events.github.io){:target="_blank" .small} of this website to get notified about changes

@@ -24,5 +24,5 @@ Due to the flexibility of DCB, it can sometimes replace entire Read Models, for 
 Double submission is a common problem. It can usually be worked around by creating IDs on the client side, but sometimes that's not an option.
 DCB allows to use a dedicated idempotency id in order to [prevent record duplication](prevent-record-duplication.md).
 
-!!! note
+!!! tip
     We will add more examples over time, make sure to watch the Github Repository[:octicons-link-external-16:](https://github.com/dcb-events/dcb-events.github.io){:target="_blank" .small} of this website to get notified about changes
