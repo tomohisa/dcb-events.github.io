@@ -3,7 +3,12 @@ hide:
   - comments
 ---
 
-# What is it?
+<div class="hero-teaser">
+    <h1 class="hero-headline">DCB</h1>
+    <h2 class="hero-claim">A simpler and more flexible approach to consistency in event-driven systems</h2>
+</div>
+
+## What is it?
 
 Dynamic Consistency Boundary (DCB) is a technique for enforcing consistency in event-driven systems without relying on rigid transactional boundaries.
 
@@ -24,8 +29,7 @@ But then, constraints that affect both entities are introduced, namely:
 - a student cannot subscribe to more than 10 courses
 
 ### Traditional approach
-
-In many contexts, it is impossible to update two aggregates with a single transaction; for this reason, such requirements are usually solved with a <dfn title="Coordinates a sequence of local transactions across multiple services, ensuring data consistency through compensating actions in case of failure">Saga</dfn> that coordinates the process:
+In many contexts, it is impossible to update two Aggregates with a single transaction; for this reason, such requirements are usually solved with a <dfn title="Coordinates a sequence of local transactions across multiple services, ensuring data consistency through compensating actions in case of failure">Saga</dfn> that coordinates the process:
 
 1. Mark the student to be subscribed by publishing an Event to the Event Stream of the student
 2. Potentially in parallel, mark the course by publishing an Event to the Event Stream of the affected course
@@ -106,6 +110,6 @@ This can be compared to the "expected revision" mechanism of traditional Event S
 
 Visit the [Examples](examples/index.md) section to explore various use cases for DCB.
 
-The [related topics](topics/index.md) section provides in-depth articles on additional subjects related to DCB.
+The [Related topics](topics/index.md) section provides in-depth articles on additional subjects related to DCB.
 
-To begin using DCB, refer to the [libraries](resources/libraries.md) section.
+To begin using DCB, refer to the [Libraries](resources/libraries.md) section.

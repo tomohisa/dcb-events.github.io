@@ -37,6 +37,68 @@ codapi-output a[href="#close"] {
     text-align: center
 }
 
+.md-content .hero-teaser {
+    text-align: center;
+    padding: 3rem 0rem;
+    margin: 0 0 2rem 0;
+    border-radius: .2em;
+    background: linear-gradient(
+            145deg,
+            var(--md-primary-fg-color),
+            rgba(255, 255, 255, 0)
+    );
+}
+
+.md-content .hero-headline {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    animation: hero-headline-in .8s ease-out;
+}
+
+.md-content .hero-claim {
+    font-size: 1rem;
+    margin: 0 auto;
+    line-height: 1.3;
+    color: var(--md-typeset-color);
+    animation: hero-claim-in 1s ease-out .3s forwards;
+}
+
+@keyframes hero-headline-in {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes hero-claim-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 0.95;
+    }
+}
+
+@media (max-width: 600px) {
+    .hero-headline {
+        font-size: 3rem;
+    }
+
+    .hero-claim {
+        font-size: 1.1rem;
+        padding: 0 1rem;
+    }
+}
+
+
 .md-content dfn {
     border-bottom: .05rem dotted var(--md-default-fg-color--light);
     cursor: help;
