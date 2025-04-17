@@ -174,7 +174,8 @@ While the phrase "Killing the Aggregate" might sound provocative, we don’t vie
 
 That said, we've chosen not to overload the term “Aggregate” any further, especially given the existing ambiguity and varied interpretations in the community. Instead, we often refer to this construct as a **Decision Model**, emphasizing its role in evaluating business rules and producing decisions in a specific context.
 
-<center>*The Aggregate is dead, long live the Aggregate*</center>
+<p>&nbsp;</p>
+<center><em>The Aggregate is dead, long live the Aggregate</em></center>
 
 ## Conclusion
 
