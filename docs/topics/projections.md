@@ -49,7 +49,7 @@ const events = [
 ```
 <codapi-snippet id="example1" engine="browser"></codapi-snippet>
 
-In order to find out how many active courses there are in total, the following simple projection could be defined and we can use JavaScripts `reduce`[:octicons-link-external-16:](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce){:target="_blank" .small} function to aggregate all Events creating a single state, starting with the `initialState`:
+In order to find out how many active courses there are in total, the following simple projection could be defined and we can use JavaScripts `reduce`[:octicons-link-external-16:](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce){:target="_blank" .small} function to Aggregate all Events creating a single state, starting with the `initialState`:
 
 ```js
 // ...
