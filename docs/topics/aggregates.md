@@ -79,14 +79,14 @@ In this pattern, closely related domain entities and value objects are grouped i
 
 A typical example is an `Order` Aggregate, where operations such as adding or removing line items are only performed through methods on the `Order` Aggregate Root. This guarantees that domain invariants—such as the correctness of the total price—are maintained at all times:
 
-![order aggregate diagram](img/order-aggregate.png){data-description="The Order is the Aggregate root. Shipping Address and Order Items are also part of the Order Aggregate" data-gallery="aggregate-pattern"}
+![order Aggregate diagram](img/order-aggregate.png){data-description="The Order is the Aggregate root. Shipping Address and Order Items are also part of the Order Aggregate" data-gallery="aggregate-pattern"}
 /// caption
 The `Order` is the Aggregate root. `Shipping Address` and `Order Items` are also part of the `Order` Aggregate
 ///
 
 Applied to the course example, we could model a `Course` as the Aggregate Root:
 
-![course aggregate diagram](img/course-aggregate.png){data-description="An Aggregate with the Course acting as Aggregate root with relations to Student entities" data-gallery="aggregate-pattern"}
+![course Aggregate diagram](img/course-aggregate.png){data-description="An Aggregate with the Course acting as Aggregate root with relations to Student entities" data-gallery="aggregate-pattern"}
 /// caption
 An Aggregate with the `Course` acting as Aggregate root with relations to `Student` entities
 ///
@@ -95,7 +95,7 @@ However, embedding the `Student` entity within the `Course Aggregate` would be i
 
 This separation is feasible because it's perfectly valid for one Aggregate to reference another by its identifier:
 
-![course and student aggregates diagram](img/course-and-student-aggregates.png){data-description="Extracting the Student entity to a separate Aggregate, referenced by the Aggregate root identifier (StudentId)" data-gallery="aggregate-pattern"}
+![course and student Aggregates diagram](img/course-and-student-aggregates.png){data-description="Extracting the Student entity to a separate Aggregate, referenced by the Aggregate root identifier (StudentId)" data-gallery="aggregate-pattern"}
 /// caption
 Extracting the `Student` entity to a separate Aggregate, referenced by the Aggregate root identifier (`StudentId`)
 ///
@@ -154,9 +154,27 @@ The Event Store appends new Events only if the last Event *in the same Event Str
 
 This makes the Event Stream a a good match for [Aggregates](../topics/aggregates.md), as demonstrated in the previous illustration: Course-Events are persisted to Streams of the corresponding Aggregate instance "`course-<courseIdentifier>`"
 
+### Consequences
+
+While Event-Sourced Aggregates bring powerful capabilities, it's important to recognize that they are subject to the same limitations as traditional Aggregates. In fact, their boundaries tend to be even more rigid, as they become materialized in the structure of the Event Streams. This rigidity can make it significantly harder to adapt the design later on, especially as the model evolves and new insights emerge.
+
+We believe that flexibility is essential in software design — it should leave room for mistakes, experimentation, and new realizations as understanding deepens over time. Additionally, Event-Sourced Aggregates often grow in size as more Events accumulate, which can negatively impact performance. Although there are mitigation strategies, such as snapshots or patterns like "closing the books", they often come at the cost of added complexity.
+
 ## Relation to DCB
 
-*tbd*
+Dynamic Consistency Boundaries offer an alternative approach by allowing consistency to be enforced for a specific use case, rather than being hardwired into a static Aggregate structure. This is where the "dynamic" aspect comes in — not because the consistency is weaker or less accurate, but because the boundary is established at runtime, tailored to the requirements of a single interaction.
+
+As a result, only the Events that are necessary to evaluate those invariants are loaded and considered, improving flexibility and potentially reducing overhead.
+
+In essence, DCB makes it possible to construct an Aggregate dynamically, just for the duration of an operation, to guard the relevant invariants.
+
+### Killing it, really?
+
+While the phrase "Killing the Aggregate" might sound provocative, we don’t view DCB as a rejection of the Aggregate pattern. On the contrary, we see it as an *evolution* — one that preserves the core intent of Aggregates, especially when viewed from the perspective of a single interaction.
+
+That said, we've chosen not to overload the term “Aggregate” any further, especially given the existing ambiguity and varied interpretations in the community. Instead, we often refer to this construct as a **Decision Model**, emphasizing its role in evaluating business rules and producing decisions in a specific context.
+
+<center>*The Aggregate is dead, long live the Aggregate*</center>
 
 ## Conclusion
 
