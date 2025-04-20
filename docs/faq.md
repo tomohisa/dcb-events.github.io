@@ -52,4 +52,4 @@ Furthermore, DCB leads to some additional complexity in the Event Store implemen
 
 The future of DCB is still unfolding. There’s a lot more to discover, both conceptually and in practice and your feedback will play a key role in shaping its evolution — sparking new ideas, use cases, and conversations.
 
-We plan to continuously extend this website with more [examples](examples/index.md), [articles](topics/index.md), and [resourced](resources/index.md) to help others explore and apply DCB in real-world systems. Make sure to watch the Github Repository[:octicons-link-external-16:](https://github.com/dcb-events/dcb-events.github.io){:target="_blank" .small} of this website to get notified about changes.
+We plan to continuously extend this website with more [examples](examples/index.md), [articles](topics/index.md), and [resources](resources/index.md) to help others explore and apply DCB in real-world systems. Make sure to watch the Github Repository[:octicons-link-external-16:](https://github.com/dcb-events/dcb-events.github.io){:target="_blank" .small} of this website to get notified about changes.
