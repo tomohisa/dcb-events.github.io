@@ -56,4 +56,6 @@ Head of Tech for Generation, Kraken, Renewables
 
 ## Contact Us
 
-For collaborations, suggestions, or just to connect, feel free to reach out to us through via [email](mailto:hello%40dcb.events) or our social profiles!
+For collaborations, suggestions, or just to connect, feel free to reach out to us via email [:material-email:](mailto:hello%40dcb.events){.small} or through our social profiles.
+
+Also, feel free to join the discussions at the footer of each page or via the Github Repository of this website [:octicons-link-external-16:](https://github.com/dcb-events/dcb-events.github.io/discussions){:target="_blank" .small}
