@@ -1,8 +1,3 @@
----
-hide:
-  - comments
----
-
 <div class="hero-teaser">
     <h1 class="hero-headline">DCB</h1>
     <h2 class="hero-claim">A simpler and more flexible approach to consistency in event-driven systems</h2>
