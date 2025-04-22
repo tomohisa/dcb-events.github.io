@@ -17,3 +17,11 @@ frameborder="0" allow="accelerometer; clipboard-write; encrypted-media;
 gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 _Publisher: **AxonIQ**, Published: **December 2024**_
+
+## Podcasts
+
+### The Event Modeling and Event Sourcing Podcast [:octicons-link-external-16:](https://podcast.eventmodeling.org/){:target="_blank" .small}
+
+This podcasts covers DCB in multiple episodes
+
+_Hosts: **Adam Dymitruk** & **Martin Dilger**_
