@@ -18,9 +18,12 @@ This makes a lot of sense of course. But it is not waterproof and sometimes not 
 To prevent double submissions on the server-side, several strategies can be used:
 
 - **Client-generated identifier:** The frontend generates some UUID (or another unique key) to serve as the identifier for the entity being created. The backend then rejects the request if the corresponding Event stream already contains Events
-    - While effective, this approach gives the client control over domain entity identifiers, which can introduce potential security risks
+
+    > :material-forward: While effective, this approach gives the client control over domain entity identifiers, which can introduce potential security risks
+
 - **Pre-issued server token:** The server generates and stores a unique token _before_ the form is rendered. When the form is submitted, the token is verified and invalidated (e.g., deleted).
-    - This method is reliable but adds infrastructure overhead and complexity, and may result in stale or unused tokens accumulating over time
+    
+    > :material-forward: This method is reliable but adds infrastructure overhead and complexity, and may result in stale or unused tokens accumulating over time
 
 ## DCB approach
 

@@ -10,11 +10,11 @@ The goal is to implement an Event-Sourced Aggregate that works with a DCB compli
 
 The Implementation of an Event-Sourced Aggregate depends on the Programming Language and Framework, but the common functionality is:
 
-- Relevant Events are loaded, remembering the position of the last consumed Event
-- A decision is made based on the projected state of those Events
-- If successful, a new Event is appended specifying the remembered position
-- The Event Store appends the new Event only if no other Event was stored in the meantime and fails otherwise
-- Upon failure the process can be repeated until the Event was successfully persisted
+1. Relevant Events are loaded, remembering the position of the last consumed Event
+2. A decision is made based on the projected state of those Events
+3. If successful, a new Event is appended specifying the remembered position
+4. The Event Store appends the new Event only if no other Event was stored in the meantime and fails otherwise
+5. Upon failure the process can be repeated until the Event was successfully persisted
 
 The following is a potential JavaScript version of an Aggregate representing a course students can be subscribed to:
 
@@ -258,6 +258,8 @@ console.log(
 
 ## DCB approach
 
+With DCB we can reuse the `CourseAggregate` from above and only need to adjust the repository implementation:
+
 ```js title="DcbCourseRepository.js"
 class DcbCourseRepository {
   #eventStore
@@ -309,3 +311,4 @@ console.log(
 
 ## Conclusion
 
+This example demonstrates how the Aggregate pattern can be used with DCB

@@ -17,12 +17,17 @@ The first and last constraints, in particular, make this example difficult to im
 
 There are several potential strategies to solve this without DCB:
 
-- Turn one of the invariants into a *soft constraint*, i.e. use the <dfn title="Representation of data tailored for specific read operations, often denormalized for performance">Read Model</dfn> for verification and accept the fact that there might be overbooked courses and/or students with more than 10 subscriptions
-    - This is of course a potential solution, with or without DCB, but it falls outside the scope of these examples
-- Create an Aggregate that spans course and student subscriptions
-    - This is not a viable solution because it leads to huge Aggregates and restricts parallel bookings
-- Create an Aggregate for each, courses and students, enforcing their constraints and use a <dfn title="Coordinates a sequence of local transactions across multiple services, ensuring data consistency through compensating actions in case of failure">Saga</dfn> to coordinate them
-    - This works, but it leads to a lot of complexity and potentially invalid states for a period of time
+- **Eventual consistency:** Turn one of the invariants into a *soft constraint*, i.e. use the <dfn title="Representation of data tailored for specific read operations, often denormalized for performance">Read Model</dfn> for verification and accept the fact that there might be overbooked courses and/or students with more than 10 subscriptions
+
+    > :material-forward: This is of course a potential solution, with or without DCB, but it falls outside the scope of these examples
+
+- **Larger Aggregate:** Create an Aggregate that spans course and student subscriptions
+
+    > :material-forward: This is not a viable solution because it leads to huge Aggregates and restricts parallel bookings
+
+- **Reservation Pattern:** Create an Aggregate for each, courses and students, enforcing their constraints and use a <dfn title="Coordinates a sequence of local transactions across multiple services, ensuring data consistency through compensating actions in case of failure">Saga</dfn> to coordinate them
+
+    > :material-forward: This works, but it leads to a lot of complexity and potentially invalid states for a period of time
 
 ## DCB approach
 

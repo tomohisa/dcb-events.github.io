@@ -16,12 +16,17 @@ As a bonus, this example is extended by adding the following features:
 
 There are a couple of common strategies to achieve global uniqueness in event-driven systems:
 
-- Use a <dfn title="Representation of data tailored for specific read operations, often denormalized for performance">Read Model</dfn> to check for uniqueness and handle a duplication due to race conditions after the fact (e.g. by deactivating the account or changing the username)
-    - This is of course a potential solution, with or without DCB, but it falls outside the scope of these examples
-- Create a dedicated storage for allocated usernames and make the write side insert a record when the corresponding Event is recorded
-    - This adds a source of error and potentially locked usernames unless Event and storage update can be done in a single transaction
-- Use the <dfn title="Design pattern used to temporarily hold or reserve a resource or state until the process is completed">Reservation Pattern</dfn> to lock a username and only continue if the locking succeeded
-    - This works but adds quite a lot of complexity and additional Events and the need for <dfn title="Coordinates a sequence of local transactions across multiple services, ensuring data consistency through compensating actions in case of failure">Sagas</dfn> or multiple writes in a single request
+- **Eventual consistency**: Use a <dfn title="Representation of data tailored for specific read operations, often denormalized for performance">Read Model</dfn> to check for uniqueness and handle a duplication due to race conditions after the fact (e.g. by deactivating the account or changing the username)
+
+     > :material-forward: This is of course a potential solution, with or without DCB, but it falls outside the scope of these examples
+
+- **Dedicated storage**: Create a dedicated storage for allocated usernames and make the write side insert a record when the corresponding Event is recorded
+    
+      > :material-forward: This adds a source of error and potentially locked usernames unless Event and storage update can be done in a single transaction
+
+- **Reservation Pattern:** Use the <dfn title="Design pattern used to temporarily hold or reserve a resource or state until the process is completed">Reservation Pattern</dfn> to lock a username and only continue if the locking succeeded
+
+      > :material-forward: This works but adds quite a lot of complexity and additional Events and the need for <dfn title="Coordinates a sequence of local transactions across multiple services, ensuring data consistency through compensating actions in case of failure">Sagas</dfn> or multiple writes in a single request
 
 ## DCB approach
 
