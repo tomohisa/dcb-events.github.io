@@ -37,7 +37,7 @@ theme:
 
 nav:
   - DCB:
-    - index.md
+    - Dynamic Consistency Boundary: index.md
     - Specification: specification.md
   - Examples:
       - examples/index.md
