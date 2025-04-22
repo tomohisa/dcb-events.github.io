@@ -43,11 +43,11 @@ nav:
       - examples/index.md
       - Course subscriptions: examples/course-subscriptions.md
       - Unique username: examples/unique-username.md
-      - Prevent record duplication: examples/prevent-record-duplication.md
       - Invoice number: examples/invoice-number.md
       - Dynamic product price: examples/dynamic-product-price.md
       - Event-Sourced Aggregate: examples/event-sourced-aggregate.md
       - Opt-In Token: examples/opt-in-token.md
+      - Prevent record duplication: examples/prevent-record-duplication.md
   - Related topics:
       - topics/index.md
       - Aggregates: topics/aggregates.md
