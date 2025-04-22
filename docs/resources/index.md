@@ -4,7 +4,15 @@ This part of the website aims to collect additional resources, like custom imple
 
 ## [Libraries](libraries.md)
 
-A collection of 3rd party libraries that implement DCB Event Stores or related tools
+3rd party libraries that implement DCB Event Stores or related tools
+
+## [Media](media.md)
+
+Videos and podcasts related to DCB
+
+## [Articles](articles.md)
+
+External blog posts and articles related to the topic
 
 ---
 
