@@ -268,13 +268,13 @@ class DcbCourseRepository {
   }
   load(courseId) {
     const tags = [`course:${courseId}`]
-    const query = [{ tags }]
+    const query = createQuery([{ tags }])
     const eventsForThisCourse = this.#eventStore.read(query)
     return CourseAggregate.reconstitute(eventsForThisCourse)
   }
   save(course) {
     const tags = [`course:${course.id}`]
-    const query = [{ tags }]
+    const query = createQuery([{ tags }])
     const eventsWithTags = course
       .pullRecordedEvents()
       .map((event) => ({ ...event, tags }))
@@ -292,22 +292,22 @@ It can be used with an `InMemoryDcbEventStore.js`[:octicons-link-external-16:](.
 
 ```js
 // create and save a new instance:
+const dcbEventStore = new InMemoryDcbEventStore()
 const repository = new DcbCourseRepository(dcbEventStore)
-const course = CourseAggregate.create('c1', 'Course 01', 10)
+const course = CourseAggregate.create("c1", "Course 01", 10)
 repository.save(course)
 
 // update an existing instance:
-const course2 = repository.load('c1')
+const course2 = repository.load("c1")
 course2.changeCapacity(15)
 repository.save(course2)
 
 console.log(
-  dcbEventStore.read([{tags: ['course:c1']}])
-  .map(e => e.type)
-) // ["CourseDefined","CourseCapacityChanged"]
+  dcbEventStore.read(createQuery([{ tags: ["course:c1"] }])).first()
+) // {type: 'CourseDefined', data: { courseId: 'c1', title: 'Course 01', capacity: 10 }, tags: [ 'course:c1' ], position: 1}
 ```
 
-<codapi-snippet engine="browser" sandbox="javascript" depends-on="example-dcb-repository" template="/assets/js/InMemoryDcbEventStoreTemplate.js"></codapi-snippet>
+<codapi-snippet engine="browser" sandbox="javascript" depends-on="example-dcb-repository" template="/assets/js/dcb.js"></codapi-snippet>
 
 ## Conclusion
 
