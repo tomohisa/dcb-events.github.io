@@ -12,6 +12,9 @@ use function Wwwision\Types\instantiate;
 require __DIR__ . '/vendor/autoload.php';
 
 $cacheDir = __DIR__ . '/.cache';
+if (!is_dir($cacheDir)) {
+    mkdir($cacheDir, 0777, true);
+}
 
 $contents = file_get_contents('php://stdin');
 try {
