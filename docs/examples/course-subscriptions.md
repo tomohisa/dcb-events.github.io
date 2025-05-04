@@ -1,3 +1,7 @@
+---
+icon: material/school
+---
+
 # Course subscription example
 
 The following example showcases the imagined application from Sara Pellegrini's blog post "Killing the Aggregate" [:octicons-link-external-16:](https://sara.event-thinking.io/2023/04/kill-aggregate-chapter-1-I-am-here-to-kill-the-aggregate.html){:target="_blank" .small}
