@@ -341,7 +341,7 @@ As you can see, the state of the composite projection is an object with a key fo
 ## How to use this with DCB
 
 With DCB, composite projections are especially useful, when building a Decision Model to enforce strong consistency.
-The `buildDecisionModel` function allows multiple projections to be composed dynamically allowing for the dynamic consistency boundaries that inspired the name DCB:
+The `buildDecisionModel` function allows multiple projections to be composed on-the-fly, allowing to enforce dynamic consistency boundaries that inspired the name DCB:
 
 ```javascript
 const eventStore = new InMemoryDcbEventStore()
@@ -356,3 +356,7 @@ console.log("append condition:", appendCondition)
 ```
 
 <codapi-snippet engine="browser" sandbox="javascript" depends-on="example3 example4 example5" template="/assets/js/dcb.js"></codapi-snippet>
+
+## Conclusion
+
+Projections play a fundamental role in DCB and Event Sourcing as a whole. The ability to combine multiple simple projections into more complex ones tailored to specific use cases unlocks a range of possibilities that can influence application design.
