@@ -177,11 +177,11 @@ function ProductPriceProjection(productId) {
     initialState: { lastValidOldPrice: null, validNewPrices: [] },
     handlers: {
       ProductDefined: (state, event) =>
-        event.metadata.minutesAgo <= productPriceGracePeriod
+        event.metadata?.minutesAgo <= productPriceGracePeriod
           ? { lastValidOldPrice: null, validNewPrices: [event.data.price] }
           : { lastValidOldPrice: event.data.price, validNewPrices: [] },
       ProductPriceChanged: (state, event) =>
-        event.metadata.minutesAgo <= productPriceGracePeriod
+        event.metadata?.minutesAgo <= productPriceGracePeriod
           ? {
               lastValidOldPrice: state.lastValidOldPrice,
               validNewPrices: [...state.validNewPrices, event.data.newPrice],
