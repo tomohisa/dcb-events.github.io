@@ -16,6 +16,24 @@ No: while DCB allows to define very specific consistency boundaries, those are a
 
 No. DCB makes it easier to switch between the consistency models, but it is still important to think about strong vs eventual consistency and their implications to the behavior of the system.
 
+## Why do you want to kill Aggregates?
+
+The idea of DCB started with the goal of killing the Aggregate [:octicons-link-external-16:](https://sara.event-thinking.io/2023/04/kill-aggregate-chapter-1-I-am-here-to-kill-the-aggregate.html){:target="_blank" .small}.
+
+However, DCB does not actually attack the Aggregate pattern itself. Instead, it offers an alternative approach to achieving consistency in event-driven architectures — one that doesn't rely on Aggregates as the primary mechanism.
+
+For more on this, see our article on [Aggregates](topics/aggregates.md).
+
+## Does DCB force me to scatter business logic?
+
+DCB enables you to structure code around use cases in order to focus on the behavior rather than the data models.
+
+However, DCB does not dictate how you design your application. You're free to organize logic around entities if that better suits your workflow.
+
+## Can I still use Aggregates with DCB?
+
+Yes, that’s possible; the [Event-Sourced Aggregate](examples/event-sourced-aggregate.md) example demonstrates that.
+
 ## How does it improve performance?
 
 The primary goal of DCB is not to improve performance, but to provide a way to selectively enforce consistency where it’s actually needed. That said, in large-scale applications, enforcing strict consistency everywhere can become a performance bottleneck. By making it easier to apply eventual consistency where appropriate, DCB can help systems scale more effectively and potentially improve performance as a side effect—though that’s not its core purpose.
@@ -33,18 +51,6 @@ A collision occurs when multiple processes attempt to modify the same data at ne
 A DCB-compliant Event Store offers features that are not typically found in traditional Event Stores (see [specification](specification.md)). As a result, a traditional Event Store can't be used with DCB directly out of the box.
 
 However, we’re experimenting with an adapter layer that allows traditional Event Stores to support DCB features by incorporating strategies like pessimistic locking to enforce consistency where needed. Stay tuned.
-
-## Why do you want to kill aggregates?
-
-The idea of DCB started with the goal of killing the Aggregate [:octicons-link-external-16:](https://sara.event-thinking.io/2023/04/kill-aggregate-chapter-1-I-am-here-to-kill-the-aggregate.html){:target="_blank" .small}.
-
-However, DCB does not actually attack the Aggregate pattern itself. Instead, it offers an alternative approach to achieving consistency in event-driven architectures — one that doesn't rely on Aggregates as the primary mechanism.
-
-For more on this, see our article on [Aggregates](topics/aggregates.md).
-
-## Can I still use Aggregates with DCB?
-
-Yes, that’s possible; the [Event-Sourced Aggregate](examples/event-sourced-aggregate.md) example demonstrates that.
 
 ## Nothing comes for free. What are limitations/drawbacks of DCB?
 
