@@ -4,6 +4,10 @@ Some common questions and misconceptions about DCB:
 
 See [about](about.md).
 
+## What's the new idea about DCB?
+
+The core idea of DBC is simple: Allowing Events to be assigned to _multiple_ domain concepts and to dynamically enforce consistency amongst them. The consequences, however, are broad because DCB can greatly improve the way you design your applications.
+
 ## Does DCB promote lack of modeling?
 
 Definitely not, on the contrary: It aims to reduce technical friction so that one can focus on the domain and be more flexible as the model evolves.
@@ -33,6 +37,10 @@ However, DCB does not dictate how you design your application. You're free to or
 ## Can I still use Aggregates with DCB?
 
 Yes, that’s possible; the [Event-Sourced Aggregate](examples/event-sourced-aggregate.md) example demonstrates that.
+
+## Is DCB increasing complexity?
+
+On the contrary. While DCB may challenge certain assumptions and require some adaptation, we believe it simplifies the overall mental model by allowing you to decide between strong and eventual consistency on a case-by-case basis.
 
 ## How does it improve performance?
 
