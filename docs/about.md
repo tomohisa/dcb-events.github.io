@@ -29,11 +29,11 @@ Self-employed Software Architect, Consultant
 [:fontawesome-brands-linkedin:](https://www.linkedin.com/in/bastian-waidelich-84865221){:target="_blank"} | [:fontawesome-brands-twitter:](https://x.com/bwaidelich){:target="_blank"}
 ///
 
-![Sara Pellegrini](assets/img/SaraPellegrini.jpg){data-title="Sara Pellegrini" data-description="Software Engineer, Continuous Learner, Free Thinker"}
+![Sara Pellegrini](assets/img/SaraPellegrini.jpg){data-title="Sara Pellegrini" data-description="Software Engineer at Particular Software"}
 /// caption
 ***Sara Pellegrini***
 
-Software Engineer, Continuous Learner, Free Thinker
+Software Engineer at Particular Software
 
 [:fontawesome-brands-github:](https://github.com/saratry){:target="_blank"} | 
 [:fontawesome-brands-linkedin:](https://www.linkedin.com/in/sara-pellegrini-55a37913){:target="_blank"} | [:fontawesome-brands-twitter:](https://x.com/_sara_p_){:target="_blank"}
