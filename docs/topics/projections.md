@@ -204,7 +204,7 @@ const CourseExistsProjection = (courseId) => ({
 
 ### Library
 
-We have build a small library [:octicons-link-external-16:](https://github.com/dcb-events/dcb-events.github.io/tree/main/libraries/dcb){:target="_blank" .small} that provides functions to create projections and test them.
+We have built a small library [:octicons-link-external-16:](https://github.com/dcb-events/dcb-events.github.io/tree/main/libraries/dcb){:target="_blank" .small} that provides functions to create projections and test them.
 
 The `createProjection` function accepts a projection object like we defined above:
 
