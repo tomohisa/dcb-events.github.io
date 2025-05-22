@@ -12,7 +12,6 @@ The goal is an application that allows students to subscribe to courses, with th
 
 - A course cannot accept more than N students
 - N, the course capacity, can change at any time to any positive integer different from the current one
-- The course title can change at any time to any title different from the current one
 - The student cannot join more than 10 courses
 
 ## Traditional approaches
