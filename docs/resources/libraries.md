@@ -16,6 +16,10 @@ But there are already a couple of libraries and libraries that prove those in pr
 - `wwwision/dcb-eventstore`[:octicons-link-external-16:](https://github.com/bwaidelich/dcb-eventstore){:target="_blank" .small} (work in progress)
 - `gember/event-sourcing`[:octicons-link-external-16:](https://github.com/GemberPHP/event-sourcing){:target="_blank" .small} (work in progress)
 
+#### Python
+
+- Event Sourcing in Python[:octicons-link-external-16:](https://eventsourcing.readthedocs.io/en/latest/topics/examples/coursebooking-dcb.html){:target="_blank" .small} (work in progress)
+
 #### Ruby
 
 - `ortegacmanuel/kroniko`[:octicons-link-external-16:](https://github.com/ortegacmanuel/kroniko){:target="_blank" .small} (work in progress)
