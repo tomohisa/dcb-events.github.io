@@ -24,6 +24,11 @@ But there are already a couple of libraries and libraries that prove those in pr
 
 - `ortegacmanuel/kroniko`[:octicons-link-external-16:](https://github.com/ortegacmanuel/kroniko){:target="_blank" .small} (work in progress)
 
+#### Rust
+
+- Disintegrate `disintegrate-es/disintegrate`[:octicons-link-external-16:](https://disintegrate-es.github.io/disintegrate/){:
+  target="_blank" .small} (slightly different approach, inspired by the original ideas of DCB)
+
 ## Add your own
 
 If you are working on a library related to DCB or on a compatible (see [specification](../specification.md)) Event Store, feel free to open a Pull request in the Github Repository[:octicons-link-external-16:](https://github.com/dcb-events/dcb-events.github.io){:target="_blank" .small} of this website to add it to the list above
