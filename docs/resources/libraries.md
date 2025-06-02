@@ -5,7 +5,7 @@ But there are already a couple of libraries and libraries that prove those in pr
 
 #### Java
 
-- AxonIQ [:octicons-link-external-16:](https://www.axoniq.io){:target="_blank" .small} has announced to support DCB with version 5 of their Axon Framework
+- AxonIQ [:octicons-link-external-16:](https://www.axoniq.io){:target="_blank" .small} has announced to support DCB with version 5 of their Axon Framework (work in progress)
 
 #### JavaScript/TypeScript
 
