@@ -3,6 +3,10 @@
 DCB is merely a set of ideas and concepts.
 But there are already a couple of libraries and libraries that prove those in practice:
 
+#### Go
+
+- `go-crablet`[:octicons-link-external-16:](https://github.com/rodolfodpk/go-crablet){:target="_blank" .small}
+
 #### Java
 
 - AxonIQ [:octicons-link-external-16:](https://www.axoniq.io){:target="_blank" .small} has announced to support DCB with version 5 of their Axon Framework (work in progress)
