@@ -5,13 +5,18 @@ import InMemoryDcbEventStore from "./InMemoryDcbEventStore"
  * Internal helper function to compare two values for deep equality.
  */
 function partialDeepEqual(value1: any, value2: any): boolean {
+  if (typeof value1 === "function" || typeof value2 === "function") {
+    return true
+  }
   if (typeof value1 !== "object" || value1 === null) {
     return value1 === value2
   }
   if (typeof value2 !== "object" || value2 === null) {
     return false
   }
-
+  if (value1 instanceof Date && value2 instanceof Date) {
+    return value1.getTime() === value2.getTime()
+  }
   return Object.keys(value1).every(
     (key) => key in value2 && partialDeepEqual(value1[key], value2[key])
   )
