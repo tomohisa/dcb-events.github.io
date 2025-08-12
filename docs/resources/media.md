@@ -2,6 +2,14 @@
 
 ## Videos
 
+### Dynamic Consistency Boundaries (DCB): Nie wieder Aggregates schneiden! - Golo Roden [:octicons-link-external-16:](https://www.youtube.com/watch?v=1EQ3iYjBZR4){:target="_blank" .small}
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/1EQ3iYjBZR4" 
+frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; 
+gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+_Presenter: **Golo Roden**, Published: **August 2025**, Language: **German**_
+
 ### Kill Aggregate Volume 2 - Sara Pellegrini [:octicons-link-external-16:](https://www.youtube.com/watch?v=AQ5fk4D3u9I){:target="_blank" .small}
 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/AQ5fk4D3u9I" 
